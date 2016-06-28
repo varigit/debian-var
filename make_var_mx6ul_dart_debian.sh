@@ -15,7 +15,7 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.1"
+readonly SCRIPT_VERSION="0.3"
 
 
 #### Exports Variables ####
@@ -337,6 +337,9 @@ protected_install ntp
 protected_install openssh-server
 protected_install nfs-common
 
+# fix config for sshd (added user login for password)
+sed -i -e 's/\PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
+
 # enable graphical desktop
 protected_install Xorg
 protected_install xfce4
@@ -383,6 +386,18 @@ protected_install mtd-utils
 protected_install bluetooth
 protected_install bluez
 protected_install bluez-obexd
+protected_install bluez-tools
+protected_install libbluetooth3
+
+# wifi support packages
+protected_install hostapd
+protected_install udhcpd
+
+# can support
+protected_install can-utils
+
+# psmisc utils (killall and etc)
+protected_install psmisc
 
 # nano
 protected_install nano
@@ -441,6 +456,11 @@ rm -f user-stage
 	LANG=C chroot ${ROOTFS_BASE} /user-stage
 
 };
+
+## binaries rootfs patching ##
+	install -m 0755 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
 
 	## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
@@ -748,7 +768,7 @@ function make_sdcard() {
 	sync
 
 	dd if=/dev/zero of=${LPARAM_BLOCK_DEVICE} bs=1024 count=4096
-	sync
+	sleep 2; sync;
 
 	pr_info "Creating new partitions"
 
@@ -769,6 +789,7 @@ p
 p
 w
 EOF
+	sleep 2; sync;
 
 	# Get total card size
 	total_size=`sfdisk -s ${LPARAM_BLOCK_DEVICE}`
@@ -777,13 +798,14 @@ EOF
 	rootfs_size=`expr ${total_size} - ${boot_rom_sizeb} - ${SPARE_SIZE}`
 
 	pr_info "ROOT SIZE=${rootfs_size} TOTAl SIZE=${total_size} BOOTROM SIZE=${boot_rom_sizeb}"
-
-	sleep 2;
+	sleep 2; sync;
 
 	# Format the partitions
 	format_sdcard
+	sleep 2; sync;
 
 	flash_u-boot
+	sleep 2; sync;
 
 	# Mount the partitions
 	mkdir -p ${P1_MOUNT_DIR}
@@ -792,6 +814,7 @@ EOF
 
 	mount ${LPARAM_BLOCK_DEVICE}${part}1  ${P1_MOUNT_DIR}
 	mount ${LPARAM_BLOCK_DEVICE}${part}2  ${P2_MOUNT_DIR}
+	sleep 2; sync;
 
 	flash_sdcard
 	copy_debian_images
@@ -967,7 +990,7 @@ function cmd_make_sdcard() {
 	make_prepare;
 
 	make_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR} || {
-		pr_error "Failed #$? in function make_kmodules"
+		pr_error "Failed #$? in function make_sdcard"
 		return 1;
 	};
 

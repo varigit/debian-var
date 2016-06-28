@@ -1,0 +1,26 @@
+From a5c22d8467cef02d9f750c046666de96680336d1 Mon Sep 17 00:00:00 2001
+From: Ruslan Filipovich <ruslan.filipovich@promwad.com>
+Date: Fri, 6 May 2016 13:49:28 +0300
+Subject: [PATCH 2/2] fix reboot function for imx6ul-var-dart board
+
+---
+ arch/arm/mach-imx/system.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-imx/system.c b/arch/arm/mach-imx/system.c
+index fc398b5..e8489a7 100644
+--- a/arch/arm/mach-imx/system.c
++++ b/arch/arm/mach-imx/system.c
+@@ -57,8 +57,7 @@ void mxc_restart(enum reboot_mode mode, const char *cmd)
+ 	 * workaround qspi-nor reboot issue whatever ldo-bypass or not.
+ 	 */
+ 	else if ((wdog_source == 2 && (cpu_is_imx6q() || cpu_is_imx6dl() ||
+-			cpu_is_imx6sl())) || cpu_is_imx6sx() || cpu_is_imx7d()
+-			|| cpu_is_imx6ul())
++			cpu_is_imx6sl())) || cpu_is_imx6sx() || cpu_is_imx7d())
+ 		wcr_enable = 0x14;
+ 	else
+ 		wcr_enable = (1 << 2);
+-- 
+2.1.4
+

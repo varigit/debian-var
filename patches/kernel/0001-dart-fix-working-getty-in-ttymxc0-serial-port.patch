@@ -1,0 +1,43 @@
+From 127b4410896b23faaa19ac7ef80cb5353f60582d Mon Sep 17 00:00:00 2001
+From: Ruslan Filipovich <ruslan.filipovich@promwad.com>
+Date: Thu, 28 Apr 2016 16:02:12 +0300
+Subject: [PATCH 1/2] [dart] fix working getty in ttymxc0 serial port
+
+---
+ arch/arm/configs/imx6ul-var-dart_defconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/configs/imx6ul-var-dart_defconfig b/arch/arm/configs/imx6ul-var-dart_defconfig
+index b707a84..3ca69762 100644
+--- a/arch/arm/configs/imx6ul-var-dart_defconfig
++++ b/arch/arm/configs/imx6ul-var-dart_defconfig
+@@ -46,7 +46,7 @@ CONFIG_SWAP=y
+ CONFIG_SYSVIPC=y
+ CONFIG_SYSVIPC_SYSCTL=y
+ # CONFIG_POSIX_MQUEUE is not set
+-# CONFIG_FHANDLE is not set
++CONFIG_FHANDLE=y
+ # CONFIG_AUDIT is not set
+ 
+ #
+@@ -1687,7 +1687,7 @@ CONFIG_VT_CONSOLE_SLEEP=y
+ CONFIG_HW_CONSOLE=y
+ CONFIG_VT_HW_CONSOLE_BINDING=y
+ CONFIG_UNIX98_PTYS=y
+-# CONFIG_DEVPTS_MULTIPLE_INSTANCES is not set
++CONFIG_DEVPTS_MULTIPLE_INSTANCES=y
+ # CONFIG_LEGACY_PTYS is not set
+ # CONFIG_SERIAL_NONSTANDARD is not set
+ # CONFIG_N_GSM is not set
+@@ -3658,7 +3658,7 @@ CONFIG_FILE_LOCKING=y
+ CONFIG_FSNOTIFY=y
+ CONFIG_DNOTIFY=y
+ CONFIG_INOTIFY_USER=y
+-# CONFIG_FANOTIFY is not set
++CONFIG_FANOTIFY=y
+ CONFIG_QUOTA=y
+ CONFIG_QUOTA_NETLINK_INTERFACE=y
+ # CONFIG_PRINT_QUOTA_WARNING is not set
+-- 
+2.1.4
+
