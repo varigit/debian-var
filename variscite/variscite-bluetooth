@@ -1,0 +1,70 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: var-bluetooth
+# Required-Start:    $local_fs $syslog
+# Required-Stop:     $local_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start variscite bluetooth daemons
+### END INIT INFO
+#
+# variscite bluetooth DART-6UL
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# This script activate the Bluetooth for Variscite SOM MX6
+# I/O
+#
+#Check if device exist
+#
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DESC=variscite-bluetooth
+
+. /lib/lsb/init-functions
+
+
+set -e
+
+#Check if BT/WIFI is up
+dmesg | grep "tuple 0x80" && {
+	log_daemon_msg "$DESC: BT found"
+} || {
+	log_daemon_msg "$DESC: No BT found"
+	log_end_msg 0
+	exit 0
+};
+
+case $1 in
+	start|restart)
+		log_daemon_msg "Starting $DESC"
+
+		echo 132 > /sys/class/gpio/export && :;
+		echo "out" > /sys/class/gpio/gpio132/direction
+		echo 0 > /sys/class/gpio/gpio132/value
+		sleep 1
+		echo 1 > /sys/class/gpio/gpio132/value
+		sleep 1
+
+		brcm_patchram_plus --patchram /lib/firmware/bcm/bcm43430a1.hcd  --enable_hci --bd_addr 64:a3:cb:5b:69:f0 --no2bytes --tosleep 1000 /dev/ttymxc1 &
+		sleep 2
+
+		log_end_msg 0
+		;;
+	stop)
+		log_daemon_msg "Stop $DESC"
+		log_end_msg 0
+		;;
+	*)
+		N=${0}
+		echo "Usage: $N {start|stop|restart}" >&2
+		exit 1
+		;;
+esac
+
+exit 0
+
