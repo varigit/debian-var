@@ -15,7 +15,7 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.3"
+readonly SCRIPT_VERSION="0.4"
 
 
 #### Exports Variables ####
@@ -461,6 +461,10 @@ rm -f user-stage
 	install -m 0755 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
+
+## added alsa default configs ##
+	install -m 0666 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
+	install -m 0666 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 
 	## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
