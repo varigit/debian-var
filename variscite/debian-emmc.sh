@@ -66,10 +66,10 @@ function format_yocto
 {
 	echo "Formating Debian partitions"
 	echo "=========================="
-	umount /run/media/${node}p1 2>/dev/null
-	umount /run/media/${node}p2 2>/dev/null
-	mkfs.vfat /dev/${node}p1 -nBOOT-VARSOM
-	mkfs.ext4 /dev/${node}p2 -Lrootfs
+	umount /run/media/mmcblk1p1 2>/dev/null
+	umount /run/media/mmcblk1p2 2>/dev/null
+	mkfs.vfat ${node}p1 -nBOOT-VARSOM
+	mkfs.ext4 ${node}p2 -Lrootfs
 	sync
 }
 
@@ -83,17 +83,17 @@ function flash_yocto
 	sudo dd if=SPL.mmc of=${node} bs=1K seek=1; sync
 
 	echo "Flashing Debian BOOT partition"
-	mkdir -p /tmp/media/${node}p1
-	mkdir -p /tmp/media/${node}p2
-	mount -t vfat /dev/${node}p1  /tmp/media/${node}p1
-	mount /dev/${node}p2  /tmp/media/${node}p2
+	mkdir -p /tmp/media/mmcblk1p1
+	mkdir -p /tmp/media/mmcblk1p2
+	mount -t vfat ${node}p1  /tmp/media/mmcblk1p1
+	mount ${node}p2  /tmp/media/mmcblk1p2
 
-	cp imx6ul-var-dart-emmc_wifi.dtb /tmp/media/${node}p1/
-	cp zImage /tmp/media/${node}p1/
+	cp imx6ul-var-dart-emmc_wifi.dtb /tmp/media/mmcblk1p1/
+	cp zImage /tmp/media/mmcblk1p1/
 
 	echo "Flashing Debian Root File System"
-	rm -rf /tmp/media/${node}p2/*
-	tar xvpf rootfs.tar.bz2 -C /tmp/media/${node}p2/ 2>&1 |
+	rm -rf /tmp/media/mmcblk1p2/*
+	tar xvpf rootfs.tar.bz2 -C /tmp/media/mmcblk1p2/ 2>&1 |
 	while read line; do
 		x=$((x+1))
 		echo -en "$x extracted\r"
@@ -101,7 +101,7 @@ function flash_yocto
 }
 
 
-# umount /run/media/${node}p* 2>/dev/null
+# umount /run/media/mmcblk1p* 2>/dev/null
 
 echo
 echo "Deleting the current partitions"
@@ -179,7 +179,7 @@ flash_yocto
 
 echo "syncing"
 sync
-umount /tmp/media/${node}p1
-umount /tmp/media/${node}p2
+umount /tmp/media/mmcblk1p1
+umount /tmp/media/mmcblk1p2
 
 read -p "Debian Flashed. Press any key to continue... " -n1
