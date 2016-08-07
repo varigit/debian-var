@@ -113,9 +113,6 @@ readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
 readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
 
-## ubi
-readonly G_UBI_FILE_NAME="rootfs.ubi.img"
-
 ## CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILER_VERSION="4.9-2016.02"
 readonly G_CROSS_COMPILER_PATH="${G_TOOLS_PATH}/gcc-linaro-${G_CROSS_COMPILER_VERSION}-x86_64_arm-linux-gnueabihf/bin"
@@ -158,8 +155,7 @@ function usage() {
 	echo "       kernel      -- build or rebuild linux kernel for this board"
 	echo "       modules     -- build or rebuild linux kernel modules and install in rootfs directory for this board"
 	echo "       rootfs      -- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
-	echo "                       make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
-	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
+	echo "                       make and install extern modules (wifi/bt), create rootfs.tar.bz2)"
 	echo "       rtar        -- generate or regenerate rootfs.tar.bz2 image from rootfs folder "
 	echo "       clean       -- clean all build artifacts (not delete sources code and resulted images (output folder))"
 	echo "       sdcard      -- create bootting sdcard for this device"
@@ -550,50 +546,6 @@ function clean_uboot() {
 	return 0;
 }
 
-# make *.ubi image from rootfs
-# params:
-#  $1 -- path to rootfs dir
-#  $2 -- tmp dir
-#  $3 -- output dir
-#  $4 -- ubi file name
-function make_ubi() {
-	readonly local _rootfs=${1};
-	readonly local _tmp=${2};
-	readonly local _output=${3};
-	readonly local _ubi_file_name=${4};
-
-	readonly local UBI_CFG="${_tmp}/ubi.cfg"
-	readonly local UBIFS_IMG="${_tmp}/rootfs.ubifs"
-	readonly local UBI_IMG="${_output}/${_ubi_file_name}"
-
-	# gnerate ubifs file
-	pr_info "Generate ubi config file: ${UBI_CFG}"
-cat > ${UBI_CFG} << EOF
-[ubifs]
-mode=ubi
-image=${UBIFS_IMG}
-vol_id=0
-vol_type=dynamic
-vol_name=rootfs
-vol_flags=autoresize
-EOF
-	# delete previus images
-	rm -f ${UBI_IMG} && :;
-	rm -f ${UBIFS_IMG} && :;
-
-	pr_info "Creating $UBIFS_IMG image"
-	mkfs.ubifs -x zlib -m 2048  -e 124KiB -c 3965 -r ${_rootfs} $UBIFS_IMG
-
-	pr_info "Creating $UBI_IMG image"
-	ubinize -o ${UBI_IMG} -m 2048 -p 128KiB -s 2048 -O 2048 ${UBI_CFG}
-
-	# delete unused file
-	rm -f ${UBIFS_IMG} && :;
-	rm -f ${UBI_CFG} && :;
-
-	return 0;
-}
-
 # make sdcard for device
 # $1 -- block device
 # $2 -- output images dir
@@ -666,7 +618,6 @@ function make_sdcard() {
 		pr_info "Copying Debian images to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${LPARAM_OUTPUT_DIR}/uImage 						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 		cp ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${DEF_ROOTFS_TARBAR_NAME}
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBI_FILE_NAME}			${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${G_UBI_FILE_NAME}
 
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
@@ -782,7 +733,7 @@ function make_wl18xx() {
 
 function cmd_make_deploy() {
 	mkdir -p ${DEF_SRC_DIR}/imx
-	mkdir -p ${DEF_SRC_DIR}/wilink8
+	mkdir -p ${DEF_SRC_DIR}/wilink8/fw
 	mkdir -p ${G_TOOLS_PATH}
 	mkdir -p ${G_ROOTFS_DIR}
 	mkdir -p ${G_TMP_DIR}
@@ -960,15 +911,6 @@ function cmd_make_kmodules() {
 	return 0;
 }
 
-function cmd_make_rfs_ubi() {
-	make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} ${G_UBI_FILE_NAME} || {
-		pr_error "Failed #$? in function make_ubi"
-		return 1;
-	};
-
-	return 0;
-}
-
 function cmd_make_rfs_tar() {
 	## pack rootfs
 	make_tarbar ${G_ROOTFS_DIR} ${G_ROOTFS_TARBAR_PATH} || {
@@ -1069,11 +1011,6 @@ case $PARAM_CMD in
 			V_RET_CODE=1;
 		};
 		;;
-	rubi )
-		cmd_make_rfs_ubi || {
-			V_RET_CODE=1;
-		};
-		;;
 	rtar )
 		cmd_make_rfs_tar || {
 			V_RET_CODE=1;
@@ -1085,8 +1022,7 @@ case $PARAM_CMD in
 		 cmd_make_kmodules &&
 		 cmd_make_wl18xx &&
 		 cmd_make_rootfs &&
-		 cmd_make_rfs_tar &&
-		 cmd_make_rfs_ubi
+		 cmd_make_rfs_tar
 		) || {
 			V_RET_CODE=1;
 		};
