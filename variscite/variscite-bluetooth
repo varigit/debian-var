@@ -1,0 +1,29 @@
+#!/bin/sh -e
+### BEGIN INIT INFO
+# Provides:          variscite-bluetooth
+# Required-Start:    $all
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+### END INIT INFO
+DESC=variscite-bluetooth
+
+. /lib/lsb/init-functions
+
+#Check if BT/WIFI is up
+dmesg | grep -q "tuple 0x91" && {
+	log_daemon_msg "BT found"
+} || {
+	log_daemon_msg "No BT found"
+	exit 0
+};
+
+echo 178 >/sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio178/direction
+echo 0 > /sys/class/gpio/gpio178/value
+sleep 0.1
+echo 1 > /sys/class/gpio/gpio178/value
+
+sleep 5; hciattach -t 10 -s 115200 /dev/ttymxc1 texas 3000000 &
+
+exit 0
