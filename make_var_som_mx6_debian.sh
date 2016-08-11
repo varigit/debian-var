@@ -584,7 +584,6 @@ function make_sdcard() {
 	# Call sfdisk to get total card size
 	local TOTAL_SIZE=`sfdisk -s ${LPARAM_BLOCK_DEVICE}`
 	local TOTAL_SIZE=`expr ${TOTAL_SIZE} / 1024`
-	local ROOTFS_SIZE=`expr ${TOTAL_SIZE} - ${BOOTLOAD_RESERVE_SIZE} - ${BOOT_ROM_SIZE} - ${SPARE_SIZE}`
 
 	function format_sdcard
 	{
