@@ -22,14 +22,14 @@ sync; sleep 1
 echo "I: install libimxvpuapi"
 cd /usr/local/src/imx/libimxvpuapi
 ./waf configure --prefix=/usr
-./waf
+./waf -j1
 ./waf install
 
 echo "I: install gstreamer-imx"
 cd /usr/local/src/imx/gstreamer-imx
 ln -s /usr/lib/arm-linux-gnueabihf/gstreamer-1.0 /usr/lib/gstreamer-1.0
 ./waf configure --prefix=/usr --kernel-headers=/usr/local/include
-./waf
+./waf -j1
 ./waf install
 
 sync
