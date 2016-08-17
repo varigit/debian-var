@@ -50,6 +50,9 @@ readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var01"
 readonly G_UBOOT_DEF_CONFIG_MMC="mx6var_som_sd_config"
 readonly G_UBOOT_NAME_FOR_EMMC="u-boot.img.mmc"
 readonly G_SPL_NAME_FOR_EMMC="SPL.mmc"
+readonly G_UBOOT_DEF_CONFIG_NAND="mx6var_som_nand_config"
+readonly G_UBOOT_NAME_FOR_NAND="u-boot.img.nand"
+readonly G_SPL_NAME_FOR_NAND="SPL.nand"
 
 ## wilink8 ##
 readonly G_WILINK8_GIT="git://git.ti.com/wilink8-wlan"
@@ -327,6 +330,10 @@ function make_debian_rootfs() {
 ## copy custom files
 	cp ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc
 	cp ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc
+	cp ${G_VARISCITE_PATH}/fw_env.config ${ROOTFS_BASE}/etc
+	cp ${G_VARISCITE_PATH}/kobs-ng ${ROOTFS_BASE}/usr/bin
+	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
+	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	cp ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d
 	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
 	cp ${G_VARISCITE_PATH}/background.png ${ROOTFS_BASE}/usr/share/linaro/wallpapers/linaro-default-wallpaper.jpg
@@ -533,6 +540,25 @@ function make_uboot() {
 	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
 	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_EMMC}
 
+### make nand uboot ###
+	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_NAND}"
+	# clean work directory
+	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION} mrproper
+
+	# make uboot config for nand
+	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION} ${G_UBOOT_DEF_CONFIG_NAND}
+
+	# make uboot
+	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
+
+	# copy images
+	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_NAND}
+	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_NAND}
+
+	# make fw_printenv
+	make env ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
+	cp ${1}/tools/env/fw_printenv ${2}
+
 	return 0;
 }
 
@@ -624,6 +650,10 @@ function make_sdcard() {
 		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/SPL.mmc
 		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.mmc
 
+		pr_info "Copying NAND U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
+		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_NAND}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/SPL.nand
+		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_NAND}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.nand
+
 		return 0;
 	}
 
@@ -631,6 +661,7 @@ function make_sdcard() {
 	{
 		pr_info "Copying scripts to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${G_VARISCITE_PATH}/debian-emmc.sh	${P2_MOUNT_DIR}/usr/sbin/
+		cp ${G_VARISCITE_PATH}/debian-install.sh ${P2_MOUNT_DIR}/usr/sbin/
 	}
 
 	function ceildiv

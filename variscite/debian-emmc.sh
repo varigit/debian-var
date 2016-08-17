@@ -1,185 +1,161 @@
 #!/bin/bash
-#
-# Flash Debian into eMMC for VAR-SOM-MX6
-#
 
-# Partitions sizes in MiB
-BOOTLOAD_RESERVE=4
-BOOT_ROM_SIZE=8
-SPARE_SIZE=0
+set -e
 
-if [ `dmesg |grep UltraLite | wc -l` = 1 ] ; then
-	echo "================================================"
-	echo " emmc debian Variscite VAR-SOM-MX6   "
-	echo "================================================"
-else
-	echo "================================================"
-	echo " emmc debian is only compatible with VAR-SOM-MX6."
-	echo "================================================"
-	read -p "Press any key to continue... " -n1 -s
-	exit 0
+if [ $EUID != 0 ] ; then
+	echo "This script must be run with super-user privileges"
+	exit 1
 fi
 
-cd /opt/images/Debian
-if [ ! -f SPL.mmc ]
-then
-	echo "SPL does not exist! exit."
-	exit 1
-fi	
-if [ ! -f u-boot.img.mmc ]
-then
-	echo "u-boot.img does not exist! exit."
-	exit 1
-fi	
+while getopts :b: OPTION;
+do
+	case $OPTION in
+		b)
+			if [ $OPTARG = dart ] ; then
+				is_dart=true
+			fi
+			;;
+	esac
+done
 
+if [ "$is_dart" = true ] ; then
+	block=mmcblk2
+	bootpart=1
+	rootfspart=2
+else
+	block=mmcblk0
+	bootpart=none
+	rootfspart=1
+fi
 
-help() {
+node=/dev/${block}
+part=p
+mountdir_prefix=/run/media/${block}${part}
+imagesdir=/opt/images/Debian
 
-bn=`basename $0`
-cat << EOF
-usage $bn <option> device_node
+function check_images
+{
+	if [ ! -b $node ] ; then
+		echo "ERROR: \"$node\" is not a block device"
+		exit 1
+	fi
 
-options:
-  -h			displays this help message
-  -s			only get partition size
-EOF
-
+	if [ "$is_dart" = true ] ; then
+		if [ ! -f ${imagesdir}/SPL.mmc ] ; then
+			echo "ERROR: SPL.mmc does not exist"
+			exit 1
+		fi
+		if [ ! -f ${imagesdir}/u-boot.img.mmc ] ; then
+			echo "ERROR: u-boot.img.mmc does not exist"
+			exit 1
+		fi
+	fi
 }
 
-if [[ $EUID -ne 0 ]]; then
-	echo "This script must be run with super-user privileges" 
-	exit 1
-fi
-
-# Parse command line
-moreoptions=1
-node="/dev/mmcblk1"
-part=p
-cal_only=0
-
-if [ ! -e ${node} ]; then
-	help
-	exit
-fi
-
-function format_yocto
+function delete_device
 {
-	echo "Formating Debian partitions"
-	echo "=========================="
-	umount /run/media/${node}p1 2>/dev/null
-	umount /run/media/${node}p2 2>/dev/null
-	mkfs.vfat /dev/${node}p1 -nBOOT-VARSOM
-	mkfs.ext4 /dev/${node}p2 -Lrootfs
+	echo
+	echo "Deleting current partitions"
+	for ((i=0; i<=10; i++))
+	do
+		if [ -e ${node}${part}${i} ] ; then
+			dd if=/dev/zero of=${node}${part}${i} bs=1024 count=1024 2> /dev/null || true
+		fi
+	done
+	sync
+
+	((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk $node &> /dev/null) || true
+	sync
+
+	dd if=/dev/zero of=$node bs=1M count=4
 	sync
 }
 
-function flash_yocto
+function create_parts
 {
-	echo "Flashing Debian "
-	echo "==============="
+	echo
+	echo "Creating new partitions"
+	if [ "$is_dart" = true ] ; then
+		SECT_SIZE_BYTES=`cat /sys/block/${block}/queue/hw_sector_size`
+		PART1_FIRST_SECT=`expr 4 \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+		PART2_FIRST_SECT=`expr $((4 + 8)) \* 1024 \* 1024 \/ $SECT_SIZE_BYTES`
+		PART1_LAST_SECT=`expr $PART2_FIRST_SECT - 1`
 
-	echo "Flashing U-Boot"
-	sudo dd if=u-boot.img.mmc of=${node} bs=1K seek=69; sync
-	sudo dd if=SPL.mmc of=${node} bs=1K seek=1; sync
-
-	echo "Flashing Debian BOOT partition"
-	mkdir -p /tmp/media/${node}p1
-	mkdir -p /tmp/media/${node}p2
-	mount -t vfat /dev/${node}p1  /tmp/media/${node}p1
-	mount /dev/${node}p2  /tmp/media/${node}p2
-
-	cp *.dtb /tmp/media/${node}p1/
-	cp uImage /tmp/media/${node}p1/
-
-	echo "Flashing Debian Root File System"
-	rm -rf /tmp/media/${node}p2/*
-	tar xvpf rootfs.tar.bz2 -C /tmp/media/${node}p2/ 2>&1 |
-	while read line; do
-		x=$((x+1))
-		echo -en "$x extracted\r"
-	done
+		(echo n; echo p; echo $bootpart; echo $PART1_FIRST_SECT; echo $PART1_LAST_SECT; echo t; echo c; \
+		 echo n; echo p; echo $rootfspart; echo $PART2_FIRST_SECT; echo; \
+		 echo p; echo w) | fdisk $node > /dev/null
+	else
+		(echo n; echo p; echo $rootfspart; echo; echo; echo p; echo w) | fdisk $node > /dev/null
+	fi
+	fdisk -l $node
+	sync; sleep 1
 }
 
+function format_boot_part
+{
+	echo
+	echo "Formatting BOOT partition"
+	mkfs.vfat ${node}${part}${bootpart} -n BOOT-VARSOM
+	sync
+}
 
-# umount /run/media/${node}p* 2>/dev/null
+function format_rootfs_part
+{
+	echo
+	echo "Formatting rootfs partition"
+	mkfs.ext4 ${node}${part}${rootfspart} -L rootfs
+	sync
+}
 
-echo
-echo "Deleting the current partitions"
+function install_bootloader
+{
+	echo
+	echo "Installing bootloader to eMMC"
+	sudo dd if=${imagesdir}/SPL.mmc of=${node} bs=1K seek=1; sync
+	sudo dd if=${imagesdir}/u-boot.img.mmc of=${node} bs=1K seek=69; sync
+}
 
-for ((i=0; i<10; i++))
-do
-	if [ `ls ${node}${part}$i 2> /dev/null | grep -c ${node}${part}$i` -ne 0 ]; then
-		dd if=/dev/zero of=${node}${part}$i bs=512 count=1024
-	fi
-done
-sync
+function install_kernel
+{
+	echo
+	echo "Installing kernel to BOOT partition"
+	mkdir -p ${mountdir_prefix}${bootpart}
+	mount -t vfat ${node}${part}${bootpart}		${mountdir_prefix}${bootpart}
+	cp -v ${imagesdir}/imx6q-var-dart.dtb	${mountdir_prefix}${bootpart}/imx6q-var-dart.dtb
+	cp -v ${imagesdir}/uImage			${mountdir_prefix}${bootpart}/uImage
+	sync
+	umount ${node}${part}${bootpart}
+}
 
-((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${node} &> /dev/null) || true
-sync
+function install_rootfs
+{
+	echo
+	echo "Installing rootfs"
+	mkdir -p ${mountdir_prefix}${rootfspart}
+	mount ${node}${part}${rootfspart} ${mountdir_prefix}${rootfspart}
+	tar xvpf ${imagesdir}/rootfs.tar.bz2 -C ${mountdir_prefix}${rootfspart} |
+	while read line; do
+		x=$((x+1))
+		echo -en "$x files extracted\r"
+	done
+	echo
+	sync
+	umount ${node}${part}${rootfspart}
+}
 
-dd if=/dev/zero of=${node} bs=1024 count=4096
-sync
+check_images
 
-echo
-echo "Creating new partitions"
-# Create a new partition table
-fdisk ${node} <<EOF 
-n
-p
-1
-8192
-24575
-t
-c
-n
-p
-2
-24576
+umount ${node}${part}*  2> /dev/null || true
 
-p
-w
-EOF
+delete_device
+create_parts
+format_rootfs_part
+install_rootfs
 
-# Get total card size
-total_size=`sfdisk -s ${node}`
-total_size=`expr ${total_size} / 1024`
-boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
-rootfs_size=`expr ${total_size} - ${boot_rom_sizeb} - ${SPARE_SIZE}`
+if [ "$is_dart" = true ] ; then
+	format_boot_part
+	install_bootloader
+	install_kernel
+fi
 
-echo "ROOT SIZE=${rootfs_size} TOTAl SIZE=${total_size} BOOTROM SIZE=${boot_rom_sizeb}"
-echo "======================================================"
-# create partitions 
-#if [ "${cal_only}" -eq "1" ]; then
-#cat << EOF
-#BOOT   : ${boot_rom_sizeb}MiB
-#ROOT   : ${rootfs_size}MiB
-#EOF
-#exit
-#fi
-
-#sfdisk --force -uM ${node} << EOF
-#,${boot_rom_sizeb},c
-#,${rootfs_size},83
-#EOF
-
-# adjust the partition reserve for bootloader.
-# if you don't put the uboot on same device, you can remove the BOOTLOADER_ERSERVE
-# to have 8M space.
-# the minimal sylinder for some card is 4M, maybe some was 8M
-# just 8M for some big eMMC 's sylinder
-#sfdisk --force -uM ${node} -N1 << EOF
-#${BOOTLOAD_RESERVE},${BOOT_ROM_SIZE},c
-#EOF
-
-sync
-sleep 2
-
-format_yocto
-flash_yocto
-
-echo "syncing"
-sync
-umount /tmp/media/${node}p1
-umount /tmp/media/${node}p2
-
-read -p "Debian Flashed. Press any key to continue... " -n1
+exit 0
