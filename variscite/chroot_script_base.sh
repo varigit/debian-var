@@ -11,4 +11,11 @@ apt-get upgrade -y
 echo "I: install building dependencies"
 apt-get install -y automake libtool
 
+echo "I: install virtual keyboard"
+# without at-spi2-core. the keyboard vanish at 1st touch
+apt-get install -y at-spi2-core florence
+
+echo "I: install mtd packages"
+apt-get install -y mtd-utils
+
 sync
