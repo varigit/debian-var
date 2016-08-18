@@ -1,0 +1,15 @@
+diff --git a/wlconf/configure-device.sh b/wlconf/configure-device.sh
+index 27ace9f..635a375 100755
+--- a/wlconf/configure-device.sh
++++ b/wlconf/configure-device.sh
+@@ -200,8 +200,8 @@ done
+ 
+ 
+ # ask if 5GHz diversity is needed
+-if [[ $TI_MODULE -eq 1 ]] &&
+-   [[ $CHIP_FLAVOR -eq 1807 || $CHIP_FLAVOR -eq 1837 ]]; then
++if [ $TI_MODULE -eq 1 ] &&
++   [ $CHIP_FLAVOR -eq 1807 -o $CHIP_FLAVOR -eq 1837 ]; then
+ 	diversity_5g="y";
+ 	high_band_component_type=0x0a;
+ elif [ $number_5G_antenna -eq 2 ]; then

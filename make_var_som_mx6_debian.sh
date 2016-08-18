@@ -313,7 +313,7 @@ function make_debian_rootfs() {
 	}
 
 ## install wl18xx stuff
-	install_wl18xx_packages
+	install_wl18xx_packages ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}
 
 ## copy imx sources to rootfs for native compilation
 	install_imx_packages
@@ -476,6 +476,9 @@ function install_wl18xx_packages() {
 
 	mkdir -p ${WL18XX_FW_DIR}
 	mkdir -p ${WLCONF_DIR}
+
+	pr_info "Compiling wl18xx wlconf"
+	make CC=${1}gcc ${G_CROSS_COMPILER_JOPTION} -C ${G_WILINK8_UTILS_SRC_DIR}/wlconf
 
 	pr_info "Installing wl18xx bt firmware"
 	cp ${G_WILINK8_BT_FW_LOCAL_DIR}/*.bts ${WL18XX_FW_DIR}
@@ -749,16 +752,6 @@ EOF
 	return 0;
 }
 
-# make firmware for wl bcm module
-# $1 -- bcm git directory
-# $2 -- rootfs output dir
-function make_wl18xx() {
-	pr_info "Compiling wl18xx wlconf"
-	make CC=${1}gcc ${G_CROSS_COMPILER_JOPTION} -C ${G_WILINK8_UTILS_SRC_DIR}/wlconf
-
-	return 0;
-}
-
 #################### commands ################
 
 function cmd_make_deploy() {
@@ -827,6 +820,9 @@ function cmd_make_deploy() {
 	(( `ls ${G_WILINK8_UTILS_SRC_DIR} | wc -l` == 0 )) && {
 		pr_info "Get wilink8 utils repository";
 		get_git_src ${G_WILINK8_UTILS_GIT} ${G_WILINK8_UTILS_GIT_BRANCH} ${G_WILINK8_UTILS_SRC_DIR}
+		cd ${G_WILINK8_UTILS_SRC_DIR}
+		patch -p1 < ${DEF_BUILDENV}/patches/wilink8/utils/config_sh.patch
+		cd -
 	};
 
 	# get wilink8 firmware
@@ -960,15 +956,6 @@ function cmd_make_sdcard() {
 	return 0;
 }
 
-function cmd_make_wl18xx() {
-	make_wl18xx ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_bcm_fw"
-		return 1;
-	};
-
-	return 0;
-}
-
 function cmd_make_clean() {
 
 	## clean kernel, dtb, modules
@@ -1031,11 +1018,6 @@ case $PARAM_CMD in
 			V_RET_CODE=1;
 		};
 		;;
-	wl18xx )
-		cmd_make_wl18xx || {
-			V_RET_CODE=1;
-		};
-		;;
 	sdcard )
 		cmd_make_sdcard || {
 			V_RET_CODE=1;
@@ -1050,7 +1032,6 @@ case $PARAM_CMD in
 		(cmd_make_uboot  &&
 		 cmd_make_kernel &&
 		 cmd_make_kmodules &&
-		 cmd_make_wl18xx &&
 		 cmd_make_rootfs &&
 		 cmd_make_rfs_tar
 		) || {
