@@ -337,6 +337,10 @@ protected_install ntp
 protected_install openssh-server
 protected_install nfs-common
 
+# packages required when flashing emmc
+protected_install dosfstools
+protected_install bzip2
+
 # fix config for sshd (added user login for password)
 sed -i -e 's/\PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
 
