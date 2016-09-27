@@ -79,8 +79,8 @@ function flash_yocto
 	echo "==============="
 
 	echo "Flashing U-Boot"
-	sudo dd if=u-boot.img.mmc of=${node} bs=1K seek=69; sync
-	sudo dd if=SPL.mmc of=${node} bs=1K seek=1; sync
+	dd if=u-boot.img.mmc of=${node} bs=1K seek=69; sync
+	dd if=SPL.mmc of=${node} bs=1K seek=1; sync
 
 	echo "Flashing Debian BOOT partition"
 	mkdir -p /tmp/media/mmcblk1p1
