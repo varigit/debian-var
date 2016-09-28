@@ -889,6 +889,7 @@ function cmd_make_deploy() {
 		pr_info "Get gstreamer-imx repository";
 		get_git_src ${G_IMX_GSTREAMER_GIT} ${G_IMX_GSTREAMER_GIT_BRANCH} ${G_IMX_GSTREAMER_SRC_DIR}
 		cd ${G_IMX_GSTREAMER_SRC_DIR}
+		git checkout 0.12.2
 		patch -p1 < ${DEF_BUILDENV}/patches/imx/gstreamer-imx/0001_fix_compilation_with_gstreamer_pre_1.6.patch
 		cd -
 	};
