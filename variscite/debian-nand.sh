@@ -13,18 +13,10 @@ readonly IMAGES_PATH="/opt/images/Debian"
 readonly UBI_SUB_PAGE_SIZE=2048
 readonly UBI_VID_HDR_OFFSET=2048
 
-
-if [ `dmesg |grep UltraLite | wc -l` = 1 ] ; then
-	echo "================================================"
-	echo " nand debian Variscite i.MX6 UltraLite DART   "
-	echo "================================================"
-else
-	echo "================================================"
-	echo " nand debian is only compatible with DART-6UL."
-	echo "================================================"
-	read -p "Press any key to continue... " -n1 -s
-	exit 0
-fi
+echo "================================="
+echo " Variscite i.MX6 UltraLite DART"
+echo " Installing Debian to NAND flash"
+echo "================================="
 
 help() {
 

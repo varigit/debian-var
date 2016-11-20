@@ -8,17 +8,10 @@ BOOTLOAD_RESERVE=4
 BOOT_ROM_SIZE=8
 SPARE_SIZE=0
 
-if [ `dmesg |grep UltraLite | wc -l` = 1 ] ; then
-	echo "================================================"
-	echo " emmc debian Variscite i.MX6 UltraLite DART   "
-	echo "================================================"
-else
-	echo "================================================"
-	echo " emmc debian is only compatible with DART-6UL."
-	echo "================================================"
-	read -p "Press any key to continue... " -n1 -s
-	exit 0
-fi
+echo "================================"
+echo " Variscite i.MX6 UltraLite DART"
+echo "   Installing Debian to eMMC"
+echo "================================"
 
 cd /opt/images/Debian
 if [ ! -f SPL.mmc ]
