@@ -40,10 +40,9 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 
 
 ## LINUX kernel: git, config, paths and etc
-#git clone https://github.com/varigit/linux-2.6-imx.git -b imx_3.14.52_1.1.0_ga-var01  kernel
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var01"
+readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_1.2.0_ga-var01"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb'
 
@@ -58,21 +57,21 @@ readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
 readonly G_UBOOT_NAME_FOR_NAND='u-boot.bin.nand'
 readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
-## ext-firmware ##
+## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="master"
+readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_1.1.0_ga-var02"
 
 ## ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
 
 ## CROSS_COMPILER config and paths
-readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2015.05-x86_64_arm-linux-gnueabihf/bin"
+readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf/bin"
 #readonly G_CROSS_COMPILEER_PREFFIX="arm-none-eabi-"
 readonly G_CROSS_COMPILEER_PREFFIX="arm-linux-gnueabihf-"
 readonly G_CROSS_COMPILEER_JOPTION="-j 4"
-readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2015.05-x86_64_arm-linux-gnueabihf.tar.xz'
-readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/15.05/components/toolchain/binaries/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
+readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz'
+readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
 
 ############## user rootfs packages ##########
 readonly G_USER_PACKAGES=""
@@ -845,16 +844,14 @@ EOF
 # $1 -- bcm git directory
 # $2 -- rootfs output dir
 function make_bcm_fw() {
-	pr_info "Make and install bcmhd configs and firmwares"
+	pr_info "Make and install bcm configs and firmware"
 
 	install -d ${2}/lib/firmware/bcm
-	install -m 0755 ${1}/bcmdhd.cal ${2}/lib/firmware/bcm/bcmdhd.cal
+	install -d ${2}/lib/firmware/brcm
+	install -m 0755 ${1}/brcm/* ${2}/lib/firmware/brcm/
 	install -m 0755 ${1}/bcm43430a1.hcd ${2}/lib/firmware/bcm/bcm43430a1.hcd
-	install -m 0755 ${1}/fw_bcmdhd.bin ${2}/lib/firmware/bcm/fw_bcmdhd.bin
-	install -m 0755 ${1}/fw_bcmdhd_mfgtest.bin ${2}/lib/firmware/bcm/fw_bcmdhd_mfgtest.bin
-	install -m 0755 ${1}/fw_bcmdhd_apsta.bin ${2}/lib/firmware/bcm/fw_bcmdhd_apsta.bin
-	install -m 0755 ${1}/LICENCE.broadcom_bcm4343w ${2}/lib/firmware/bcm/
-	install -m 0755 ${1}/wl ${2}/usr/sbin/wl
+	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
+	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
 
 	return 0;
 }
@@ -865,25 +862,25 @@ function cmd_make_deploy() {
 	make_prepare;
 
 	# get bcm firmware repository
-	(( `ls ${G_BCM_FW_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_BCM_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get bcmhd firmware repository";
 		get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} ${G_BCM_FW_SRC_DIR}
 	};
 
 	# get kernel repository
-	(( `ls ${G_LINUX_KERNEL_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_LINUX_KERNEL_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get kernel repository";
 		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR};
 	};
 
 	# get uboot repository
-	(( `ls ${G_UBOOT_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get uboot repository";
 		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} ${G_UBOOT_SRC_DIR}
 	};
 
 	# get linaro toolchain
-	(( `ls ${G_CROSS_COMPILEER_PATH} | wc -l` == 0 )) && {
+	(( `ls ${G_CROSS_COMPILEER_PATH} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get and unpack cross compiler";
 		wget -c ${G_EXT_CROSS_COMPILER_LINK} -O ${G_TMP_DIR}/${G_EXT_CROSS_COMPILER_NAME}
 		tar -xJf ${G_TMP_DIR}/${G_EXT_CROSS_COMPILER_NAME} -C ${G_TOOLS_PATH}/
