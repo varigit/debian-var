@@ -67,12 +67,12 @@ readonly G_BCM_FW_GIT_BRANCH="master"
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
 
 ## CROSS_COMPILER config and paths
-readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2015.05-x86_64_arm-linux-gnueabihf/bin"
+readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf/bin"
 #readonly G_CROSS_COMPILEER_PREFFIX="arm-none-eabi-"
 readonly G_CROSS_COMPILEER_PREFFIX="arm-linux-gnueabihf-"
 readonly G_CROSS_COMPILEER_JOPTION="-j 4"
-readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2015.05-x86_64_arm-linux-gnueabihf.tar.xz'
-readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/15.05/components/toolchain/binaries/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
+readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz'
+readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
 
 ############## user rootfs packages ##########
 readonly G_USER_PACKAGES=""
