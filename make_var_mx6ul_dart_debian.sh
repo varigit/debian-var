@@ -467,6 +467,7 @@ rm -f user-stage
 	install -m 0755 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
 
 ## added alsa default configs ##
 	install -m 0666 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
