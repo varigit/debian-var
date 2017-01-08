@@ -9,16 +9,11 @@ BOOT_ROM_SIZE=8
 SPARE_SIZE=0
 
 echo "================================"
-echo " Variscite i.MX6 UltraLite DART"
+echo " Variscite i.MX7 SOM"
 echo "   Installing Debian to eMMC"
 echo "================================"
 
 cd /opt/images/Debian
-if [ ! -f SPL.mmc ]
-then
-	echo "SPL does not exist! exit."
-	exit 1
-fi	
 if [ ! -f u-boot.img.mmc ]
 then
 	echo "u-boot.img does not exist! exit."
@@ -30,7 +25,7 @@ help() {
 
 bn=`basename $0`
 cat << EOF
-usage $bn <option> device_node
+usage $bn <option>
 
 options:
   -h			displays this help message
@@ -46,7 +41,7 @@ fi
 
 # Parse command line
 moreoptions=1
-node="/dev/mmcblk1"
+node="/dev/mmcblk2"
 part=p
 cal_only=0
 
@@ -59,8 +54,8 @@ function format_yocto
 {
 	echo "Formating Debian partitions"
 	echo "=========================="
-	umount /run/media/mmcblk1p1 2>/dev/null
-	umount /run/media/mmcblk1p2 2>/dev/null
+	umount /run/media/mmcblk2p1 2>/dev/null
+	umount /run/media/mmcblk2p2 2>/dev/null
 	mkfs.vfat ${node}p1 -nBOOT-VARSOM
 	mkfs.ext4 ${node}p2 -Lrootfs
 	sync
@@ -72,21 +67,20 @@ function flash_yocto
 	echo "==============="
 
 	echo "Flashing U-Boot"
-	dd if=u-boot.img.mmc of=${node} bs=1K seek=69; sync
-	dd if=SPL.mmc of=${node} bs=1K seek=1; sync
+	dd if=u-boot.img.mmc of=${node} bs=1K seek=1; sync
 
 	echo "Flashing Debian BOOT partition"
-	mkdir -p /tmp/media/mmcblk1p1
-	mkdir -p /tmp/media/mmcblk1p2
-	mount -t vfat ${node}p1  /tmp/media/mmcblk1p1
-	mount ${node}p2  /tmp/media/mmcblk1p2
+	mkdir -p /tmp/media/mmcblk2p1
+	mkdir -p /tmp/media/mmcblk2p2
+	mount -t vfat ${node}p1  /tmp/media/mmcblk2p1
+	mount ${node}p2  /tmp/media/mmcblk2p2
 
-	cp imx6ul-var-dart-emmc_wifi.dtb /tmp/media/mmcblk1p1/
-	cp zImage /tmp/media/mmcblk1p1/
+	cp imx7d-var-som-emmc.dtb /tmp/media/mmcblk2p1/
+	cp zImage /tmp/media/mmcblk2p1/
 
 	echo "Flashing Debian Root File System"
-	rm -rf /tmp/media/mmcblk1p2/*
-	tar xvpf rootfs.tar.bz2 -C /tmp/media/mmcblk1p2/ 2>&1 |
+	rm -rf /tmp/media/mmcblk2p2/*
+	tar xvpf rootfs.tar.bz2 -C /tmp/media/mmcblk2p2/ 2>&1 |
 	while read line; do
 		x=$((x+1))
 		echo -en "$x extracted\r"
@@ -94,7 +88,7 @@ function flash_yocto
 }
 
 
-# umount /run/media/mmcblk1p* 2>/dev/null
+# umount /run/media/mmcblk2p* 2>/dev/null
 
 echo
 echo "Deleting the current partitions"
@@ -172,7 +166,7 @@ flash_yocto
 
 echo "syncing"
 sync
-umount /tmp/media/mmcblk1p1
-umount /tmp/media/mmcblk1p2
+umount /tmp/media/mmcblk2p1
+umount /tmp/media/mmcblk2p2
 
 read -p "Debian Flashed. Press any key to continue... " -n1

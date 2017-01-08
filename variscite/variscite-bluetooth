@@ -47,11 +47,11 @@ case $1 in
 	start|restart)
 		log_daemon_msg "Starting $DESC"
 
-		echo 132 > /sys/class/gpio/export && :;
-		echo "out" > /sys/class/gpio/gpio132/direction
-		echo 0 > /sys/class/gpio/gpio132/value
+		echo 14 > /sys/class/gpio/export && :;
+		echo "out" > /sys/class/gpio/gpio14/direction
+		echo 0 > /sys/class/gpio/gpio14/value
 		sleep 1
-		echo 1 > /sys/class/gpio/gpio132/value
+		echo 1 > /sys/class/gpio/gpio14/value
 		sleep 1
 
 		eth0_addr=$(cat /sys/class/net/eth0/address | sed 's/\://g')
@@ -61,7 +61,7 @@ case $1 in
 		bd_addr_temp=$(printf '%012X' $bd_addr_temp)
 		bd_addr=$(echo $bd_addr_temp | sed 's/\(..\)/\1:/g;s/:$//')
 
-		brcm_patchram_plus --patchram /lib/firmware/bcm/bcm43430a1.hcd --enable_hci --bd_addr ${bd_addr} --no2bytes --tosleep 1000 /dev/ttymxc1 &
+		brcm_patchram_plus --patchram /lib/firmware/bcm/bcm43430a1.hcd --enable_hci --bd_addr ${bd_addr} --no2bytes --tosleep 1000 /dev/ttymxc2 &
 		sleep 2
 
 		log_end_msg 0

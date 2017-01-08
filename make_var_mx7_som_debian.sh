@@ -1,5 +1,5 @@
 #!/bin/bash
-# It is designed to build Debian linux for Variscite imx6ul-dart module
+# It is designed to build Debian linux for Variscite var-som-mx7 module
 # script tested in OS debian (jessie)
 # prepare host OS system:
 #  sudo apt-get install binfmt-support qemu qemu-user-static debootstrap kpartx
@@ -42,25 +42,23 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_1.2.0_ga-var01"
-readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart_defconfig'
-readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb'
+readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var01"
+readonly G_LINUX_KERNEL_DEF_CONFIG='imx7-var-som_defconfig'
+readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-nand.dtb'
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.10_dart_6ul_var1"
-readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
-readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
+readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var02"
+readonly G_UBOOT_DEF_CONFIG_MMC='mx7dvar_som_defconfig'
+readonly G_UBOOT_DEF_CONFIG_NAND='mx7dvar_som_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
-readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
-readonly G_UBOOT_NAME_FOR_NAND='u-boot.bin.nand'
-readonly G_SPL_NAME_FOR_NAND='SPL.nand'
+readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
 
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_1.1.0_ga-var02"
+readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_2.0.1_ga-var01"
 
 ## ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
@@ -87,7 +85,7 @@ PARAM_BLOCK_DEVICE="na"
 ### usage ###
 function usage() {
 	echo "This program version ${SCRIPT_VERSION}"
-	echo " Used for make debian(${DEB_RELEASE}) image for \"imx6ul-var-dart\" board"
+	echo " Used for make debian(${DEB_RELEASE}) image for \"var-som-mx7\" board"
 	echo " and create booted sdcard"
 	echo ""
 	echo "Usage:"
@@ -241,8 +239,8 @@ function make_debian_rootfs() {
 	pr_info "Make debian(${DEB_RELEASE}) rootfs start..."
 
 	# umount previus mounts (if fail)
-	umount -l -f ${ROOTFS_BASE}/proc && :;
-	umount -l -f ${ROOTFS_BASE}/sys && :;
+	umount -l -f ${ROOTFS_BASE}/proc 2>/dev/null && :;
+	umount -l -f ${ROOTFS_BASE}/sys  2>/dev/null && :;
 
 ## clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/* && :;
@@ -253,6 +251,10 @@ function make_debian_rootfs() {
 ## prepare qemu
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
 	cp /usr/bin/qemu-arm-static usr/bin/
+	mount -o bind /proc ${ROOTFS_BASE}/proc
+	mount -o bind /dev ${ROOTFS_BASE}/dev
+	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
+	mount -o bind /sys ${ROOTFS_BASE}/sys
 	LANG=C chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage
 
 	# delete unused folder
@@ -272,7 +274,7 @@ echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
 " > etc/fstab
 
-echo "imx6ul-var-dart" > etc/hostname
+echo "var-som-mx7" > etc/hostname
 
 echo "auto lo
 iface lo inet loopback
@@ -464,12 +466,13 @@ rm -f user-stage
 	install -m 0755 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
 
 ## added alsa default configs ##
 	install -m 0666 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0666 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 
-	## Revert regular booting
+## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
 # added mirror to source list
@@ -487,7 +490,7 @@ rm -f cleanup
 	# clean all packages
 	chmod +x cleanup
 	LANG=C chroot ${ROOTFS_BASE} /cleanup
-
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
 	return 0;
 }
 
@@ -580,8 +583,7 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
 	# copy images
-	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
-	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	cp ${1}/u-boot.imx ${2}/${G_UBOOT_NAME_FOR_EMMC}
 
 ### make nand uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_NAND}"
@@ -595,8 +597,7 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
 	# copy images
-	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_NAND}
-	cp ${1}/u-boot.bin ${2}/${G_UBOOT_NAME_FOR_NAND}
+	cp ${1}/u-boot.imx ${2}/${G_UBOOT_NAME_FOR_NAND}
 
 	return 0;
 }
@@ -707,8 +708,7 @@ function make_sdcard() {
 	function flash_u-boot
 	{
 		pr_info "Flashing U-Boot"
-		dd if=${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
-		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=69; sync
+		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
 	}
 
 	function flash_sdcard
@@ -734,11 +734,9 @@ function make_sdcard() {
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		pr_info "Copying NAND U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_NAND}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/SPL.nand
 		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_NAND}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.nand
 
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/SPL.mmc
 		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.mmc
 
 		return 0;

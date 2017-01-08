@@ -5,16 +5,15 @@
 
 #### global constants ####
 readonly UBOOT_IMAGE='u-boot.img.nand'
-readonly SPL_IMAGE='SPL.nand'
 readonly KERNEL_IMAGE='zImage'
-readonly KERNEL_DTB='imx6ul-var-dart-nand_wifi.dtb'
+readonly KERNEL_DTB='imx7d-var-som-nand.dtb'
 readonly ROOTFS_IMAGE='rootfs.ubi.img'
 readonly IMAGES_PATH="/opt/images/Debian"
 readonly UBI_SUB_PAGE_SIZE=2048
 readonly UBI_VID_HDR_OFFSET=2048
 
 echo "================================="
-echo " Variscite i.MX6 UltraLite DART"
+echo " Variscite i.MX7 SOM"
 echo " Installing Debian to NAND flash"
 echo "================================="
 
@@ -43,20 +42,10 @@ function install_bootloader()
 		exit 1
 	};
 
-	[ ! -f ${IMAGES_PATH}/$SPL_IMAGE ] && {
-		echo "\"${IMAGES_PATH}/$SPL_IMAGE\"" does not exist! exit.
-		exit 1
-	};
-
-	echo
-	echo "Installing SPL from \"${IMAGES_PATH}/$SPL_IMAGE\"... "
-	flash_erase /dev/mtd0 0 0 2>/dev/null
-	kobs-ng init -x ${IMAGES_PATH}/$SPL_IMAGE --search_exponent=1 -v > /dev/null
-
 	echo
 	echo "Installing U-BOOT from \"${IMAGES_PATH}/$UBOOT_IMAGE\"..."
-	flash_erase /dev/mtd1  0 0  2>/dev/null
-	nandwrite -p /dev/mtd1 ${IMAGES_PATH}/$UBOOT_IMAGE; sync
+	flash_erase /dev/mtd0 0 0 2>/dev/null
+	kobs-ng init -x ${IMAGES_PATH}/$UBOOT_IMAGE --search_exponent=1 -v > /dev/null
 
 	# delete uboot env
 	flash_erase /dev/mtd2 0 0 2>/dev/null
