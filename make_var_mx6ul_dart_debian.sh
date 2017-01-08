@@ -241,8 +241,7 @@ function make_debian_rootfs() {
 	pr_info "Make debian(${DEB_RELEASE}) rootfs start..."
 
 	# umount previus mounts (if fail)
-	umount -l -f ${ROOTFS_BASE}/proc && :;
-	umount -l -f ${ROOTFS_BASE}/sys && :;
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev.null && :;
 
 ## clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/* && :;
@@ -253,6 +252,10 @@ function make_debian_rootfs() {
 ## prepare qemu
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
 	cp /usr/bin/qemu-arm-static usr/bin/
+	mount -o bind /proc ${ROOTFS_BASE}/proc
+	mount -o bind /dev ${ROOTFS_BASE}/dev
+	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
+	mount -o bind /sys ${ROOTFS_BASE}/sys
 	LANG=C chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage
 
 	# delete unused folder
@@ -290,7 +293,7 @@ slim shared/default-x-display-manager select slim
 	pr_info "rootfs: prepare install packages in rootfs"
 ## apt-get install without starting
 cat > ${ROOTFS_BASE}/usr/sbin/policy-rc.d << EOF
-# !/bin/sh
+#!/bin/sh
 exit 101
 EOF
 
@@ -433,7 +436,7 @@ EOF
 	LANG=C chroot ${ROOTFS_BASE} /third-stage
 
 ## fourth-stage ##
-### install vvariscite-bluetooth init script
+### install variscite-bluetooth init script
 	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus ${ROOTFS_BASE}/usr/bin/
 	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
@@ -487,7 +490,7 @@ rm -f cleanup
 	# clean all packages
 	chmod +x cleanup
 	LANG=C chroot ${ROOTFS_BASE} /cleanup
-
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
 	return 0;
 }
 
