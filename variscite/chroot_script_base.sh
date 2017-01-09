@@ -18,4 +18,8 @@ apt-get install -y at-spi2-core florence
 echo "I: install mtd packages"
 apt-get install -y mtd-utils
 
+echo "I: install dosfstools package"
+apt-get install -y dosfstools
+
+
 sync
