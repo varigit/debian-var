@@ -292,9 +292,7 @@ function make_debian_rootfs() {
 	local ROOTFS_BASE=$1
 
 ## umount previously mount points
-	umount -l -f ${ROOTFS_BASE}/dev/pts && :;
-	umount -l -f ${ROOTFS_BASE}/dev && :;
-	umount -l -f ${ROOTFS_BASE}/proc && :;
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 
 ## clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/* && :;
@@ -322,6 +320,7 @@ function make_debian_rootfs() {
 ## prepare qemu
 	pr_info "chroot in rootfs"
 	mount -o bind /proc ${ROOTFS_BASE}/proc
+	mount -o bind /sys ${ROOTFS_BASE}/sys
 	mount -o bind /dev ${ROOTFS_BASE}/dev
 	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
 	cp /usr/bin/qemu-arm-static ${ROOTFS_BASE}/usr/bin/
@@ -356,9 +355,7 @@ function make_debian_rootfs() {
 
 
 ## umount previously mount points
-	umount -l -f ${ROOTFS_BASE}/dev/pts && :;
-	umount -l -f ${ROOTFS_BASE}/dev && :;
-	umount -l -f ${ROOTFS_BASE}/proc && :;
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 
 	rm ${ROOTFS_BASE}/usr/bin/qemu-arm-static
 	rm ${ROOTFS_BASE}/chroot_script*
