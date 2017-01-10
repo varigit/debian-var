@@ -42,7 +42,7 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var01"
+readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_1.2.0_ga-var01"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx7-var-som_defconfig'
 readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-nand.dtb'
 
@@ -238,9 +238,8 @@ function make_debian_rootfs() {
 
 	pr_info "Make debian(${DEB_RELEASE}) rootfs start..."
 
-	# umount previus mounts (if fail)
-	umount -l -f ${ROOTFS_BASE}/proc 2>/dev/null && :;
-	umount -l -f ${ROOTFS_BASE}/sys  2>/dev/null && :;
+# umount previus mounts (if fail)
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 
 ## clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/* && :;
@@ -252,9 +251,9 @@ function make_debian_rootfs() {
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
 	cp /usr/bin/qemu-arm-static usr/bin/
 	mount -o bind /proc ${ROOTFS_BASE}/proc
+	mount -o bind /sys ${ROOTFS_BASE}/sys
 	mount -o bind /dev ${ROOTFS_BASE}/dev
 	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
-	mount -o bind /sys ${ROOTFS_BASE}/sys
 	LANG=C chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage
 
 	# delete unused folder
@@ -526,7 +525,7 @@ function make_kernel() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ ${2}
 
-	pr_info "make kernal"
+	pr_info "make kernel"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ zImage
 
 	pr_info "make ${3} file"
