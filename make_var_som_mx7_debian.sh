@@ -533,7 +533,7 @@ function make_kernel() {
 
 	pr_info "Copy kernel and dtb files to output dir: ${5}"
 	cp ${4}/arch/arm/boot/zImage ${5}/;
-	cp ${4}/arch/arm/boot/dts/*.dtb ${5}/;
+	cp ${4}/arch/arm/boot/dts/imx7d-var-som*.dtb ${5}/;
 
 	return 0;
 }
