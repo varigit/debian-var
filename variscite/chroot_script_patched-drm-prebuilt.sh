@@ -7,7 +7,7 @@ for pkg in $(ls *.deb | grep -v dbg) ; do dpkg -i $pkg; done
 
 cd /usr/local/src/deb/mesa
 echo "I: installing mesa against patched libdrm"
-dpkg -i libegl1-mesa_11.1.3-1~bpo8+1_armhf.deb libgbm1_11.1.3-1~bpo8+1_armhf.deb libgl1-mesa-dri_11.1.3-1~bpo8+1_armhf.deb libgl1-mesa-glx_11.1.3-1~bpo8+1_armhf.deb libglapi-mesa_11.1.3-1~bpo8+1_armhf.deb libgles2-mesa_11.1.3-1~bpo8+1_armhf.deb libwayland-egl1-mesa_11.1.3-1~bpo8+1_armhf.deb libxatracker2_11.1.3-1~bpo8+1_armhf.deb mesa-common-dev_11.1.3-1~bpo8+1_armhf.deb
+dpkg -i libegl1-mesa_13.0.4-1~bpo8+1_armhf.deb libgbm1_13.0.4-1~bpo8+1_armhf.deb libgl1-mesa-dri_13.0.4-1~bpo8+1_armhf.deb libgl1-mesa-glx_13.0.4-1~bpo8+1_armhf.deb libglapi-mesa_13.0.4-1~bpo8+1_armhf.deb libgles2-mesa_13.0.4-1~bpo8+1_armhf.deb libwayland-egl1-mesa_13.0.4-1~bpo8+1_armhf.deb libxatracker2_13.0.4-1~bpo8+1_armhf.deb mesa-common-dev_13.0.4-1~bpo8+1_armhf.deb
 
 cd /usr/local/src/deb/xorg-server
 echo "I: installing xorg-server against patched libdrm"
