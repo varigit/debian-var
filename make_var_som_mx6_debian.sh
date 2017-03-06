@@ -872,7 +872,6 @@ function cmd_make_deploy() {
 		tar -xvf ${G_IMX_XORG_LOCAL_PATH} -C ${DEF_SRC_DIR}/imx
 		cd ${G_IMX_XORG_LOCAL_DIR}
 		patch -p1 < ${DEF_BUILDENV}/patches/imx/xserver-xorg-video-imx-viv-5.0.11.p${G_IMX_GPU_SW_VER}/Stop-using-Git-to-write-local-version.patch
-		patch -p1 < ${DEF_BUILDENV}/patches/imx/xserver-xorg-video-imx-viv-5.0.11.p${G_IMX_GPU_SW_VER}/Remove-dix-internal-header-usage.patch
 		cd -
 	};
 
