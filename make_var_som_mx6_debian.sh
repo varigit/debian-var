@@ -15,7 +15,7 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.1"
+readonly SCRIPT_VERSION="0.2"
 
 
 #### Exports Variables ####
@@ -39,7 +39,7 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_1.1.0_ga-var02"
+readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var01"
 readonly G_LINUX_KERNEL_DEF_CONFIG="imx_v7_var_defconfig"
 readonly G_LINUX_DTB="imx6dl-var-som-cap.dtb imx6dl-var-som-res.dtb imx6dl-var-som-solo-cap.dtb imx6dl-var-som-solo-res.dtb imx6dl-var-som-solo-vsc.dtb imx6dl-var-som-vsc.dtb imx6q-var-dart.dtb imx6q-var-som-cap.dtb imx6q-var-som-res.dtb imx6q-var-som-vsc.dtb"
 
@@ -66,11 +66,14 @@ readonly G_WILINK8_COMPAT_WIRELESS_SRC_DIR="${DEF_SRC_DIR}/wilink8/compat-wirele
 readonly G_WILINK8_UTILS_SRC_DIR="${DEF_SRC_DIR}/wilink8/utils"
 readonly G_WILINK8_UTILS_GIT="${G_WILINK8_GIT}/18xx-ti-utils.git"
 readonly G_WILINK8_UTILS_GIT_BRANCH="master"
-readonly G_WILINK8_FW_LOCAL_PATH="${DEF_SRC_DIR}/wilink8/fw/wl18xx-fw-4.bin"
-readonly G_WILINK8_FW_REMOTE_LINK="https://github.com/varigit/meta-variscite-mx6/raw/imx-4.1.15-1.0.0_ga-var02/recipes-connectivity/wl18xx-firmware/wl18xx-firmware/wl18xx-fw-4.bin"
-readonly G_WILINK8_BT_FW_LOCAL_DIR="${DEF_SRC_DIR}/wilink8/BT_VAR_FW-yocto_v5"
-readonly G_WILINK8_BT_FW_LOCAL_PATH="${DEF_SRC_DIR}/wilink8/bt_fw.zip"
-readonly G_WILINK8_BT_FW_REMOTE_LINK="https://github.com/varigit/BT_VAR_FW/archive/yocto_v5.zip"
+readonly G_WILINK8_FW_WIFI_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_wifi"
+readonly G_WILINK8_FW_WIFI_GIT="${G_WILINK8_GIT}/wl18xx_fw.git"
+readonly G_WILINK8_FW_WIFI_GIT_BRANCH="master"
+readonly G_WILINK8_FW_WIFI_GIT_SRCREV="fe3909e93d15a4b17e43699dde2bba0e9a3c0abc"
+readonly G_WILINK8_FW_BT_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_bt"
+readonly G_WILINK8_FW_BT_GIT="git://git.ti.com/ti-bt/service-packs.git"
+readonly G_WILINK8_FW_BT_GIT_BRANCH="master"
+readonly G_WILINK8_FW_BT_GIT_SRCREV="54f5c151dacc608b19ab2ce4c30e27a3983048b2"
 
 ## imx accelerations ##
 # much more standard replacement for Freescale's imx-gst1.0-plugin
@@ -86,17 +89,17 @@ readonly G_IMX_FW_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_FW_PKG}"
 readonly G_IMX_FW_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_FW_PKG}.bin"
 readonly G_IMX_FW_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_FW_PKG}.bin"
 # sh imx-vpu-5.4.33.bin --auto-accept
-readonly G_IMX_VPU_PKG="imx-vpu-5.4.33"
+readonly G_IMX_VPU_PKG="imx-vpu-5.4.35"
 readonly G_IMX_VPU_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_VPU_PKG}"
 readonly G_IMX_VPU_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_VPU_PKG}.bin"
 readonly G_IMX_VPU_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_VPU_PKG}.bin"
 # sh imx-codec-4.0.9.bin --auto-accept
-readonly G_IMX_CODEC_PKG="imx-codec-4.0.9"
+readonly G_IMX_CODEC_PKG="imx-codec-4.1.4"
 readonly G_IMX_CODEC_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_CODEC_PKG}"
 readonly G_IMX_CODEC_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_CODEC_PKG}.bin"
 readonly G_IMX_CODEC_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_CODEC_PKG}.bin"
 
-readonly G_IMX_GPU_SW_VER="8.4"
+readonly G_IMX_GPU_SW_VER="8.6"
 # sh imx-gpu-viv-5.0.11.pX.Y-hfp.bin --auto-accept
 readonly G_IMX_GPU_PKG="imx-gpu-viv-5.0.11.p${G_IMX_GPU_SW_VER}-hfp"
 readonly G_IMX_GPU_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_GPU_PKG}"
@@ -115,6 +118,7 @@ readonly G_IMX_VPU_API_GIT_BRANCH="master"
 readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
 readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
+readonly G_IMX_GSTREAMER_GIT_SRCREV="eb03bfab6f1f3eb854df247af0da308d1d1e2090"
 
 ## CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILER_VERSION="4.9-2016.02"
@@ -125,8 +129,8 @@ readonly G_EXT_CROSS_COMPILER_NAME="gcc-linaro-${G_CROSS_COMPILER_VERSION}-x86_6
 readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/${G_CROSS_COMPILER_VERSION}/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
 
 ## ROOTFS config and paths
-#readonly G_ROOTFS_REMOTE_LINK="http://releases.linaro.org/debian/images/developer-armhf/16.06/linaro-jessie-developer-20160620-25.tar.gz"
-readonly G_LINARO_ROOTFS_REMOTE_LINK="http://releases.linaro.org/debian/images/alip-armhf/16.07/linaro-jessie-alip-20160722-27.tar.gz"
+#readonly G_ROOTFS_REMOTE_LINK="http://releases.linaro.org/debian/images/developer-armhf/17.02/linaro-jessie-developer-20161117-32.tar.gz"
+readonly G_LINARO_ROOTFS_REMOTE_LINK="http://releases.linaro.org/debian/images/alip-armhf/17.02/linaro-jessie-alip-20161117-32.tar.gz"
 readonly G_LINARO_ROOTFS_LOCAL_PATH="${DEF_SRC_DIR}/linaro-jessie.tar.gz"
 
 ############## user rootfs packages ##########
@@ -480,10 +484,10 @@ function install_wl18xx_packages() {
 	make CC=${1}gcc ${G_CROSS_COMPILER_JOPTION} -C ${G_WILINK8_UTILS_SRC_DIR}/wlconf
 
 	pr_info "Installing wl18xx bt firmware"
-	cp ${G_WILINK8_BT_FW_LOCAL_DIR}/*.bts ${WL18XX_FW_DIR}
+	cp ${G_WILINK8_FW_BT_SRC_DIR}/initscripts/*.bts ${WL18XX_FW_DIR}
 	
 	pr_info "Installing wl18xx wifi firmware"
-	cp ${G_WILINK8_FW_LOCAL_PATH} ${WL18XX_FW_DIR}
+	cp ${G_WILINK8_FW_WIFI_SRC_DIR}/*.bin ${WL18XX_FW_DIR}
 	
 	pr_info "Installing wl18xx wlconf"
 	cp ${G_WILINK8_UTILS_SRC_DIR}/wlconf/configure-device.sh ${WLCONF_DIR}
@@ -824,17 +828,22 @@ function cmd_make_deploy() {
 		cd -
 	};
 
-	# get wilink8 firmware
-	(( `ls ${G_WILINK8_FW_LOCAL_PATH} | wc -l` == 0 )) && {
-		pr_info "Get wilink8 firmware";
-		get_remote_file ${G_WILINK8_FW_REMOTE_LINK} ${G_WILINK8_FW_LOCAL_PATH}
+	# get wilink8 firmware repository
+	(( `ls ${G_WILINK8_FW_WIFI_SRC_DIR} | wc -l` == 0 )) && {
+		pr_info "Get wilink8 wifi firmware repository";
+		get_git_src ${G_WILINK8_FW_WIFI_GIT} ${G_WILINK8_FW_WIFI_GIT_BRANCH} ${G_WILINK8_FW_WIFI_SRC_DIR}
+		cd ${G_WILINK8_FW_WIFI_SRC_DIR}
+		git checkout ${G_WILINK8_FW_WIFI_GIT_SRCREV}
+		cd -
 	};
 
-	# get bt firmware
-	(( `ls ${G_WILINK8_BT_FW_LOCAL_PATH} | wc -l` == 0 )) && {
-		pr_info "Get and unpack BT firmware";
-		get_remote_file ${G_WILINK8_BT_FW_REMOTE_LINK} ${G_WILINK8_BT_FW_LOCAL_PATH}
-		unzip ${G_WILINK8_BT_FW_LOCAL_PATH} -d ${DEF_SRC_DIR}/wilink8
+	# get bt firmware repository
+	(( `ls ${G_WILINK8_FW_BT_SRC_DIR} | wc -l` == 0 )) && {
+		pr_info "Get wilink8 bt firmware repository";
+		get_git_src ${G_WILINK8_FW_BT_GIT} ${G_WILINK8_FW_BT_GIT_BRANCH} ${G_WILINK8_FW_BT_SRC_DIR}
+		cd ${G_WILINK8_FW_BT_SRC_DIR}
+		git checkout ${G_WILINK8_FW_BT_GIT_SRCREV}
+		cd -
 	};
 
 	# get imx firmware
@@ -887,8 +896,7 @@ function cmd_make_deploy() {
 		pr_info "Get gstreamer-imx repository";
 		get_git_src ${G_IMX_GSTREAMER_GIT} ${G_IMX_GSTREAMER_GIT_BRANCH} ${G_IMX_GSTREAMER_SRC_DIR}
 		cd ${G_IMX_GSTREAMER_SRC_DIR}
-		git checkout 0.12.2
-		patch -p1 < ${DEF_BUILDENV}/patches/imx/gstreamer-imx/0001_fix_compilation_with_gstreamer_pre_1.6.patch
+		git checkout ${G_IMX_GSTREAMER_GIT_SRCREV}
 		cd -
 	};
 
