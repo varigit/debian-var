@@ -18,12 +18,17 @@ dmesg | grep -q "tuple 0x91" && {
 	exit 0
 };
 
+# Enable bluetooth chip
 echo 178 >/sys/class/gpio/export
 echo "out" > /sys/class/gpio/gpio178/direction
 echo 0 > /sys/class/gpio/gpio178/value
-sleep 0.1
+sleep 1
 echo 1 > /sys/class/gpio/gpio178/value
-
-sleep 5; hciattach -t 10 -s 115200 /dev/ttymxc1 texas 3000000 &
+sleep 1;
+# Attach UART to bluetooth stack
+hciattach -t 10 -s 115200 /dev/ttymxc1 texas 3000000
+sleep 1;
+# Enable SCO over HCI
+hcitool cmd 0x3f 0x210 0x01 0x00 0x00 0xff
 
 exit 0
