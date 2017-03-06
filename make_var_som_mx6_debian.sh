@@ -337,6 +337,7 @@ function make_debian_rootfs() {
 	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
 	cp ${G_VARISCITE_PATH}/background.png ${ROOTFS_BASE}/usr/share/linaro/wallpapers/linaro-default-wallpaper.jpg
 	cp ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
+	cp ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_base.sh
 	sleep 1; sync
 
