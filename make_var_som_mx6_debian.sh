@@ -359,7 +359,7 @@ function make_debian_rootfs() {
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_gst.sh
 
 ## kill latest dbus-daemon instance due to qemu-arm-static
-	QEMU_PROC_ID=$(ps -uax | pgrep dbus-daemon | tail -1)
+	QEMU_PROC_ID=$(ps axf | grep dbus-daemon | grep qemu-arm-static | awk '{print $1}')
 	if [ -n "$QEMU_PROC_ID" ]
 	then
 		kill -9 $QEMU_PROC_ID
