@@ -55,7 +55,7 @@ if [ ! -e ${node} ]; then
 	exit
 fi
 
-function format_yocto
+function format_debian
 {
 	echo "Formating Debian partitions"
 	echo "=========================="
@@ -66,7 +66,7 @@ function format_yocto
 	sync
 }
 
-function flash_yocto
+function flash_debian
 {
 	echo "Flashing Debian "
 	echo "==============="
@@ -81,7 +81,7 @@ function flash_yocto
 	mount -t vfat ${node}p1  /tmp/media/mmcblk1p1
 	mount ${node}p2  /tmp/media/mmcblk1p2
 
-	cp imx6ul-var-dart-emmc_wifi.dtb /tmp/media/mmcblk1p1/
+	cp imx6ul-var-dart-emmc_wifi.dtb imx6ull-var-dart-emmc_wifi.dtb /tmp/media/mmcblk1p1/
 	cp zImage /tmp/media/mmcblk1p1/
 
 	echo "Flashing Debian Root File System"
@@ -167,8 +167,8 @@ echo "======================================================"
 sync
 sleep 2
 
-format_yocto
-flash_yocto
+format_debian
+flash_debian
 
 echo "syncing"
 sync
