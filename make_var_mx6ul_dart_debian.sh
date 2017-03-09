@@ -60,7 +60,7 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_1.1.0_ga-var02"
+readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_2.0.1_ga-var01"
 
 ## ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
