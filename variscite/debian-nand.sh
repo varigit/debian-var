@@ -7,7 +7,8 @@
 readonly UBOOT_IMAGE='u-boot.img.nand'
 readonly SPL_IMAGE='SPL.nand'
 readonly KERNEL_IMAGE='zImage'
-readonly KERNEL_DTB='imx6ul-var-dart-nand_wifi.dtb'
+readonly KERNEL_DTB_UL='imx6ul-var-dart-nand_wifi.dtb'
+readonly KERNEL_DTB_ULL='imx6ull-var-dart-nand_wifi.dtb'
 readonly ROOTFS_IMAGE='rootfs.ubi.img'
 readonly IMAGES_PATH="/opt/images/Debian"
 readonly UBI_SUB_PAGE_SIZE=2048
@@ -73,7 +74,11 @@ function install_kernel()
 	echo "Installing Kernel"
 	flash_erase /dev/mtd3 0 0 2>/dev/null
 	nandwrite -p /dev/mtd3 ${IMAGES_PATH}/$KERNEL_IMAGE > /dev/null
-	nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$KERNEL_DTB > /dev/null
+	if dmesg | grep -i "machine model" | grep -q "ULL"; then
+	  nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$KERNEL_DTB_ULL > /dev/null
+	else
+	  nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$KERNEL_DTB_UL > /dev/null
+	fi
 }
 
 function install_rootfs()
