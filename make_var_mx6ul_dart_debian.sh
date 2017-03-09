@@ -422,6 +422,17 @@ apt-get -y remove hddtemp
 
 apt-get -y autoremove
 
+# Remove foreign man pages and locales
+rm -rf /usr/share/man/??
+rm -rf /usr/share/man/??_*
+rm -rf /var/cache/man/??
+rm -rf /var/cache/man/??_*
+(cd /usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
+
+# Remove document files
+rm -rf /usr/share/doc
+
+
 # create users and set password
 useradd -m -G audio -s /bin/bash user
 useradd -m -G audio -s /bin/bash x_user
