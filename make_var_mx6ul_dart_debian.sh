@@ -540,7 +540,7 @@ function make_kernel() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ ${2}
 
-	pr_info "make kernal"
+	pr_info "make kernel"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ zImage
 
 	pr_info "make ${3} file"
@@ -766,7 +766,7 @@ function make_sdcard() {
 		pr_info "Copying scripts to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${G_VARISCITE_PATH}/debian-emmc.sh	${P2_MOUNT_DIR}/usr/sbin/
 		cp ${G_VARISCITE_PATH}/debian-nand.sh	${P2_MOUNT_DIR}/usr/sbin/
-		cp ${G_VARISCITE_PATH}/kobs-ng			${P2_MOUNT_DIR}/usr/sbin/
+		cp ${G_VARISCITE_PATH}/kobs-ng		${P2_MOUNT_DIR}/usr/sbin/
 	
 		# added exec options
 		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng 
