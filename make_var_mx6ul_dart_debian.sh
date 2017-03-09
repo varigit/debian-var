@@ -394,6 +394,8 @@ protected_install bluez
 protected_install bluez-obexd
 protected_install bluez-tools
 protected_install libbluetooth3
+protected_install blueman
+protected_install gconf2
 
 # wifi support packages
 protected_install hostapd
