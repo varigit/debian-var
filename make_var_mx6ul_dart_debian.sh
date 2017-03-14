@@ -215,7 +215,6 @@ function get_git_src() {
 
 function make_prepare() {
 ## create src dirs
-#	mkdir -p ${G_WILINK8_SRC_DIR} && :;
 	mkdir -p ${G_BCM_FW_SRC_DIR} && :;
 	mkdir -p ${G_LINUX_KERNEL_SRC_DIR} && :;
 	mkdir -p ${G_UBOOT_SRC_DIR} && :;
@@ -241,7 +240,7 @@ function make_debian_rootfs() {
 	pr_info "Make debian(${DEB_RELEASE}) rootfs start..."
 
 	# umount previus mounts (if fail)
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev.null && :;
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 
 ## clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/* && :;
@@ -251,7 +250,7 @@ function make_debian_rootfs() {
 
 ## prepare qemu
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
-	cp /usr/bin/qemu-arm-static usr/bin/
+	cp /usr/bin/qemu-arm-static ${ROOTFS_BASE}/usr/bin/
 	mount -o bind /proc ${ROOTFS_BASE}/proc
 	mount -o bind /dev ${ROOTFS_BASE}/dev
 	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
