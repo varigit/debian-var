@@ -213,13 +213,10 @@ function get_git_src() {
 
 function make_prepare() {
 ## create src dirs
-#	mkdir -p ${G_WILINK8_SRC_DIR} && :;
 	mkdir -p ${G_BCM_FW_SRC_DIR} && :;
 	mkdir -p ${G_LINUX_KERNEL_SRC_DIR} && :;
 	mkdir -p ${G_UBOOT_SRC_DIR} && :;
 	mkdir -p ${G_TOOLS_PATH} && :;
-
-##	mkdir -p ${G_CROSS_COMPILEER_PATH} && :;
 
 ## create rootfs dir
 	mkdir -p ${G_ROOTFS_DIR} && :;
@@ -249,7 +246,7 @@ function make_debian_rootfs() {
 
 ## prepare qemu
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
-	cp /usr/bin/qemu-arm-static usr/bin/
+	cp /usr/bin/qemu-arm-static ${ROOTFS_BASE}/usr/bin/
 	mount -o bind /proc ${ROOTFS_BASE}/proc
 	mount -o bind /sys ${ROOTFS_BASE}/sys
 	mount -o bind /dev ${ROOTFS_BASE}/dev
@@ -291,7 +288,7 @@ slim shared/default-x-display-manager select slim
 	pr_info "rootfs: prepare install packages in rootfs"
 ## apt-get install without starting
 cat > ${ROOTFS_BASE}/usr/sbin/policy-rc.d << EOF
-# !/bin/sh
+#!/bin/sh
 exit 101
 EOF
 
@@ -446,7 +443,7 @@ EOF
 	LANG=C chroot ${ROOTFS_BASE} /third-stage
 
 ## fourth-stage ##
-### install vvariscite-bluetooth init script
+### install variscite-bluetooth init script
 	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus ${ROOTFS_BASE}/usr/bin/
 	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
