@@ -24,6 +24,7 @@ readonly ABSOLUTE_FILENAME=`readlink -e "$0"`
 readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 readonly SCRIPT_START_DATE=`date +%Y%m%d`
+readonly LOOP_MAJOR=7
 
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
@@ -673,6 +674,49 @@ EOF
 
 # make sdcard for device
 # $1 -- block device
+function check_sdcard()
+{
+	# Check that parameter is a valid block device
+	if [ ! -b "$1" ]; then
+          pr_error "$1 is not a valid block device, exiting"
+	   return 1
+        fi
+
+	local dev=$(basename $1)
+
+	# Check that /sys/block/$dev exists
+	if [ ! -d /sys/block/$dev ]; then
+	  pr_error "Directory /sys/block/${dev} missing, exiting"
+	  return 1
+        fi
+
+	# Get device parameters
+	local removable=$(cat /sys/block/${dev}/removable)
+	local block_size=$(cat /sys/class/block/${dev}/queue/physical_block_size)
+	local size_bytes=$((${block_size}*$(cat /sys/class/block/${dev}/size)))
+	local size_gib=$(bc <<< "scale=1; ${size_bytes}/(1024*1024*1024)")
+
+	# Check that device is either removable or loop
+	if [ "$removable" != "1" -a $(stat -c '%t' /dev/$dev) != ${LOOP_MAJOR} ]; then
+          pr_error "$1 is not a removable device, exiting"
+	  return 1
+        fi
+
+	# Check that device is attached
+	if [ ${size_bytes} -eq 0 ]; then
+          pr_error "$1 is not attached, exiting"
+          return 1
+	fi
+
+	pr_info "Device: ${LPARAM_BLOCK_DEVICE}, ${size_gib}GiB"
+	pr_info "================================================"
+	read -p "Press Enter to continue"
+
+	return 0
+}
+
+# make sdcard for device
+# $1 -- block device
 # $2 -- output images dir
 function make_sdcard() {
 	readonly local LPARAM_BLOCK_DEVICE=${1}
@@ -697,9 +741,10 @@ function make_sdcard() {
 		part="p"
 	fi
 
-	pr_info "Device: ${LPARAM_BLOCK_DEVICE}"
-	pr_info "================================================"
-	read -p "Press Enter to continue"
+	# Check that we're using a valid device
+	if ! check_sdcard ${LPARAM_BLOCK_DEVICE}; then
+		return 1
+	fi
 
 	for ((i=0; i<10; i++))
 	do
