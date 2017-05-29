@@ -67,13 +67,14 @@ readonly G_WILINK8_UTILS_SRC_DIR="${DEF_SRC_DIR}/wilink8/utils"
 readonly G_WILINK8_UTILS_GIT="${G_WILINK8_GIT}/18xx-ti-utils.git"
 readonly G_WILINK8_UTILS_GIT_BRANCH="master"
 readonly G_WILINK8_FW_WIFI_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_wifi"
-readonly G_WILINK8_FW_WIFI_GIT="${G_WILINK8_GIT}/wl18xx_fw.git"
+#readonly G_WILINK8_FW_WIFI_GIT="${G_WILINK8_GIT}/wl18xx_fw.git"
+readonly G_WILINK8_FW_WIFI_GIT="git://github.com/varigit/ti-wl18xx-fw.git"
 readonly G_WILINK8_FW_WIFI_GIT_BRANCH="master"
-readonly G_WILINK8_FW_WIFI_GIT_SRCREV="fe3909e93d15a4b17e43699dde2bba0e9a3c0abc"
+readonly G_WILINK8_FW_WIFI_GIT_SRCREV="3bad7e76e820869f3a276bf02617c17096e28321"
 readonly G_WILINK8_FW_BT_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_bt"
 readonly G_WILINK8_FW_BT_GIT="git://git.ti.com/ti-bt/service-packs.git"
 readonly G_WILINK8_FW_BT_GIT_BRANCH="master"
-readonly G_WILINK8_FW_BT_GIT_SRCREV="54f5c151dacc608b19ab2ce4c30e27a3983048b2"
+readonly G_WILINK8_FW_BT_GIT_SRCREV="0ee619b598d023fffc77679f099bc2a4815510e4"
 
 ## imx accelerations ##
 # much more standard replacement for Freescale's imx-gst1.0-plugin
