@@ -66,11 +66,14 @@ readonly G_WILINK8_COMPAT_WIRELESS_SRC_DIR="${DEF_SRC_DIR}/wilink8/compat-wirele
 readonly G_WILINK8_UTILS_SRC_DIR="${DEF_SRC_DIR}/wilink8/utils"
 readonly G_WILINK8_UTILS_GIT="${G_WILINK8_GIT}/18xx-ti-utils.git"
 readonly G_WILINK8_UTILS_GIT_BRANCH="master"
-readonly G_WILINK8_FW_LOCAL_PATH="${DEF_SRC_DIR}/wilink8/fw/wl18xx-fw-4.bin"
-readonly G_WILINK8_FW_REMOTE_LINK="https://github.com/varigit/meta-variscite-mx6/raw/imx-4.1.15-1.0.0_ga-var02/recipes-connectivity/wl18xx-firmware/wl18xx-firmware/wl18xx-fw-4.bin"
-readonly G_WILINK8_BT_FW_LOCAL_DIR="${DEF_SRC_DIR}/wilink8/BT_VAR_FW-yocto_v5"
-readonly G_WILINK8_BT_FW_LOCAL_PATH="${DEF_SRC_DIR}/wilink8/bt_fw.zip"
-readonly G_WILINK8_BT_FW_REMOTE_LINK="https://github.com/varigit/BT_VAR_FW/archive/yocto_v5.zip"
+readonly G_WILINK8_FW_WIFI_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_wifi"
+readonly G_WILINK8_FW_WIFI_GIT="git://github.com/varigit/ti-wl18xx-fw.git"
+readonly G_WILINK8_FW_WIFI_GIT_BRANCH="master"
+readonly G_WILINK8_FW_WIFI_GIT_SRCREV="3bad7e76e820869f3a276bf02617c17096e28321"
+readonly G_WILINK8_FW_BT_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_bt"
+readonly G_WILINK8_FW_BT_GIT="git://git.ti.com/ti-bt/service-packs.git"
+readonly G_WILINK8_FW_BT_GIT_BRANCH="master"
+readonly G_WILINK8_FW_BT_GIT_SRCREV="0ee619b598d023fffc77679f099bc2a4815510e4"
 
 ## imx accelerations ##
 # much more standard replacement for Freescale's imx-gst1.0-plugin
@@ -485,10 +488,10 @@ function install_wl18xx_packages() {
 	make CC=${1}gcc ${G_CROSS_COMPILER_JOPTION} -C ${G_WILINK8_UTILS_SRC_DIR}/wlconf
 
 	pr_info "Installing wl18xx bt firmware"
-	cp ${G_WILINK8_BT_FW_LOCAL_DIR}/*.bts ${WL18XX_FW_DIR}
+	cp ${G_WILINK8_FW_BT_SRC_DIR}/initscripts/*.bts ${WL18XX_FW_DIR}
 	
 	pr_info "Installing wl18xx wifi firmware"
-	cp ${G_WILINK8_FW_LOCAL_PATH} ${WL18XX_FW_DIR}
+	cp ${G_WILINK8_FW_WIFI_SRC_DIR}/*.bin ${WL18XX_FW_DIR}
 	
 	pr_info "Installing wl18xx wlconf"
 	cp ${G_WILINK8_UTILS_SRC_DIR}/wlconf/configure-device.sh ${WLCONF_DIR}
@@ -829,17 +832,22 @@ function cmd_make_deploy() {
 		cd -
 	};
 
-	# get wilink8 firmware
-	(( `ls ${G_WILINK8_FW_LOCAL_PATH} | wc -l` == 0 )) && {
-		pr_info "Get wilink8 firmware";
-		get_remote_file ${G_WILINK8_FW_REMOTE_LINK} ${G_WILINK8_FW_LOCAL_PATH}
+	# get wilink8 firmware repository
+	(( `ls ${G_WILINK8_FW_WIFI_SRC_DIR} | wc -l` == 0 )) && {
+		pr_info "Get wilink8 wifi firmware repository";
+		get_git_src ${G_WILINK8_FW_WIFI_GIT} ${G_WILINK8_FW_WIFI_GIT_BRANCH} ${G_WILINK8_FW_WIFI_SRC_DIR}
+		cd ${G_WILINK8_FW_WIFI_SRC_DIR}
+		git checkout ${G_WILINK8_FW_WIFI_GIT_SRCREV}
+		cd -
 	};
 
-	# get bt firmware
-	(( `ls ${G_WILINK8_BT_FW_LOCAL_PATH} | wc -l` == 0 )) && {
-		pr_info "Get and unpack BT firmware";
-		get_remote_file ${G_WILINK8_BT_FW_REMOTE_LINK} ${G_WILINK8_BT_FW_LOCAL_PATH}
-		unzip ${G_WILINK8_BT_FW_LOCAL_PATH} -d ${DEF_SRC_DIR}/wilink8
+	# get bt firmware repository
+	(( `ls ${G_WILINK8_FW_BT_SRC_DIR} | wc -l` == 0 )) && {
+		pr_info "Get wilink8 bt firmware repository";
+		get_git_src ${G_WILINK8_FW_BT_GIT} ${G_WILINK8_FW_BT_GIT_BRANCH} ${G_WILINK8_FW_BT_SRC_DIR}
+		cd ${G_WILINK8_FW_BT_SRC_DIR}
+		git checkout ${G_WILINK8_FW_BT_GIT_SRCREV}
+		cd -
 	};
 
 	# get imx firmware
