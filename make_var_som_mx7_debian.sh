@@ -50,7 +50,7 @@ readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-nand.dtb'
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var02"
+readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var03"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx7dvar_som_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx7dvar_som_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
