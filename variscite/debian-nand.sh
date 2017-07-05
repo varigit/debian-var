@@ -6,29 +6,45 @@
 #### global constants ####
 readonly UBOOT_IMAGE='u-boot.img.nand'
 readonly KERNEL_IMAGE='zImage'
-readonly KERNEL_DTB='imx7d-var-som-nand.dtb'
+KERNEL_DTB='imx7d-var-som-nand.dtb'
 readonly ROOTFS_IMAGE='rootfs.ubi.img'
 readonly IMAGES_PATH="/opt/images/Debian"
 readonly UBI_SUB_PAGE_SIZE=2048
 readonly UBI_VID_HDR_OFFSET=2048
 
-echo "================================="
+usage()
+{
+	echo
+	echo "This script installs Debian on the SOM's internal NAND flash"
+	echo
+	echo " Usage: `basename $0` OPTIONS"
+	echo
+	echo " OPTIONS:"
+	echo " -m	install device tree with M4 support (imx7d-var-som-nand-m4.dtb, instead of the default imx7d-var-som-nand.dtb)"
+	echo " -h	display this Help and exit"
+	echo
+}
+
+while getopts mh OPTION;
+do
+	case $OPTION in
+		m)
+			KERNEL_DTB='imx7d-var-som-nand-m4.dtb'
+			;;
+		h)
+			usage
+			exit 0
+			;;
+	esac
+done
+
+echo "============================================"
 echo " Variscite i.MX7 SOM"
 echo " Installing Debian to NAND flash"
-echo "================================="
-
-help() {
-
-	bn=`basename $0`
-
-cat << EOF
-usage $bn <option>
-
-options:
-  -h			displays this help message
-EOF
-
-}
+echo "============================================"
+echo " Installing the following Device Tree file: "
+echo " $KERNEL_DTB"
+echo "============================================"
 
 [[ $EUID -ne 0 ]] && {
 	echo "This script must be run with super-user privileges" 

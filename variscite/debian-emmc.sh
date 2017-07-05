@@ -75,7 +75,7 @@ function flash_yocto
 	mount -t vfat ${node}p1  /tmp/media/mmcblk2p1
 	mount ${node}p2  /tmp/media/mmcblk2p2
 
-	cp imx7d-var-som-emmc.dtb /tmp/media/mmcblk2p1/
+	cp imx7d-var-som-emmc*.dtb /tmp/media/mmcblk2p1/
 	cp zImage /tmp/media/mmcblk2p1/
 
 	echo "Flashing Debian Root File System"
