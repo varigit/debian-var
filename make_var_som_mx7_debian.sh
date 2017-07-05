@@ -472,9 +472,9 @@ rm -f user-stage
 };
 
 ## binaries rootfs patching ##
-	install -m 0755 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
 
@@ -482,8 +482,8 @@ rm -f user-stage
 		${ROOTFS_BASE}/usr/share/images/desktop-base/default
 
 ## added alsa default configs ##
-	install -m 0666 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
-	install -m 0666 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
+	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 
 ## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
@@ -903,8 +903,8 @@ function make_bcm_fw() {
 
 	install -d ${2}/lib/firmware/bcm
 	install -d ${2}/lib/firmware/brcm
-	install -m 0755 ${1}/brcm/* ${2}/lib/firmware/brcm/
-	install -m 0755 ${1}/bcm43430a1.hcd ${2}/lib/firmware/bcm/bcm43430a1.hcd
+	install -m 0644 ${1}/brcm/* ${2}/lib/firmware/brcm/
+	install -m 0644 ${1}/bcm43430a1.hcd ${2}/lib/firmware/bcm/bcm43430a1.hcd
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
 
