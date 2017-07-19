@@ -494,7 +494,8 @@ function install_wl18xx_packages() {
 	
 	pr_info "Installing wl18xx wifi firmware"
 	cp ${G_WILINK8_FW_WIFI_SRC_DIR}/*.bin ${WL18XX_FW_DIR}
-	
+	cp ${G_VARISCITE_PATH}/wl1271-nvs.bin ${WL18XX_FW_DIR}
+
 	pr_info "Installing wl18xx wlconf"
 	cp ${G_WILINK8_UTILS_SRC_DIR}/wlconf/configure-device.sh ${WLCONF_DIR}
 	cp ${G_WILINK8_UTILS_SRC_DIR}/wlconf/default.conf ${WLCONF_DIR}
