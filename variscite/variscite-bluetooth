@@ -30,6 +30,13 @@ DESC=variscite-bluetooth
 
 set -e
 
+BT_GPIO=132
+BT_TTY_DEV=/dev/ttymxc1
+DART_6UL_FIRMWARE=/lib/firmware/bcm/bcm43430a1.hcd
+DART_6UL_5G_FIRMWARE=/lib/firmware/bcm/bcm4339.hcd
+WIFI_MMC_DTS_DIR="/proc/device-tree/soc/aips-bus@02100000/usdhc@02190000"
+WIFI_MMC_DTS_FILE="${WIFI_MMC_DTS_DIR}/no-1-8-v"
+
 #Check if BT/WIFI is up
 dmesg | grep "tuple 0x80" && {
 	log_daemon_msg "$DESC: BT found"
@@ -43,25 +50,61 @@ max() {
   printf "%s\n" "$@" | sort -g -r | head -n1
 }
 
+# Detect DART-6UL-5G chip
+som_is_dart_6ul_5g() {
+  if [ -d ${WIFI_MMC_DTS_DIR} -a ! -f ${WIFI_MMC_DTS_FILE} ]; then
+    return 0
+  fi
+
+  return 1
+}
+
+# Get firmware file
+get_bt_firmware() {
+  if som_is_dart_6ul_5g; then
+    echo ${DART_6UL_5G_FIRMWARE}
+  else
+    echo ${DART_6UL_FIRMWARE}
+  fi
+}
+
+# Get BT MAC address
+get_bt_macaddr() {
+  eth0_addr=$(cat /sys/class/net/eth0/address | sed 's/\://g')
+  eth1_addr=$(cat /sys/class/net/eth1/address | sed 's/\://g')
+  bt_addr=$(max $eth0_addr $eth1_addr)
+  bt_addr=$((0x$bt_addr+1))
+  bt_addr=$(printf '%012X' $bt_addr)
+
+  echo $bt_addr | sed 's/\(..\)/\1:/g;s/:$//'
+}
+
+# Enable BT via GPIO
+enable_bt() {
+  echo ${BT_GPIO} > /sys/class/gpio/export && :;
+  echo "out" > /sys/class/gpio/gpio${BT_GPIO}/direction
+  echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
+  sleep 1
+  echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
+  sleep 1
+}
+
 case $1 in
 	start|restart)
 		log_daemon_msg "Starting $DESC"
 
-		echo 132 > /sys/class/gpio/export && :;
-		echo "out" > /sys/class/gpio/gpio132/direction
-		echo 0 > /sys/class/gpio/gpio132/value
-		sleep 1
-		echo 1 > /sys/class/gpio/gpio132/value
-		sleep 1
+		enable_bt
 
-		eth0_addr=$(cat /sys/class/net/eth0/address | sed 's/\://g')
-		eth1_addr=$(cat /sys/class/net/eth1/address | sed 's/\://g')
-		bd_addr_temp=$(max $eth0_addr $eth1_addr)
-		bd_addr_temp=$((0x$bd_addr_temp+1))
-		bd_addr_temp=$(printf '%012X' $bd_addr_temp)
-		bd_addr=$(echo $bd_addr_temp | sed 's/\(..\)/\1:/g;s/:$//')
+		mac_addr=$(get_bt_macaddr)
+		fw_file=$(get_bt_firmware)
 
-		brcm_patchram_plus --patchram /lib/firmware/bcm/bcm43430a1.hcd --enable_hci --bd_addr ${bd_addr} --no2bytes --tosleep 1000 /dev/ttymxc1 &
+		brcm_patchram_plus --patchram ${fw_file} \
+				   --enable_hci \
+				   --bd_addr ${mac_addr} \
+				   --no2bytes \
+				   --baudrate 3000000 \
+				   --scopcm=1,0,0,0,0,0,0,0,0,0 \
+				   --tosleep 1000 ${BT_TTY_DEV} &
 		sleep 2
 
 		log_end_msg 0
