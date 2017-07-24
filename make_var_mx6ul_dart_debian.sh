@@ -910,7 +910,7 @@ function make_bcm_fw() {
 	install -d ${2}/lib/firmware/bcm
 	install -d ${2}/lib/firmware/brcm
 	install -m 0755 ${1}/brcm/* ${2}/lib/firmware/brcm/
-	install -m 0755 ${1}/bcm43430a1.hcd ${2}/lib/firmware/bcm/bcm43430a1.hcd
+	install -m 0755 ${1}/*.hcd ${2}/lib/firmware/bcm/
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
 
