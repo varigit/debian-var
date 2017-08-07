@@ -58,14 +58,17 @@ readonly G_SPL_NAME_FOR_NAND="SPL.nand"
 readonly G_WILINK8_GIT="git://git.ti.com/wilink8-wlan"
 readonly G_WILINK8_BACKPORTS_SRC_DIR="${DEF_SRC_DIR}/wilink8/backports"
 readonly G_WILINK8_BACKPORTS_GIT="${G_WILINK8_GIT}/backports.git"
-readonly G_WILINK8_BACKPORTS_GIT_BRANCH="upstream_41"
+readonly G_WILINK8_BACKPORTS_GIT_BRANCH="upstream_44"
+readonly G_WILINK8_BACKPORTS_GIT_SRCREV="d4777ef8ac84a855b7e385b01a6690874460f536"
 readonly G_WILINK8_WL18XX_SRC_DIR="${DEF_SRC_DIR}/wilink8/wl18xx"
 readonly G_WILINK8_WL18XX_GIT="${G_WILINK8_GIT}/wl18xx.git"
-readonly G_WILINK8_WL18XX_GIT_BRANCH="upstream_41"
+readonly G_WILINK8_WL18XX_GIT_BRANCH="upstream_44"
+readonly G_WILINK8_WL18XX_GIT_SRCREV="5c94cc59baf694fb0aa5c5af6c6ae2a9b2d0e8fb"
 readonly G_WILINK8_COMPAT_WIRELESS_SRC_DIR="${DEF_SRC_DIR}/wilink8/compat-wireless"
 readonly G_WILINK8_UTILS_SRC_DIR="${DEF_SRC_DIR}/wilink8/utils"
 readonly G_WILINK8_UTILS_GIT="${G_WILINK8_GIT}/18xx-ti-utils.git"
 readonly G_WILINK8_UTILS_GIT_BRANCH="master"
+readonly G_WILINK8_UTILS_GIT_SRCREV="5040274cae5e88303e8a895c2707628fa72d58e8"
 readonly G_WILINK8_FW_WIFI_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_wifi"
 readonly G_WILINK8_FW_WIFI_GIT="${G_WILINK8_GIT}/wl18xx_fw.git"
 readonly G_WILINK8_FW_WIFI_GIT_BRANCH="master"
@@ -852,7 +855,7 @@ function cmd_make_deploy() {
 		pr_info "Get wilink8 backports repository";
 		get_git_src ${G_WILINK8_BACKPORTS_GIT} ${G_WILINK8_BACKPORTS_GIT_BRANCH} ${G_WILINK8_BACKPORTS_SRC_DIR}
 		cd ${G_WILINK8_BACKPORTS_SRC_DIR}
-		patch -p1 < ${DEF_BUILDENV}/patches/wilink8/backports/0001-header_add_possible_write_read_pnet_on_kernel_4.1.patch
+		git checkout ${G_WILINK8_BACKPORTS_GIT_SRCREV}
 		cd -
 	};
 
@@ -860,6 +863,9 @@ function cmd_make_deploy() {
 	(( `ls ${G_WILINK8_WL18XX_SRC_DIR} | wc -l` == 0 )) && {
 		pr_info "Get wilink8 wl18xx repository";
 		get_git_src ${G_WILINK8_WL18XX_GIT} ${G_WILINK8_WL18XX_GIT_BRANCH} ${G_WILINK8_WL18XX_SRC_DIR}
+		cd ${G_WILINK8_WL18XX_SRC_DIR}
+		git checkout ${G_WILINK8_WL18XX_GIT_SRCREV}
+		cd -
 	};
 
 	# generate compat-wireless
@@ -875,6 +881,7 @@ function cmd_make_deploy() {
 		pr_info "Get wilink8 utils repository";
 		get_git_src ${G_WILINK8_UTILS_GIT} ${G_WILINK8_UTILS_GIT_BRANCH} ${G_WILINK8_UTILS_SRC_DIR}
 		cd ${G_WILINK8_UTILS_SRC_DIR}
+		git checkout ${G_WILINK8_UTILS_GIT_SRCREV}
 		patch -p1 < ${DEF_BUILDENV}/patches/wilink8/utils/config_sh.patch
 		cd -
 	};
