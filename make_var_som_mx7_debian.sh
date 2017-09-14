@@ -61,8 +61,14 @@ readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_2.0.1_ga-var01"
-readonly G_BCM_FW_GIT_REV="a434c692b489b8a451a653fe5e3dd925eb3bc5e5"
+readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_2.0.1_ga-var02"
+readonly G_BCM_FW_GIT_REV="2523d192b429fcb9ab910b4e54b2451821d90c3e"
+
+## Broadcom BT/WIFI driver ##
+readonly G_BCM_DRV_SRC_DIR="${DEF_SRC_DIR}/laird-linux-backports"
+readonly G_BCM_DRV_GIT="git://github.com/varigit/laird-linux-backports"
+readonly G_BCM_DRV_GIT_BRANCH="3.5.5.8"
+readonly G_BCM_DRV_GIT_REV="58a1896d37ec04bd16af8ab784145ae3c85d3c4b"
 
 ## ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
@@ -547,6 +553,10 @@ function make_kernel() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ ${2}
 
+	# Disable CONFIG_CFG80211 and CONFIG_BRCMFMAC (WIFI support)
+	sed -i 's/CONFIG_CFG80211=y/CONFIG_CFG80211=n/' ${4}/.config
+	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4} oldconfig
+
 	pr_info "make kernel"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ zImage
 
@@ -579,11 +589,24 @@ function make_kernel_modules() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ ${2}
 
+	# Disable CONFIG_CFG80211 and CONFIG_BRCMFMAC (WIFI support)
+	sed -i 's/CONFIG_CFG80211=y/CONFIG_CFG80211=n/' ${3}/.config
+	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3} oldconfig
+
 	pr_info "Compiling Linux kernel modules"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ modules
 
 	pr_info "Installing Linux kernel modules to ${4}"
 	make CROSS_COMPILE=${1} ARCH=arm INSTALL_MOD_PATH=${4}/ ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ modules_install
+
+	pr_info "Generating lwb-fcc-var defconfig"
+	make ARCH=arm CC=gcc KLIB_BUILD=${3} KLIB=${4} -C ${G_BCM_DRV_SRC_DIR} defconfig-lwb-fcc-var
+
+	pr_info "Compiling WIFI modules modules"
+	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} KLIB_BUILD=${3} KLIB=${4} -C ${G_BCM_DRV_SRC_DIR} modules
+
+	pr_info "Installing WIFI modules"
+	make ARCH=arm CROSS_COMPILE=${1} KLIB_BUILD=${3} KLIB=${4} INSTALL_MOD_PATH=${4} -C ${G_BCM_DRV_SRC_DIR} modules_install
 
 	return 0;
 }
@@ -928,6 +951,12 @@ function cmd_make_deploy() {
 	(( `ls ${G_BCM_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get bcmhd firmware repository";
 		get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} ${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
+	};
+
+	# get bcm wifi driver repository
+	(( `ls ${G_BCM_DRV_SRC_DIR} | wc -l` == 0 )) && {
+		pr_info "Get Laird backports repository";
+		get_git_src ${G_BCM_DRV_GIT} ${G_BCM_DRV_GIT_BRANCH} ${G_BCM_DRV_SRC_DIR} ${G_BCM_DRV_GIT_REV}
 	};
 
 	# get kernel repository
