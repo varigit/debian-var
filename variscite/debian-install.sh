@@ -168,11 +168,7 @@ if [ $CPUS = 1 ] || [ $CPUS = 2 ] ; then
 		if [ "$BOARD" = "scb" ] ; then
 			KERNEL_DTB=imx6dl-var-som-solo-vsc.dtb
 		else
-			if [ $TOUCHSCREEN = "cap" ] ; then
-				KERNEL_DTB=imx6dl-var-som-solo-cap.dtb
-			else
-				KERNEL_DTB=imx6dl-var-som-solo-res.dtb
-			fi
+			KERNEL_DTB=imx6dl-var-som-solo-$TOUCHSCREEN.dtb
 		fi
 	else
 		if [ $CPUS = 1 ] || [ `dmesg | grep -c i.MX6DL` = 1 ] ; then
@@ -180,11 +176,7 @@ if [ $CPUS = 1 ] || [ $CPUS = 2 ] ; then
 			if [ $BOARD = "scb" ] ; then
 				KERNEL_DTB=imx6dl-var-som-vsc.dtb
 			else
-				if [ $TOUCHSCREEN = "cap" ] ; then
-					KERNEL_DTB=imx6dl-var-som-cap.dtb
-				else
-					KERNEL_DTB=imx6dl-var-som-res.dtb
-				fi
+				KERNEL_DTB=imx6dl-var-som-$TOUCHSCREEN.dtb
 			fi
 		else
 			# iMX6 Dual
@@ -195,14 +187,15 @@ fi
 
 #iMX6 Dual/Quad
 if [ $CPUS = 4 ] ; then
-	if [ $BOARD = "scb" ] ; then
-		KERNEL_DTB=imx6q-var-som-vsc.dtb
+	if [ `cat /sys/devices/soc0/soc_id` = "i.MX6QP" ] ; then
+		QUADTYPE="imx6qp"
 	else
-		if [ $TOUCHSCREEN = "cap" ] ; then
-			KERNEL_DTB=imx6q-var-som-cap.dtb
-		else
-			KERNEL_DTB=imx6q-var-som-res.dtb
-		fi
+		QUADTYPE="imx6q"
+	fi
+	if [ $BOARD = "scb" ] ; then
+		KERNEL_DTB=$QUADTYPE-var-som-vsc.dtb
+	else
+		KERNEL_DTB=$QUADTYPE-var-som-$TOUCHSCREEN.dtb
 	fi
 fi
 
