@@ -9,6 +9,8 @@ readonly SPL_IMAGE='SPL.nand'
 readonly KERNEL_IMAGE='zImage'
 readonly KERNEL_DTB_UL='imx6ul-var-dart-nand_wifi.dtb'
 readonly KERNEL_DTB_ULL='imx6ull-var-dart-nand_wifi.dtb'
+readonly KERNEL_DTB_UL5G='imx6ul-var-dart-5g-nand_wifi.dtb'
+readonly KERNEL_DTB_ULL5G='imx6ull-var-dart-5g-nand_wifi.dtb'
 readonly ROOTFS_IMAGE='rootfs.ubi.img'
 readonly IMAGES_PATH="/opt/images/Debian"
 readonly UBI_SUB_PAGE_SIZE=2048
@@ -19,23 +21,25 @@ echo " Variscite i.MX6 UltraLite DART"
 echo " Installing Debian to NAND flash"
 echo "================================="
 
-help() {
-
-	bn=`basename $0`
-
-cat << EOF
-usage $bn <option>
-
-options:
-  -h			displays this help message
-EOF
-
+usage() {
+	echo "usage: $(basename $0) <mx6ul|mx6ull|mx6ul5g|mx6ull5g>"
 }
 
 [[ $EUID -ne 0 ]] && {
-	echo "This script must be run with super-user privileges" 
+	echo "This script must be run with super-user privileges"
 	exit 1
 }
+
+if [ $# -ne 1 ]; then
+	usage
+	exit 1
+fi
+
+if [ "$1" != "mx6ul" -a "$1" != "mx6ull" -a "$1" != "mx6ul5g" -a "$1" != "mx6ull5g" ]; then
+	usage
+	exit 1
+fi
+som=$1
 
 function install_bootloader()
 {
@@ -74,11 +78,22 @@ function install_kernel()
 	echo "Installing Kernel"
 	flash_erase /dev/mtd3 0 0 2>/dev/null
 	nandwrite -p /dev/mtd3 ${IMAGES_PATH}/$KERNEL_IMAGE > /dev/null
-	if dmesg | grep -i "machine model" | grep -q "ULL"; then
-	  nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$KERNEL_DTB_ULL > /dev/null
-	else
-	  nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$KERNEL_DTB_UL > /dev/null
-	fi
+	case $som in
+	"mx6ul")
+		dtb=$KERNEL_DTB_UL
+		;;
+	"mx6ul")
+		dtb=$KERNEL_DTB_ULL
+		;;
+	"mx6ul5g")
+		dtb=$KERNEL_DTB_ULL5G
+		;;
+	"mx6ull5g")
+		dtb=$KERNEL_DTB_ULL5G
+		;;
+	esac
+
+	nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$dtb > /dev/null
 }
 
 function install_rootfs()
