@@ -7,6 +7,7 @@
 BOOTLOAD_RESERVE=4
 BOOT_ROM_SIZE=8
 SPARE_SIZE=0
+DTB_FILES='imx6ul-var-dart-emmc_wifi.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb'
 
 echo "================================"
 echo " Variscite i.MX6 UltraLite DART"
@@ -81,7 +82,7 @@ function flash_debian
 	mount -t vfat ${node}p1  /tmp/media/mmcblk1p1
 	mount ${node}p2  /tmp/media/mmcblk1p2
 
-	cp imx6ul-var-dart-emmc_wifi.dtb imx6ull-var-dart-emmc_wifi.dtb /tmp/media/mmcblk1p1/
+	cp ${DTB_FILES} /tmp/media/mmcblk1p1/
 	cp zImage /tmp/media/mmcblk1p1/
 
 	echo "Flashing Debian Root File System"
