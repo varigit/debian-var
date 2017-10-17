@@ -44,7 +44,7 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var02"
-readonly G_LINUX_KERNEL_REV="c6d2d28186b918523c54c9d629dded82c7fdb45a"
+readonly G_LINUX_KERNEL_REV="05c96047c7bc4654ae3802fba4e228614f13b580"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb'
 
