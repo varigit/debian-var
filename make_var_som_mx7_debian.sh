@@ -44,7 +44,7 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var02"
-readonly G_LINUX_KERNEL_REV="65ef23a88cfed95e36bd4489b46a4f3e534dd348"
+readonly G_LINUX_KERNEL_REV="05c96047c7bc4654ae3802fba4e228614f13b580"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx7-var-som_defconfig'
 readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-emmc-m4.dtb imx7d-var-som-nand.dtb imx7d-var-som-nand-m4.dtb'
 
@@ -52,7 +52,7 @@ readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-emmc-m4.dtb imx7d-var
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var03"
-readonly G_UBOOT_REV="4f1603cd366f5ed0e8d7634f1b5ad07473d94c5a"
+readonly G_UBOOT_REV="4c9eadeffc06ee970573e997b568e07c5759fd40"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx7dvar_som_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx7dvar_som_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
@@ -61,8 +61,8 @@ readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_2.0.1_ga-var02"
-readonly G_BCM_FW_GIT_REV="2523d192b429fcb9ab910b4e54b2451821d90c3e"
+readonly G_BCM_FW_GIT_BRANCH="3.5.5.18"
+readonly G_BCM_FW_GIT_REV="423be46b06b5629e45a4943f98a3053c819091ce"
 
 ## Broadcom BT/WIFI driver ##
 readonly G_BCM_DRV_SRC_DIR="${DEF_SRC_DIR}/laird-linux-backports"
@@ -935,7 +935,7 @@ function make_bcm_fw() {
 	install -d ${2}/lib/firmware/bcm
 	install -d ${2}/lib/firmware/brcm
 	install -m 0644 ${1}/brcm/* ${2}/lib/firmware/brcm/
-	install -m 0644 ${1}/bcm43430a1.hcd ${2}/lib/firmware/bcm/bcm43430a1.hcd
+	install -m 0644 ${1}/*.hcd ${2}/lib/firmware/bcm/
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
 
