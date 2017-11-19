@@ -82,11 +82,11 @@ function install_kernel()
 	"mx6ul")
 		dtb=$KERNEL_DTB_UL
 		;;
-	"mx6ul")
+	"mx6ull")
 		dtb=$KERNEL_DTB_ULL
 		;;
 	"mx6ul5g")
-		dtb=$KERNEL_DTB_ULL5G
+		dtb=$KERNEL_DTB_UL5G
 		;;
 	"mx6ull5g")
 		dtb=$KERNEL_DTB_ULL5G
