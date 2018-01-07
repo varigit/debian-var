@@ -1,6 +1,5 @@
 #!/bin/bash
 # It is designed to build Debian linux for Variscite imx6ul-dart module
-# script tested in OS debian (jessie)
 # prepare host OS system:
 #  sudo apt-get install binfmt-support qemu qemu-user-static debootstrap kpartx
 #  sudo apt-get install lvm2 dosfstools gpart binutils git lib32ncurses5-dev python-m2crypto
@@ -15,7 +14,7 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.4"
+readonly SCRIPT_VERSION="0.5"
 
 
 #### Exports Variables ####
@@ -28,10 +27,10 @@ readonly LOOP_MAJOR=7
 
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
-readonly DEB_RELEASE="jessie"
+readonly DEB_RELEASE="stretch"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
-## base paths 
+## base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
 readonly DEF_SRC_DIR="${DEF_BUILDENV}/src"
 readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
@@ -39,21 +38,19 @@ readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 
-
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
-readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var02"
-readonly G_LINUX_KERNEL_REV="05c96047c7bc4654ae3802fba4e228614f13b580"
-readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart_defconfig'
+readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
+readonly G_LINUX_KERNEL_BRANCH="imx_4.9.11_1.0.0_ga-var01"
+readonly G_LINUX_KERNEL_REV="8acc1a483056f0174473fc1555413686c245f975"
+readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
-
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var03"
-readonly G_UBOOT_REV="09e6aa9a3d2851e7c88a1284476185139acf287a"
+readonly G_UBOOT_BRANCH="imx_v2017.03_4.9.11_1.0.0_ga_var01"
+readonly G_UBOOT_REV="539c83f017e56a252c66ad867d0e31f5d68b28ac"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
@@ -67,22 +64,16 @@ readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="3.5.5.18"
 readonly G_BCM_FW_GIT_REV="423be46b06b5629e45a4943f98a3053c819091ce"
 
-## Broadcom BT/WIFI driver ##
-readonly G_BCM_DRV_SRC_DIR="${DEF_SRC_DIR}/laird-linux-backports"
-readonly G_BCM_DRV_GIT="git://github.com/varigit/laird-linux-backports"
-readonly G_BCM_DRV_GIT_BRANCH="3.5.5.8"
-readonly G_BCM_DRV_GIT_REV="58a1896d37ec04bd16af8ab784145ae3c85d3c4b"
-
 ## ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
 
 ## CROSS_COMPILER config and paths
-readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf/bin"
+readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf'
+readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/${G_EXT_CROSS_COMPILER_NAME}/bin"
 #readonly G_CROSS_COMPILEER_PREFFIX="arm-none-eabi-"
 readonly G_CROSS_COMPILEER_PREFFIX="arm-linux-gnueabihf-"
 readonly G_CROSS_COMPILEER_JOPTION="-j 4"
-readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz'
-readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
+readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}.tar.xz"
 
 ############## user rootfs packages ##########
 readonly G_USER_PACKAGES=""
@@ -236,8 +227,6 @@ function make_prepare() {
 	mkdir -p ${G_UBOOT_SRC_DIR} && :;
 	mkdir -p ${G_TOOLS_PATH} && :;
 
-##	mkdir -p ${G_CROSS_COMPILEER_PATH} && :;
-
 ## create rootfs dir
 	mkdir -p ${G_ROOTFS_DIR} && :;
 
@@ -255,7 +244,7 @@ function make_debian_rootfs() {
 
 	pr_info "Make debian(${DEB_RELEASE}) rootfs start..."
 
-	# umount previus mounts (if fail)
+## umount previus mounts (if fail)
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 
 ## clear rootfs dir
@@ -302,7 +291,6 @@ locales locales/default_environment_locale select en_US.UTF-8
 console-common	console-data/keymap/policy	select	Select keymap from full list
 keyboard-configuration keyboard-configuration/variant select 'English (US)'
 openssh-server openssh-server/permit-root-login select true
-slim shared/default-x-display-manager select slim
 " > debconf.set
 
 	pr_info "rootfs: prepare install packages in rootfs"
@@ -356,33 +344,33 @@ protected_install nfs-common
 
 # packages required when flashing emmc
 protected_install dosfstools
-protected_install bzip2
 
 # fix config for sshd (added user login for password)
 sed -i -e 's/\PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
 
 # enable graphical desktop
-protected_install Xorg
+protected_install xorg
 protected_install xfce4
 protected_install xfce4-goodies
-protected_install slim
 
-# sound mixer & volune
-protected_install xfce4-mixer
-protected_install xfce4-volumed
+# sound mixer & volume
+# xfce-mixer is not part of Stretch since the stable versionit depends on
+# gstreamer-0.10, no longer used
+# Stretch now uses PulseAudio and xfce4-pulseaudio-plugin is included in
+# Xfce desktop and can be added to Xfce panels.
+#protected_install xfce4-mixer
+#protected_install xfce4-volumed
 
 # network manager
 protected_install network-manager-gnome
 
-## fix slim config (added autologin x_user) ##
-sed -i -e 's/\#auto_login.*/auto_login\tyes/g' /etc/slim.conf
-sed -i -e 's/\#default_user.*/default_user\tx_user/g' /etc/slim.conf
+## fix lightdm config (added autologin x_user) ##
+sed -i -e 's/\#autologin-user=/autologin-user=x_user/g' /etc/lightdm/lightdm.conf
+sed -i -e 's/\#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
 
 # added alsa & alsa utilites
-protected_install alsa-base
 protected_install alsa-utils
-# protected_install gstreamer0.10-plugins-good
-protected_install gstreamer0.10-alsa
+protected_install gstreamer1.0-alsa
 
 # added i2c tools
 protected_install i2c-tools
@@ -397,18 +385,13 @@ protected_install iperf
 protected_install audacious
 # protected_install parole
 
-# wifi
-protected_install wpasupplicant
-
 # mtd
 protected_install mtd-utils
 
 # bluetooth
 protected_install bluetooth
-protected_install bluez
 protected_install bluez-obexd
 protected_install bluez-tools
-protected_install libbluetooth3
 protected_install blueman
 protected_install gconf2
 
@@ -419,20 +402,9 @@ protected_install udhcpd
 # can support
 protected_install can-utils
 
-# psmisc utils (killall and etc)
-protected_install psmisc
-
-# nano
-protected_install nano
-
 # delete unused packages ##
-apt-get -y remove xscreensaver
 apt-get -y remove xserver-xorg-video-ati
-apt-get -y remove xserver-xorg-video-r128
 apt-get -y remove xserver-xorg-video-radeon
-apt-get -y remove xserver-xorg-video-mach64
-apt-get -y remove manpages
-apt-get -y remove gstreamer0.10-x
 apt-get -y remove hddtemp
 
 apt-get -y autoremove
@@ -446,7 +418,6 @@ rm -rf /var/cache/man/??_*
 
 # Remove document files
 rm -rf /usr/share/doc
-
 
 # create users and set password
 useradd -m -G audio -s /bin/bash user
@@ -505,10 +476,13 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 
-	## Revert regular booting
+## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
-# added mirror to source list
+## added fixed systemd-hostnamed unit file
+	install -m 0644 ${G_VARISCITE_PATH}/systemd-hostnamed.service ${ROOTFS_BASE}/lib/systemd/system
+
+## added mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
@@ -559,10 +533,6 @@ function make_kernel() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ ${2}
 
-	# Disable CONFIG_CFG80211 and CONFIG_BRCMFMAC (WIFI support)
-	sed -i 's/CONFIG_CFG80211=y/CONFIG_CFG80211=n/' ${4}/.config
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4} oldconfig
-
 	pr_info "make kernel"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ zImage
 
@@ -595,24 +565,11 @@ function make_kernel_modules() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ ${2}
 
-	# Disable CONFIG_CFG80211 and CONFIG_BRCMFMAC (WIFI support)
-	sed -i 's/CONFIG_CFG80211=y/CONFIG_CFG80211=n/' ${3}/.config
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3} oldconfig
-
 	pr_info "Compiling Linux kernel modules"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ modules
 
 	pr_info "Installing Linux kernel modules to ${4}"
 	make CROSS_COMPILE=${1} ARCH=arm INSTALL_MOD_PATH=${4}/ ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ modules_install
-
-	pr_info "Generating lwb-fcc-var defconfig"
-	make ARCH=arm CC=gcc KLIB_BUILD=${3} KLIB=${4} -C ${G_BCM_DRV_SRC_DIR} defconfig-lwb-fcc-var
-
-	pr_info "Compiling WIFI modules modules"
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} KLIB_BUILD=${3} KLIB=${4} -C ${G_BCM_DRV_SRC_DIR} modules
-
-	pr_info "Installing WIFI modules"
-	make ARCH=arm CROSS_COMPILE=${1} KLIB_BUILD=${3} KLIB=${4} INSTALL_MOD_PATH=${4} -C ${G_BCM_DRV_SRC_DIR} modules_install
 
 	return 0;
 }
@@ -623,7 +580,7 @@ function make_kernel_modules() {
 function make_uboot() {
 ### make emmc uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_MMC}"
-	# clean work directory 
+	# clean work directory
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} mrproper
 
 	# make uboot config for mmc
@@ -714,17 +671,17 @@ function check_sdcard()
 {
 	# Check that parameter is a valid block device
 	if [ ! -b "$1" ]; then
-          pr_error "$1 is not a valid block device, exiting"
-	   return 1
-        fi
+		pr_error "$1 is not a valid block device, exiting"
+		return 1
+	fi
 
 	local dev=$(basename $1)
 
 	# Check that /sys/block/$dev exists
 	if [ ! -d /sys/block/$dev ]; then
-	  pr_error "Directory /sys/block/${dev} missing, exiting"
-	  return 1
-        fi
+		pr_error "Directory /sys/block/${dev} missing, exiting"
+		return 1
+	fi
 
 	# Get device parameters
 	local removable=$(cat /sys/block/${dev}/removable)
@@ -734,14 +691,14 @@ function check_sdcard()
 
 	# Check that device is either removable or loop
 	if [ "$removable" != "1" -a $(stat -c '%t' /dev/$dev) != ${LOOP_MAJOR} ]; then
-          pr_error "$1 is not a removable device, exiting"
-	  return 1
-        fi
+		pr_error "$1 is not a removable device, exiting"
+		return 1
+	fi
 
 	# Check that device is attached
 	if [ ${size_bytes} -eq 0 ]; then
-          pr_error "$1 is not attached, exiting"
-          return 1
+		pr_error "$1 is not attached, exiting"
+		return 1
 	fi
 
 	pr_info "Device: ${LPARAM_BLOCK_DEVICE}, ${size_gib}GiB"
@@ -849,14 +806,14 @@ function make_sdcard() {
 		cp ${G_VARISCITE_PATH}/kobs-ng		${P2_MOUNT_DIR}/usr/sbin/
 	
 		# added exec options
-		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng 
+		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng
 	}
 
 	function ceildiv
 	{
-	    local num=$1
-	    local div=$2
-	    echo $(( (num + div - 1) / div ))
+		local num=$1
+		local div=$2
+		echo $(( (num + div - 1) / div ))
 	}
 
 	# Delete the partitions
@@ -962,12 +919,6 @@ function cmd_make_deploy() {
 	(( `ls ${G_BCM_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get bcmhd firmware repository";
 		get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} ${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
-	};
-
-	# get bcm wifi driver repository
-	(( `ls ${G_BCM_DRV_SRC_DIR} | wc -l` == 0 )) && {
-		pr_info "Get Laird backports repository";
-		get_git_src ${G_BCM_DRV_GIT} ${G_BCM_DRV_GIT_BRANCH} ${G_BCM_DRV_SRC_DIR} ${G_BCM_DRV_GIT_REV}
 	};
 
 	# get kernel repository
@@ -1143,7 +1094,7 @@ function cmd_make_clean() {
 #################### main function #######################
 
 ## test for root access support (msrc not allowed)
-[ "$PARAM_CMD" != "deploy" ] && [ ${EUID} -ne 0 ] && {
+[ "$PARAM_CMD" != "deploy" ] && [ "$PARAM_CMD" != "bootloader" ] && [ "$PARAM_CMD" != "kernel" ] && [ "$PARAM_CMD" != "modules" ] && [ ${EUID} -ne 0 ] && {
 	pr_error "this command must be run as root (or sudo/su)"
 	exit 1;
 };
