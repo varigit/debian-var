@@ -42,8 +42,8 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
-readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var02"
+readonly G_LINUX_KERNEL_GIT="https://github.com/twonav/linux-2.6-imx.git"
+readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_twonav"
 readonly G_LINUX_KERNEL_REV="05c96047c7bc4654ae3802fba4e228614f13b580"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
@@ -51,7 +51,7 @@ readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dt
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
-readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
+readonly G_UBOOT_GIT="https://github.com/twonav/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var03"
 readonly G_UBOOT_REV="09e6aa9a3d2851e7c88a1284476185139acf287a"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
@@ -63,13 +63,13 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
-readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
+readonly G_BCM_FW_GIT="git://github.com/twonav/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="3.5.5.18"
 readonly G_BCM_FW_GIT_REV="423be46b06b5629e45a4943f98a3053c819091ce"
 
 ## Broadcom BT/WIFI driver ##
 readonly G_BCM_DRV_SRC_DIR="${DEF_SRC_DIR}/laird-linux-backports"
-readonly G_BCM_DRV_GIT="git://github.com/varigit/laird-linux-backports"
+readonly G_BCM_DRV_GIT="git://github.com/twonav/laird-linux-backports"
 readonly G_BCM_DRV_GIT_BRANCH="3.5.5.8"
 readonly G_BCM_DRV_GIT_REV="58a1896d37ec04bd16af8ab784145ae3c85d3c4b"
 
