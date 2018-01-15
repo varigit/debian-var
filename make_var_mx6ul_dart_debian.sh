@@ -38,6 +38,8 @@ readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
 readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
+readonly SDCARD_ZIMAGE_DIR=/media/$(logname)/BOOT-VARSOM
+readonly SDCARD_ROOTFS_DIR=/media/$(logname)/rootfs
 
 
 ## LINUX kernel: git, config, paths and etc
@@ -108,20 +110,21 @@ function usage() {
 	echo "  -h|--help   -- print this help"
 	echo "  -c|--cmd <command>"
 	echo "     Supported commands:"
-	echo "       deploy      -- prepare environment for all commands"
-	echo "       all         -- build or rebuild kernel/bootloader/rootfs"
-	echo "       bootloader  -- build or rebuild bootloader (u-boot+SPL)"
-	echo "       kernel      -- build or rebuild linux kernel for this board"
-	echo "       modules     -- build or rebuild linux kernel modules and install in rootfs directory for this board"
-	echo "       rootfs      -- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
-	echo "                       make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
-	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
-	echo "       rtar        -- generate or regenerate rootfs.tar.bz2 image from rootfs folder "
-	echo "       clean       -- clean all build artifacts (not delete sources code and resulted images (output folder))"
-	echo "       sdcard      -- create bootting sdcard for this device"
-	echo "  -o|--output -- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
-	echo "  -d|--dev    -- select sdcard device (exmple: -d /dev/sde)"
-	echo "  --debug     -- enable debug mode for this script"
+	echo "       deploy      		-- prepare environment for all commands"
+	echo "       all         		-- build or rebuild kernel/bootloader/rootfs"
+	echo "       bootloader  		-- build or rebuild bootloader (u-boot+SPL)"
+	echo "       kernel      		-- build or rebuild linux kernel for this board"
+	echo "       modules     		-- build or rebuild linux kernel modules and install in rootfs directory for this board"
+	echo "       kernel_to_sd     	-- copy kernel and modules contents to sdcard"
+	echo "       rootfs      		-- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
+	echo "                       		make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
+	echo "       rubi        		-- generate or regenerate rootfs.ubi.img image from rootfs folder "
+	echo "       rtar        		-- generate or regenerate rootfs.tar.bz2 image from rootfs folder "
+	echo "       clean       		-- clean all build artifacts (not delete sources code and resulted images (output folder))"
+	echo "       sdcard      		-- create bootting sdcard for this device"
+	echo "  	-o|--output 		-- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
+	echo "  	-d|--dev    		-- select sdcard device (exmple: -d /dev/sde)"
+	echo "  	--debug     		-- enable debug mode for this script"
 	echo "Examples of use:"
 	echo "  make only linux kernel for board: sudo ./${SCRIPT_NAME} --cmd kernel"
 	echo "  make only rootfs for board:       sudo ./${SCRIPT_NAME} --cmd rootfs"
@@ -617,6 +620,29 @@ function make_kernel_modules() {
 	return 0;
 }
 
+function copy_kernel() {
+	pr_info "Copying kernel to sdcard"
+
+	rm -rf /media/ebosch/rootfs/lib/modules/* || {
+		pr_error "Failed #$? prepare modules dir"
+		return 1;
+	};
+
+	rm -rf /media/ebosch/BOOT-VARSOM/*.dtb || {
+		pr_error "Failed #$? prepare dtb dir"
+		return 1;
+	};
+
+	pr_info "Copy kernel and dtb files to output dir: /media/ebosch/BOOT-VARSOM"
+	cp ${1}/arch/arm/boot/zImage ${SDCARD_ZIMAGE_DIR};
+	cp ${1}/arch/arm/boot/dts/*.dtb ${SDCARD_ZIMAGE_DIR};
+
+	pr_info "Installing Linux kernel modules to /media/ebosch/rootfs/lib/modules/"
+	cp -r ${2}/lib/modules/* ${SDCARD_ROOTFS_DIR}/lib/modules/
+
+	sync
+}
+
 # make uboot
 # $1 uboot path
 # $2 outputdir
@@ -1071,6 +1097,17 @@ function cmd_make_kmodules() {
 	return 0;
 }
 
+function cmd_copy_kernel() {
+	make_prepare;
+
+	copy_kernel ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} || {
+		pr_error "Failed #$? in function copy_kernel"
+		return 1;
+	};
+
+	return 0;
+}
+
 function cmd_make_rfs_ubi() {
 	make_prepare;
 
@@ -1175,6 +1212,11 @@ case $PARAM_CMD in
 		;;
 	modules )
 		cmd_make_kmodules || {
+			V_RET_CODE=1;
+		};
+		;;
+	kernel_to_sd )
+		cmd_copy_kernel || {
 			V_RET_CODE=1;
 		};
 		;;
