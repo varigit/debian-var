@@ -54,8 +54,8 @@ readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dt
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/twonav/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var03"
-readonly G_UBOOT_REV="09e6aa9a3d2851e7c88a1284476185139acf287a"
+readonly G_UBOOT_BRANCH="imx_v2015.10_dart_6ul_var1-twonav"
+readonly G_UBOOT_REV="570b452d2056ddb8a724f47bc193bfcc55663891"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
