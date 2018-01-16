@@ -93,6 +93,7 @@ readonly G_USER_PACKAGES=""
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
 PARAM_OUTPUT_DIR="${DEF_BUILDENV}/output"
 PARAM_DEBUG="0"
+PARAM_REBUILD="0"
 PARAM_CMD="all"
 PARAM_BLOCK_DEVICE="na"
 
@@ -116,6 +117,7 @@ function usage() {
 	echo "       kernel      		-- build or rebuild linux kernel for this board"
 	echo "       modules     		-- build or rebuild linux kernel modules and install in rootfs directory for this board"
 	echo "       kernel_to_sd     	-- copy kernel and modules contents to sdcard"
+	echo "       -r|--rebuild     	-- rebuild kernel and modules"
 	echo "       rootfs      		-- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
 	echo "                       		make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
 	echo "       rubi        		-- generate or regenerate rootfs.ubi.img image from rootfs folder "
@@ -134,8 +136,8 @@ function usage() {
 }
 
 ###### parse input arguments ##
-readonly SHORTOPTS="c:o:d:h"
-readonly LONGOPTS="cmd:,output:,dev:,help,debug"
+readonly SHORTOPTS="c:o:d:h:r"
+readonly LONGOPTS="cmd:,output:,dev:,help,debug,rebuild"
 
 ARGS=$(getopt -s bash --options ${SHORTOPTS}  \
   --longoptions ${LONGOPTS} --name ${SCRIPT_NAME} -- "$@" )
@@ -157,6 +159,9 @@ while true; do
 			[ -e ${1} ] && {
 				PARAM_BLOCK_DEVICE=${1};
 			};
+			;;
+		-r|--rebuild ) # rebuild kernel
+			PARAM_REBUILD=1;
 			;;
 		--debug ) # enable debug
 			PARAM_DEBUG=1;
@@ -622,6 +627,13 @@ function make_kernel_modules() {
 
 function copy_kernel() {
 	pr_info "Copying kernel to sdcard"
+
+	[ "${PARAM_REBUILD}" = "1" ] && {
+		echo "Recompiling kernel..."
+		cmd_make_kernel
+		cmd_make_kmodules
+	};
+
 
 	rm -rf /media/ebosch/rootfs/lib/modules/* || {
 		pr_error "Failed #$? prepare modules dir"
