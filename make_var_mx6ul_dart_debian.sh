@@ -489,6 +489,11 @@ rm -f user-stage
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libz.so.1.2.8 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libz.so
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libm.so.6 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libm.so
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libdl.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdl.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libdbus-1.so.3.8.14 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdbus-1.so
+	ln -sfv libdbus-glib-1.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdbus-glib-1.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libglib-2.0.so.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libglib-2.0.so
+	ln -sfv libnm-glib.so.4 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-glib.so
+	ln -sfv libnm-util.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-util.so
 
 ## binaries rootfs patching ##
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
