@@ -1,6 +1,5 @@
 #!/bin/bash
 # It is designed to build Debian linux for Variscite MX6 modules
-# script tested in OS debian (jessie)
 # prepare host OS system:
 #  sudo apt-get install binfmt-support qemu qemu-user-static debootstrap kpartx
 #  sudo apt-get install lvm2 dosfstools gpart binutils git lib32ncurses5-dev python-m2crypto
@@ -15,7 +14,7 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.2"
+readonly SCRIPT_VERSION="0.5"
 
 
 #### Exports Variables ####
@@ -25,9 +24,13 @@ readonly ABSOLUTE_DIRECTORY=`dirname ${ABSOLUTE_FILENAME}`
 readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
+
+# default mirror
+readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
+readonly DEB_RELEASE="stretch"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
-## base paths 
+## base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
 readonly DEF_SRC_DIR="${DEF_BUILDENV}/src"
 readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
@@ -35,36 +38,28 @@ readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 
-
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
-readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var02"
-readonly G_LINUX_KERNEL_DEF_CONFIG="imx_v7_var_defconfig"
-readonly G_LINUX_DTB="imx6dl-var-som-cap.dtb imx6dl-var-som-res.dtb imx6dl-var-som-solo-cap.dtb imx6dl-var-som-solo-res.dtb imx6dl-var-som-solo-vsc.dtb imx6dl-var-som-vsc.dtb imx6q-var-dart.dtb imx6q-var-som-cap.dtb imx6q-var-som-res.dtb imx6q-var-som-vsc.dtb"
+readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
+readonly G_LINUX_KERNEL_BRANCH="imx_4.9.11_1.0.0_ga-var01"
+readonly G_LINUX_KERNEL_REV="aa811714badb0d69660a6efe09ef97324502bd92"
+readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
+readonly G_LINUX_DTB='imx6dl-var-som-cap.dtb imx6dl-var-som-res.dtb imx6dl-var-som-solo-cap.dtb imx6dl-var-som-solo-res.dtb imx6dl-var-som-solo-vsc.dtb imx6dl-var-som-vsc.dtb imx6q-var-dart.dtb imx6q-var-som-cap.dtb imx6q-var-som-res.dtb imx6q-var-som-vsc.dtb imx6qp-var-som-cap.dtb imx6qp-var-som-res.dtb imx6qp-var-som-vsc.dtb'
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var03"
-readonly G_UBOOT_DEF_CONFIG_MMC="mx6var_som_sd_config"
-readonly G_UBOOT_NAME_FOR_EMMC="u-boot.img.mmc"
-readonly G_SPL_NAME_FOR_EMMC="SPL.mmc"
-readonly G_UBOOT_DEF_CONFIG_NAND="mx6var_som_nand_config"
-readonly G_UBOOT_NAME_FOR_NAND="u-boot.img.nand"
-readonly G_SPL_NAME_FOR_NAND="SPL.nand"
+readonly G_UBOOT_BRANCH="imx_v2017.03_4.9.11_1.0.0_ga_var01"
+readonly G_UBOOT_REV="362e9a706e9bca888e25f679bd4c9576c35a8a50"
+readonly G_UBOOT_DEF_CONFIG_MMC='mx6var_som_sd_config'
+readonly G_UBOOT_DEF_CONFIG_NAND='mx6var_som_nand_config'
+readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
+readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
+readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
+readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
 ## wilink8 ##
 readonly G_WILINK8_GIT="git://git.ti.com/wilink8-wlan"
-readonly G_WILINK8_BACKPORTS_SRC_DIR="${DEF_SRC_DIR}/wilink8/backports"
-readonly G_WILINK8_BACKPORTS_GIT="${G_WILINK8_GIT}/backports.git"
-readonly G_WILINK8_BACKPORTS_GIT_BRANCH="upstream_44"
-readonly G_WILINK8_BACKPORTS_GIT_SRCREV="d4777ef8ac84a855b7e385b01a6690874460f536"
-readonly G_WILINK8_WL18XX_SRC_DIR="${DEF_SRC_DIR}/wilink8/wl18xx"
-readonly G_WILINK8_WL18XX_GIT="${G_WILINK8_GIT}/wl18xx.git"
-readonly G_WILINK8_WL18XX_GIT_BRANCH="upstream_44"
-readonly G_WILINK8_WL18XX_GIT_SRCREV="5c94cc59baf694fb0aa5c5af6c6ae2a9b2d0e8fb"
-readonly G_WILINK8_COMPAT_WIRELESS_SRC_DIR="${DEF_SRC_DIR}/wilink8/compat-wireless"
 readonly G_WILINK8_UTILS_SRC_DIR="${DEF_SRC_DIR}/wilink8/utils"
 readonly G_WILINK8_UTILS_GIT="${G_WILINK8_GIT}/18xx-ti-utils.git"
 readonly G_WILINK8_UTILS_GIT_BRANCH="master"
@@ -80,66 +75,66 @@ readonly G_WILINK8_FW_BT_GIT_SRCREV="0ee619b598d023fffc77679f099bc2a4815510e4"
 
 ## imx accelerations ##
 # much more standard replacement for Freescale's imx-gst1.0-plugin
-readonly G_IMX_GPU_DRV_SRC_DIR="${DEF_SRC_DIR}/imx/kernel-module-imx-gpu-viv"
-readonly G_IMX_GPU_DRV_GIT="git://github.com/Freescale/kernel-module-imx-gpu-viv.git"
-readonly G_IMX_GPU_DRV_GIT_BRANCH="master"
 # Freescale mirror
 readonly G_FSL_MIRROR="http://www.freescale.com/lgfiles/NMG/MAD/YOCTO"
 # apt-get install gstreamer1.0-x gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa
-# sh firmware-imx-5.4.bin --auto-accept
-readonly G_IMX_FW_PKG="firmware-imx-5.4"
+# sh firmware-imx-6.0.bin --auto-accept
+readonly G_IMX_FW_PKG="firmware-imx-6.0"
 readonly G_IMX_FW_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_FW_PKG}"
 readonly G_IMX_FW_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_FW_PKG}.bin"
 readonly G_IMX_FW_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_FW_PKG}.bin"
-# sh imx-vpu-5.4.33.bin --auto-accept
-readonly G_IMX_VPU_PKG="imx-vpu-5.4.35"
+# sh imx-vpu-5.4.37.bin --auto-accept
+readonly G_IMX_VPU_PKG="imx-vpu-5.4.37"
 readonly G_IMX_VPU_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_VPU_PKG}"
 readonly G_IMX_VPU_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_VPU_PKG}.bin"
 readonly G_IMX_VPU_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_VPU_PKG}.bin"
-# sh imx-codec-4.0.9.bin --auto-accept
-readonly G_IMX_CODEC_PKG="imx-codec-4.1.4"
+# sh imx-codec-4.2.1.bin --auto-accept
+readonly G_IMX_CODEC_PKG="imx-codec-4.2.1"
 readonly G_IMX_CODEC_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_CODEC_PKG}"
 readonly G_IMX_CODEC_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_CODEC_PKG}.bin"
 readonly G_IMX_CODEC_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_CODEC_PKG}.bin"
-
-readonly G_IMX_GPU_SW_VER="8.6"
-# sh imx-gpu-viv-5.0.11.pX.Y-hfp.bin --auto-accept
-readonly G_IMX_GPU_PKG="imx-gpu-viv-5.0.11.p${G_IMX_GPU_SW_VER}-hfp"
-readonly G_IMX_GPU_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_GPU_PKG}"
-readonly G_IMX_GPU_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_GPU_PKG}.bin"
-readonly G_IMX_GPU_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_GPU_PKG}.bin"
-# sh imx-gpu-viv-5.0.11.pX.Y-hfp.bin --auto-accept
-readonly G_IMX_XORG_PKG="xserver-xorg-video-imx-viv-5.0.11.p${G_IMX_GPU_SW_VER}"
-readonly G_IMX_XORG_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_XORG_PKG}"
-readonly G_IMX_XORG_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_XORG_PKG}.tar.gz"
-readonly G_IMX_XORG_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_XORG_PKG}.tar.gz"
+# sh imx-gpu-g2d-6.2.2.p0.bin --auto-accept
+readonly G_IMX_GPU_G2D_PKG="imx-gpu-g2d-6.2.2.p0"
+readonly G_IMX_GPU_G2D_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_GPU_G2D_PKG}"
+readonly G_IMX_GPU_G2D_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_GPU_G2D_PKG}.bin"
+readonly G_IMX_GPU_G2D_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_GPU_G2D_PKG}.bin"
+# sh imx-gpu-viv-6.2.2.p0-aarch32.bin --auto-accept
+readonly G_IMX_GPU_VIV_PKG="imx-gpu-viv-6.2.2.p0-aarch32"
+readonly G_IMX_GPU_VIV_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_GPU_VIV_PKG}"
+readonly G_IMX_GPU_VIV_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_GPU_VIV_PKG}.bin"
+readonly G_IMX_GPU_VIV_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_GPU_VIV_PKG}.bin"
+# i.MX X.org Video Driver for i.MX Graphics 2D acceleration
+readonly G_IMX_XORG_DRV_SRC_DIR="${DEF_SRC_DIR}/imx/xf86-video-imx-vivante"
+readonly G_IMX_XORG_DRV_GIT="https://source.codeaurora.org/external/imx/xf86-video-imx-vivante.git"
+readonly G_IMX_XORG_DRV_GIT_BRANCH="nxp/imx_4.9.11_1.0.0_ga"
+readonly G_IMX_XORG_DRV_GIT_SRCREV="07ef065dfe09f1c05a1a188c371577faa3677a17"
 # replacement for Freescale's closed-development libfslvapwrapper library
 readonly G_IMX_VPU_API_SRC_DIR="${DEF_SRC_DIR}/imx/libimxvpuapi"
 readonly G_IMX_VPU_API_GIT="git://github.com/Freescale/libimxvpuapi.git"
 readonly G_IMX_VPU_API_GIT_BRANCH="master"
+readonly G_IMX_VPU_API_GIT_SRCREV="4afb52f97e28c731c903a8538bf99e4a6d155b42"
 # much more standard replacement for Freescale's imx-gst1.0-plugin
 readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
 readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
-readonly G_IMX_GSTREAMER_GIT_SRCREV="eb03bfab6f1f3eb854df247af0da308d1d1e2090"
+readonly G_IMX_GSTREAMER_GIT_SRCREV="ecd884a7199938301307123dc92d5c3cc9b1becb"
+
+## ubi
+readonly G_UBI_FILE_NAME='rootfs.ubi.img'
 
 ## CROSS_COMPILER config and paths
-readonly G_CROSS_COMPILER_VERSION="4.9-2016.02"
-readonly G_CROSS_COMPILER_PATH="${G_TOOLS_PATH}/gcc-linaro-${G_CROSS_COMPILER_VERSION}-x86_64_arm-linux-gnueabihf/bin"
+readonly G_CROSS_COMPILER_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
+readonly G_CROSS_COMPILER_ARCHIVE="${G_CROSS_COMPILER_NAME}.tar.xz"
+readonly G_CROSS_COMPILER_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_NAME}/bin"
 readonly G_CROSS_COMPILER_PREFIX="arm-linux-gnueabihf-"
 readonly G_CROSS_COMPILER_JOPTION="-j 4"
-readonly G_EXT_CROSS_COMPILER_NAME="gcc-linaro-${G_CROSS_COMPILER_VERSION}-x86_64_arm-linux-gnueabihf.tar.xz"
-readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/${G_CROSS_COMPILER_VERSION}/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
-
-## ROOTFS config and paths
-#readonly G_ROOTFS_REMOTE_LINK="http://releases.linaro.org/debian/images/developer-armhf/17.02/linaro-jessie-developer-20161117-32.tar.gz"
-readonly G_LINARO_ROOTFS_REMOTE_LINK="http://releases.linaro.org/debian/images/alip-armhf/17.02/linaro-jessie-alip-20161117-32.tar.gz"
-readonly G_LINARO_ROOTFS_LOCAL_PATH="${DEF_SRC_DIR}/linaro-jessie.tar.gz"
+readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/${G_CROSS_COMPILER_ARCHIVE}"
 
 ############## user rootfs packages ##########
 readonly G_USER_PACKAGES=""
 
 #### Input params #####
+PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
 PARAM_OUTPUT_DIR="${DEF_BUILDENV}/output"
 PARAM_DEBUG="0"
 PARAM_CMD="all"
@@ -149,7 +144,7 @@ PARAM_BLOCK_DEVICE="na"
 ### usage ###
 function usage() {
 	echo "This program version ${SCRIPT_VERSION}"
-	echo " Used for make debian image for \"var-som-mx6\" board"
+	echo " Used for make debian(${DEB_RELEASE}) image for \"var-som-mx6\" board"
 	echo " and create booted sdcard"
 	echo ""
 	echo "Usage:"
@@ -165,7 +160,8 @@ function usage() {
 	echo "       kernel      -- build or rebuild linux kernel for this board"
 	echo "       modules     -- build or rebuild linux kernel modules and install in rootfs directory for this board"
 	echo "       rootfs      -- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
-	echo "                       make and install extern modules (wifi/bt), create rootfs.tar.bz2)"
+	echo "                       make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
+	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
 	echo "       rtar        -- generate or regenerate rootfs.tar.bz2 image from rootfs folder "
 	echo "       clean       -- clean all build artifacts (not delete sources code and resulted images (output folder))"
 	echo "       sdcard      -- create bootting sdcard for this device"
@@ -268,11 +264,16 @@ function pr_debug() {
 # $1 - git repository
 # $2 - branch name
 # $3 - output dir
+# $4 - commit id
 function get_git_src() {
 	# clone src code
-	git clone -b ${2} ${1} ${3}
-	return $?
-} 
+	git clone ${1} -b ${2} ${3}
+	cd ${3}
+	git reset --hard ${4}
+	RET=$?
+	cd -
+	return $RET
+}
 
 # get remote file
 # $1 - remote file
@@ -281,7 +282,7 @@ function get_remote_file() {
 	# download remote file
 	wget -c ${1} -O ${2}
 	return $?
-} 
+}
 
 # unpack fsl package
 # $1 - package
@@ -290,26 +291,261 @@ function unpack_imx_package() {
 	/bin/sh ${1} --auto-accept
 	cd -
 	return $?
-} 
+}
 
 # function generate rootfs in input dir
 # $1 - rootfs base dir
 function make_debian_rootfs() {
-	pr_info "Make debian rootfs start..."
 	local ROOTFS_BASE=$1
 
-## umount previously mount points
+	pr_info "Make debian(${DEB_RELEASE}) rootfs start..."
+
+## umount previus mounts (if fail)
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 
 ## clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/* && :;
 
-## extract linaro rootfs
-	pr_info "extracting linaro rootfs"
-	tar zxf ${G_LINARO_ROOTFS_LOCAL_PATH} -C ${ROOTFS_BASE}
-	mv ${ROOTFS_BASE}/binary/* ${G_ROOTFS_DIR}
-	rmdir ${ROOTFS_BASE}/binary
-	sync
+	pr_info "rootfs: debootstrap"
+	debootstrap --verbose --foreign --arch armhf ${DEB_RELEASE} ${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
+
+## prepare qemu
+	pr_info "rootfs: debootstrap in rootfs (second-stage)"
+	cp /usr/bin/qemu-arm-static ${ROOTFS_BASE}/usr/bin/
+	mount -o bind /proc ${ROOTFS_BASE}/proc
+	mount -o bind /dev ${ROOTFS_BASE}/dev
+	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
+	mount -o bind /sys ${ROOTFS_BASE}/sys
+	LANG=C chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage
+
+	# delete unused folder
+	LANG=C chroot $ROOTFS_BASE rm -rf  ${ROOTFS_BASE}/debootstrap
+
+	pr_info "rootfs: generate default configs"
+	mkdir -p ${ROOTFS_BASE}/etc/sudoers.d/
+	echo "user ALL=(root) /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/vi, /sbin/reboot" > ${ROOTFS_BASE}/etc/sudoers.d/user
+	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
+
+
+echo "deb $PARAM_DEB_LOCAL_MIRROR ${DEB_RELEASE} main contrib non-free
+" > etc/apt/sources.list
+
+
+echo "
+# /dev/mmcblk0p1  /boot           vfat    defaults        0       0
+" > etc/fstab
+
+echo "var-som-mx6" > etc/hostname
+
+echo "auto lo
+iface lo inet loopback
+" > etc/network/interfaces
+
+echo "
+locales locales/locales_to_be_generated multiselect en_US.UTF-8 UTF-8
+locales locales/default_environment_locale select en_US.UTF-8
+console-common	console-data/keymap/policy	select	Select keymap from full list
+keyboard-configuration keyboard-configuration/variant select 'English (US)'
+openssh-server openssh-server/permit-root-login select true
+" > debconf.set
+
+	pr_info "rootfs: prepare install packages in rootfs"
+## apt-get install without starting
+cat > ${ROOTFS_BASE}/usr/sbin/policy-rc.d << EOF
+#!/bin/sh
+exit 101
+EOF
+
+chmod +x ${ROOTFS_BASE}/usr/sbin/policy-rc.d
+
+## third packages stage
+cat > third-stage << EOF
+#!/bin/bash
+# apply debconfig options
+debconf-set-selections /debconf.set
+rm -f /debconf.set
+
+function protected_install() {
+    local _name=\${1}
+    local repeated_cnt=5;
+    local RET_CODE=1;
+
+    for (( c=0; c<\${repeated_cnt}; c++ ))
+    do
+        apt-get install -y \${_name} && {
+            RET_CODE=0;
+            break;
+        };
+
+        echo ""
+        echo "###########################"
+        echo "## Fix missing packeges ###"
+        echo "###########################"
+        echo ""
+
+        sleep 2;
+    done
+
+    return \${RET_CODE}
+}
+
+
+# update packages and install base
+apt-get update || apt-get update
+
+protected_install locales
+protected_install ntp
+protected_install openssh-server
+protected_install nfs-common
+
+# packages required when flashing emmc
+protected_install dosfstools
+
+# fix config for sshd (added user login for password)
+sed -i -e 's/\PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
+
+# enable graphical desktop
+protected_install xorg
+protected_install xfce4
+protected_install xfce4-goodies
+
+# sound mixer & volume
+# xfce-mixer is not part of Stretch since the stable versionit depends on
+# gstreamer-0.10, no longer used
+# Stretch now uses PulseAudio and xfce4-pulseaudio-plugin is included in
+# Xfce desktop and can be added to Xfce panels.
+#protected_install xfce4-mixer
+#protected_install xfce4-volumed
+
+# network manager
+protected_install network-manager-gnome
+protected_install net-tools
+
+## fix lightdm config (added autologin x_user) ##
+sed -i -e 's/\#autologin-user=/autologin-user=x_user/g' /etc/lightdm/lightdm.conf
+sed -i -e 's/\#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
+
+# added alsa & alsa utilites
+protected_install alsa-utils
+protected_install gstreamer1.0-alsa
+
+# added i2c tools
+protected_install i2c-tools
+
+# added usb tools
+protected_install usbutils
+
+# added net tools
+protected_install iperf
+
+#media
+protected_install audacious
+# protected_install parole
+
+# mtd
+protected_install mtd-utils
+
+# bluetooth
+protected_install bluetooth
+protected_install bluez-obexd
+protected_install bluez-tools
+protected_install blueman
+protected_install gconf2
+
+# wifi support packages
+protected_install hostapd
+protected_install udhcpd
+
+# can support
+protected_install can-utils
+
+# delete unused packages ##
+apt-get -y remove xserver-xorg-video-ati
+apt-get -y remove xserver-xorg-video-radeon
+apt-get -y remove hddtemp
+
+apt-get -y autoremove
+
+# Remove foreign man pages and locales
+rm -rf /usr/share/man/??
+rm -rf /usr/share/man/??_*
+rm -rf /var/cache/man/??
+rm -rf /var/cache/man/??_*
+(cd /usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
+
+# Remove document files
+rm -rf /usr/share/doc
+
+# create users and set password
+useradd -m -G audio -s /bin/bash user
+useradd -m -G audio -s /bin/bash x_user
+usermod -a -G video user
+usermod -a -G video x_user
+echo "user:user" | chpasswd
+echo "root:root" | chpasswd
+passwd -d x_user
+
+# sado kill
+rm -f third-stage
+EOF
+
+	pr_info "rootfs: install selected debian packages (third-stage)"
+	chmod +x third-stage
+	LANG=C chroot ${ROOTFS_BASE} /third-stage
+
+## fourth-stage ##
+### install variscite-bluetooth init script
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth enable 2 3 4 5
+
+## end packages stage ##
+[ "${G_USER_PACKAGES}" != "" ] && {
+
+	pr_info "rootfs: install user defined packages (user-stage)"
+	pr_info "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\" "
+
+echo "#!/bin/bash
+# update packages
+apt-get update
+
+# install all user packages
+apt-get -y install ${G_USER_PACKAGES}
+
+rm -f user-stage
+" > user-stage
+
+	chmod +x user-stage
+	LANG=C chroot ${ROOTFS_BASE} /user-stage
+
+};
+
+## binaries rootfs patching ##
+	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
+
+	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
+		${ROOTFS_BASE}/usr/share/images/desktop-base/default
+
+## added alsa default configs ##
+	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
+	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
+
+## Revert regular booting
+	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
+
+## added fixed systemd-hostnamed unit file
+	install -m 0644 ${G_VARISCITE_PATH}/systemd-hostnamed.service ${ROOTFS_BASE}/lib/systemd/system
+
+## added mirror to source list
+echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
+deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
+" > etc/apt/sources.list
+
+	cp ${G_VARISCITE_PATH}/chroot_script* ${ROOTFS_BASE}
 
 ## install kernel modules in rootfs
 	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} ${ROOTFS_BASE} || {
@@ -323,29 +559,12 @@ function make_debian_rootfs() {
 ## copy imx sources to rootfs for native compilation
 	install_imx_packages
 
-
-## prepare qemu
-	pr_info "chroot in rootfs"
-	mount -o bind /proc ${ROOTFS_BASE}/proc
-	mount -o bind /sys ${ROOTFS_BASE}/sys
-	mount -o bind /dev ${ROOTFS_BASE}/dev
-	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
-	cp /usr/bin/qemu-arm-static ${ROOTFS_BASE}/usr/bin/
-	cp ${G_VARISCITE_PATH}/chroot_script* ${ROOTFS_BASE}
-
 ## copy custom files
-	cp ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc
-	cp ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc
-	cp ${G_VARISCITE_PATH}/fw_env.config ${ROOTFS_BASE}/etc
 	cp ${G_VARISCITE_PATH}/kobs-ng ${ROOTFS_BASE}/usr/bin
+	cp ${G_VARISCITE_PATH}/fw_env.config ${ROOTFS_BASE}/etc
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
-	cp ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d
 	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
-	cp ${G_VARISCITE_PATH}/background.png ${ROOTFS_BASE}/usr/share/linaro/wallpapers/linaro-default-wallpaper.jpg
-	cp ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
-	cp ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot
-	install -m 0644 ${G_VARISCITE_PATH}/systemd-hostnamed.service ${ROOTFS_BASE}/lib/systemd/system
 
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_base.sh
 	sleep 1; sync
@@ -354,14 +573,21 @@ function make_debian_rootfs() {
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_patched-drm-prebuilt.sh
 	sleep 1; sync
 
-## install iMX GPU libs
-	cp ${G_VARISCITE_PATH}/xorg.conf ${ROOTFS_BASE}/etc/X11
-	cp ${G_VARISCITE_PATH}/rc.autohdmi ${ROOTFS_BASE}/etc/init.d
-	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_xorg.sh
-	sleep 1; sync
-
-## install iMX VPU libs 
+## install iMX VPU libs
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_gst.sh
+
+## clenup command
+echo "#!/bin/bash
+apt-get clean
+rm -f cleanup
+" > cleanup
+
+	# clean all packages
+	pr_info "rootfs: clean"
+	chmod +x cleanup
+	LANG=C chroot ${ROOTFS_BASE} /cleanup
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
+	return 0;
 
 ## kill latest dbus-daemon instance due to qemu-arm-static
 	QEMU_PROC_ID=$(ps axf | grep dbus-daemon | grep qemu-arm-static | awk '{print $1}')
@@ -370,15 +596,9 @@ function make_debian_rootfs() {
 		kill -9 $QEMU_PROC_ID
 	fi
 
-## umount previously mount points
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
-
 	rm ${ROOTFS_BASE}/usr/bin/qemu-arm-static
 	rm ${ROOTFS_BASE}/chroot_script*
-	rm ${ROOTFS_BASE}/md5sum.txt
 	rm -rf ${ROOTFS_BASE}/usr/local/src/*
-
-	return 0;
 }
 
 # make tarbar arx from footfs
@@ -408,16 +628,15 @@ function make_tarbar() {
 # $2 -- linux defconfig file
 # $3 -- linux dtb files
 # $4 -- linux dirname
-# $5 -- out patch
+# $5 -- out path
 function make_kernel() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${4}/ ${2}
-	echo "# CONFIG_MXC_GPU_VIV is not set" >> ${4}/.config
 
 	pr_info "make kernel"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILER_JOPTION} LOADADDR=0x10008000 -C ${4}/ uImage
 
-	pr_info "make ${3} dtbs"
+	pr_info "make ${3}"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILER_JOPTION} -C ${4} ${3}
 
 	pr_info "Copy kernel and dtb files to output dir: ${5}"
@@ -448,18 +667,6 @@ function make_kernel_modules() {
 
 	pr_info "Compiling kernel modules"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} modules
-
-	# presently not a module but built in the kernel
-	pr_info "Compiling iMX GPU kernel module"
-	cd ${G_IMX_GPU_DRV_SRC_DIR}
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} M=${G_IMX_GPU_DRV_SRC_DIR}/kernel-module-imx-gpu-viv-src AQROOT=${G_IMX_GPU_DRV_SRC_DIR}/kernel-module-imx-gpu-viv-src
-	cd -
-
-	pr_info "make wl18xx defconfig"
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} KLIB_BUILD=${3} KLIB=${4} -C ${G_WILINK8_COMPAT_WIRELESS_SRC_DIR} defconfig-wl18xx
-
-	pr_info "Compiling wl18xx modules"
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} KLIB_BUILD=${3} KLIB=${4} -C ${G_WILINK8_COMPAT_WIRELESS_SRC_DIR} modules
 }
 
 # install linux kernel modules
@@ -473,13 +680,6 @@ function install_kernel_modules() {
 
 	pr_info "Installing kernel modules to ${4}"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} INSTALL_MOD_PATH=${4} modules_install
-
-	pr_info "Installing iMX GPU kernel module"
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} M=${G_IMX_GPU_DRV_SRC_DIR}/kernel-module-imx-gpu-viv-src AQROOT=${G_IMX_GPU_DRV_SRC_DIR}/kernel-module-imx-gpu-viv-src INSTALL_MOD_PATH=${4} modules_install
-
-	pr_info "Installing wl18xx modules to ${4}"
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} KLIB_BUILD=${3} KLIB=${4} -C ${G_WILINK8_COMPAT_WIRELESS_SRC_DIR}/ INSTALL_MOD_PATH=${4} modules_install
-
 
 	return 0;
 }
@@ -495,7 +695,7 @@ function install_wl18xx_packages() {
 	make CC=${1}gcc ${G_CROSS_COMPILER_JOPTION} -C ${G_WILINK8_UTILS_SRC_DIR}/wlconf
 
 	pr_info "Installing wl18xx bt firmware"
-	cp ${G_WILINK8_FW_BT_SRC_DIR}/initscripts/*.bts ${WL18XX_FW_DIR}
+	cp ${G_WILINK8_FW_BT_SRC_DIR}/initscripts/TIInit_*.bts ${WL18XX_FW_DIR}
 	
 	pr_info "Installing wl18xx wifi firmware"
 	cp ${G_WILINK8_FW_WIFI_SRC_DIR}/*.bin ${WL18XX_FW_DIR}
@@ -529,8 +729,6 @@ function install_imx_packages() {
 
 	cp -r ${G_IMX_VPU_LOCAL_DIR} ${IMX_DIR}
 	cp -r ${G_IMX_CODEC_LOCAL_DIR} ${IMX_DIR}
-	cp -r ${G_IMX_GPU_LOCAL_DIR} ${IMX_DIR}
-	cp -r ${G_IMX_XORG_LOCAL_DIR} ${IMX_DIR}
 	cp -r ${G_IMX_VPU_API_SRC_DIR} ${IMX_DIR}
 	cp -r ${G_IMX_GSTREAMER_SRC_DIR} ${IMX_DIR}
 
@@ -545,7 +743,7 @@ function install_imx_packages() {
 function make_uboot() {
 ### make emmc uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_MMC}"
-	# clean work directory 
+	# clean work directory
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION} mrproper
 
 	# make uboot config for mmc
@@ -596,17 +794,17 @@ function check_sdcard()
 {
 	# Check that parameter is a valid block device
 	if [ ! -b "$1" ]; then
-          pr_error "$1 is not a valid block device, exiting"
-	   return 1
-        fi
+		pr_error "$1 is not a valid block device, exiting"
+		return 1
+	fi
 
 	local dev=$(basename $1)
 
 	# Check that /sys/block/$dev exists
 	if [ ! -d /sys/block/$dev ]; then
-	  pr_error "Directory /sys/block/${dev} missing, exiting"
-	  return 1
-        fi
+		pr_error "Directory /sys/block/${dev} missing, exiting"
+		return 1
+	fi
 
 	# Get device parameters
 	local removable=$(cat /sys/block/${dev}/removable)
@@ -616,14 +814,14 @@ function check_sdcard()
 
 	# Check that device is either removable or loop
 	if [ "$removable" != "1" -a $(stat -c '%t' /dev/$dev) != ${LOOP_MAJOR} ]; then
-          pr_error "$1 is not a removable device, exiting"
-	  return 1
-        fi
+		pr_error "$1 is not a removable device, exiting"
+		#return 1
+	fi
 
 	# Check that device is attached
 	if [ ${size_bytes} -eq 0 ]; then
-          pr_error "$1 is not attached, exiting"
-          return 1
+		pr_error "$1 is not attached, exiting"
+		return 1
 	fi
 
 	pr_info "Device: ${LPARAM_BLOCK_DEVICE}, ${size_gib}GiB"
@@ -708,13 +906,13 @@ function make_sdcard() {
 
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
-		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/SPL.mmc
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.mmc
-
 		pr_info "Copying NAND U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_NAND}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/SPL.nand
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_NAND}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.nand
+		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_NAND}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_NAND}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+
+		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
+		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		return 0;
 	}
@@ -728,9 +926,9 @@ function make_sdcard() {
 
 	function ceildiv
 	{
-	    local num=$1
-	    local div=$2
-	    echo $(( (num + div - 1) / div ))
+		local num=$1
+		local div=$2
+		echo $(( (num + div - 1) / div ))
 	}
 
 	# Delete the partitions
@@ -815,149 +1013,103 @@ EOF
 
 function cmd_make_deploy() {
 	mkdir -p ${DEF_SRC_DIR}/imx
-	mkdir -p ${DEF_SRC_DIR}/wilink8/fw
+	mkdir -p ${DEF_SRC_DIR}/wilink8
 	mkdir -p ${G_TOOLS_PATH}
 	mkdir -p ${G_ROOTFS_DIR}
 	mkdir -p ${G_TMP_DIR}
 	mkdir -p ${PARAM_OUTPUT_DIR}
 
 	# get linaro toolchain
-	(( `ls ${G_CROSS_COMPILER_PATH} | wc -l` == 0 )) && {
+	(( `ls ${G_CROSS_COMPILER_PATH} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get and unpack cross compiler";
-		get_remote_file ${G_EXT_CROSS_COMPILER_LINK} ${DEF_SRC_DIR}/${G_EXT_CROSS_COMPILER_NAME}
-		tar -xJf ${DEF_SRC_DIR}/${G_EXT_CROSS_COMPILER_NAME} -C ${G_TOOLS_PATH}/
-	};
-
-	# get linaro rootfs
-	(( `ls ${G_LINARO_ROOTFS_LOCAL_PATH} | wc -l` == 0 )) && {
-		pr_info "Get Linaro rootfs";
-		get_remote_file ${G_LINARO_ROOTFS_REMOTE_LINK} ${G_LINARO_ROOTFS_LOCAL_PATH}
+		get_remote_file ${G_EXT_CROSS_COMPILER_LINK} ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE}
+		tar -xJf ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE} -C ${G_TOOLS_PATH}/
 	};
 
 	# get uboot repository
-	(( `ls ${G_UBOOT_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get uboot repository";
-		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} ${G_UBOOT_SRC_DIR}
+		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} ${G_UBOOT_SRC_DIR} ${G_UBOOT_REV}
 	};
 
 	# get kernel repository
-	(( `ls ${G_LINUX_KERNEL_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_LINUX_KERNEL_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get kernel repository";
-		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR};
-	};
-
-	# get imx gpu driver repository
-	(( `ls ${G_IMX_GPU_DRV_SRC_DIR} | wc -l` == 0 )) && {
-		pr_info "Get iMX GPU driver repository";
-		get_git_src ${G_IMX_GPU_DRV_GIT} ${G_IMX_GPU_DRV_GIT_BRANCH} ${G_IMX_GPU_DRV_SRC_DIR}
-	};
-
-	# get wilink8 backports repository
-	(( `ls ${G_WILINK8_BACKPORTS_SRC_DIR} | wc -l` == 0 )) && {
-		pr_info "Get wilink8 backports repository";
-		get_git_src ${G_WILINK8_BACKPORTS_GIT} ${G_WILINK8_BACKPORTS_GIT_BRANCH} ${G_WILINK8_BACKPORTS_SRC_DIR}
-		cd ${G_WILINK8_BACKPORTS_SRC_DIR}
-		git checkout ${G_WILINK8_BACKPORTS_GIT_SRCREV}
-		cd -
-	};
-
-	# get wilink8 wl18xx repository
-	(( `ls ${G_WILINK8_WL18XX_SRC_DIR} | wc -l` == 0 )) && {
-		pr_info "Get wilink8 wl18xx repository";
-		get_git_src ${G_WILINK8_WL18XX_GIT} ${G_WILINK8_WL18XX_GIT_BRANCH} ${G_WILINK8_WL18XX_SRC_DIR}
-		cd ${G_WILINK8_WL18XX_SRC_DIR}
-		git checkout ${G_WILINK8_WL18XX_GIT_SRCREV}
-		cd -
-	};
-
-	# generate compat-wireless
-	(( `ls ${G_WILINK8_COMPAT_WIRELESS_SRC_DIR} | wc -l` == 0 )) && {
-		pr_info "Generate compat-wireless"
-		cd ${G_WILINK8_BACKPORTS_SRC_DIR}
-		python ./gentree.py --clean ${G_WILINK8_WL18XX_SRC_DIR} ${G_WILINK8_COMPAT_WIRELESS_SRC_DIR}
-		cd -
+		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
 	};
 
 	# get wilink8 utils repository
-	(( `ls ${G_WILINK8_UTILS_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_WILINK8_UTILS_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get wilink8 utils repository";
-		get_git_src ${G_WILINK8_UTILS_GIT} ${G_WILINK8_UTILS_GIT_BRANCH} ${G_WILINK8_UTILS_SRC_DIR}
+		get_git_src ${G_WILINK8_UTILS_GIT} ${G_WILINK8_UTILS_GIT_BRANCH} ${G_WILINK8_UTILS_SRC_DIR} ${G_WILINK8_UTILS_GIT_SRCREV}
 		cd ${G_WILINK8_UTILS_SRC_DIR}
-		git checkout ${G_WILINK8_UTILS_GIT_SRCREV}
 		patch -p1 < ${DEF_BUILDENV}/patches/wilink8/utils/config_sh.patch
 		cd -
 	};
 
 	# get wilink8 firmware repository
-	(( `ls ${G_WILINK8_FW_WIFI_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_WILINK8_FW_WIFI_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get wilink8 wifi firmware repository";
-		get_git_src ${G_WILINK8_FW_WIFI_GIT} ${G_WILINK8_FW_WIFI_GIT_BRANCH} ${G_WILINK8_FW_WIFI_SRC_DIR}
-		cd ${G_WILINK8_FW_WIFI_SRC_DIR}
-		git checkout ${G_WILINK8_FW_WIFI_GIT_SRCREV}
-		cd -
+		get_git_src ${G_WILINK8_FW_WIFI_GIT} ${G_WILINK8_FW_WIFI_GIT_BRANCH} ${G_WILINK8_FW_WIFI_SRC_DIR} ${G_WILINK8_FW_WIFI_GIT_SRCREV}
 	};
 
 	# get bt firmware repository
-	(( `ls ${G_WILINK8_FW_BT_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_WILINK8_FW_BT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get wilink8 bt firmware repository";
-		get_git_src ${G_WILINK8_FW_BT_GIT} ${G_WILINK8_FW_BT_GIT_BRANCH} ${G_WILINK8_FW_BT_SRC_DIR}
-		cd ${G_WILINK8_FW_BT_SRC_DIR}
-		git checkout ${G_WILINK8_FW_BT_GIT_SRCREV}
-		cd -
+		get_git_src ${G_WILINK8_FW_BT_GIT} ${G_WILINK8_FW_BT_GIT_BRANCH} ${G_WILINK8_FW_BT_SRC_DIR} ${G_WILINK8_FW_BT_GIT_SRCREV}
 	};
 
 	# get imx firmware
-	(( `ls ${G_IMX_FW_LOCAL_PATH} | wc -l` == 0 )) && {
+	(( `ls ${G_IMX_FW_LOCAL_PATH} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get and unpack iMX firmware";
 		get_remote_file ${G_IMX_FW_REMOTE_LINK} ${G_IMX_FW_LOCAL_PATH}
 		unpack_imx_package ${G_IMX_FW_LOCAL_PATH}
 	};
 
 	# get imx vpu library
-	(( `ls ${G_IMX_VPU_LOCAL_PATH} | wc -l` == 0 )) && {
+	(( `ls ${G_IMX_VPU_LOCAL_PATH} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get and unpack iMV VPU library";
 		get_remote_file ${G_IMX_VPU_REMOTE_LINK} ${G_IMX_VPU_LOCAL_PATH}
 		unpack_imx_package ${G_IMX_VPU_LOCAL_PATH}
 	};
 
 	# get imx codec libraries
-	(( `ls ${G_IMX_CODEC_LOCAL_PATH} | wc -l` == 0 )) && {
+	(( `ls ${G_IMX_CODEC_LOCAL_PATH} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get and unpack iMV CODEC libraries";
 		get_remote_file ${G_IMX_CODEC_REMOTE_LINK} ${G_IMX_CODEC_LOCAL_PATH}
 		unpack_imx_package ${G_IMX_CODEC_LOCAL_PATH}
 	};
 
-	# get imx gpu libraries
-	(( `ls ${G_IMX_GPU_LOCAL_PATH} | wc -l` == 0 )) && {
-		pr_info "Get and unpack iMV GPU libraries";
-		get_remote_file ${G_IMX_GPU_REMOTE_LINK} ${G_IMX_GPU_LOCAL_PATH}
-		unpack_imx_package ${G_IMX_GPU_LOCAL_PATH}
+	# get imx gpu g2d libraries
+	(( `ls ${G_IMX_GPU_G2D_LOCAL_PATH} 2>/dev/null | wc -l` == 0 )) && {
+		pr_info "Get and unpack iMV GPU G2D libraries";
+		get_remote_file ${G_IMX_GPU_G2D_REMOTE_LINK} ${G_IMX_GPU_G2D_LOCAL_PATH}
+		unpack_imx_package ${G_IMX_GPU_G2D_LOCAL_PATH}
+	};
+
+	# get imx gpu viv libraries
+	(( `ls ${G_IMX_GPU_VIV_LOCAL_PATH} 2>/dev/null | wc -l` == 0 )) && {
+		pr_info "Get and unpack iMV GPU VIV libraries";
+		get_remote_file ${G_IMX_GPU_VIV_REMOTE_LINK} ${G_IMX_GPU_VIV_LOCAL_PATH}
+		unpack_imx_package ${G_IMX_GPU_VIV_LOCAL_PATH}
 	};
 
 	# get imx xorg libraries
-	(( `ls ${G_IMX_XORG_LOCAL_PATH} | wc -l` == 0 )) && {
-		pr_info "Get and unpack iMV XORG libraries";
-		get_remote_file ${G_IMX_XORG_REMOTE_LINK} ${G_IMX_XORG_LOCAL_PATH}
-		echo "tar -xvf ${G_IMX_XORG_LOCAL_PATH} -C ${G_IMX_XORG_LOCAL_DIR}"
-		tar -xvf ${G_IMX_XORG_LOCAL_PATH} -C ${DEF_SRC_DIR}/imx
-		cd ${G_IMX_XORG_LOCAL_DIR}
-		patch -p1 < ${DEF_BUILDENV}/patches/imx/xserver-xorg-video-imx-viv-5.0.11.p${G_IMX_GPU_SW_VER}/Stop-using-Git-to-write-local-version.patch
-		cd -
+	(( `ls ${G_IMX_XORG_DRV_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
+		pr_info "Get XORG driver repository";
+		get_git_src ${G_IMX_XORG_DRV_GIT} ${G_IMX_XORG_DRV_GIT_BRANCH} ${G_IMX_XORG_DRV_SRC_DIR} ${G_IMX_XORG_DRV_GIT_SRCREV}
 	};
 
 	# get imx vpu api repository
-	(( `ls ${G_IMX_VPU_API_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_IMX_VPU_API_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get iMX VPU API repository";
-		get_git_src ${G_IMX_VPU_API_GIT} ${G_IMX_VPU_API_GIT_BRANCH} ${G_IMX_VPU_API_SRC_DIR}
+		get_git_src ${G_IMX_VPU_API_GIT} ${G_IMX_VPU_API_GIT_BRANCH} ${G_IMX_VPU_API_SRC_DIR} ${G_IMX_VPU_API_GIT_SRCREV}
 	};
 
 	# get gstreamer-imx repository
-	(( `ls ${G_IMX_GSTREAMER_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_IMX_GSTREAMER_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get gstreamer-imx repository";
-		get_git_src ${G_IMX_GSTREAMER_GIT} ${G_IMX_GSTREAMER_GIT_BRANCH} ${G_IMX_GSTREAMER_SRC_DIR}
-		cd ${G_IMX_GSTREAMER_SRC_DIR}
-		git checkout ${G_IMX_GSTREAMER_GIT_SRCREV}
-		cd -
+		get_git_src ${G_IMX_GSTREAMER_GIT} ${G_IMX_GSTREAMER_GIT_BRANCH} ${G_IMX_GSTREAMER_SRC_DIR} ${G_IMX_GSTREAMER_GIT_SRCREV}
 	};
 
 	return 0;
@@ -972,6 +1124,12 @@ function cmd_make_rootfs() {
 		return 1;
 	}
 	cd -
+
+	## pack rootfs
+	make_tarbar ${G_ROOTFS_DIR} ${G_ROOTFS_TARBAR_PATH} || {
+		pr_error "Failed #$? in function make_tarbar"
+		return 4;
+	}
 
 	return 0;
 }
@@ -1099,9 +1257,7 @@ case $PARAM_CMD in
 		(cmd_make_uboot  &&
 		 cmd_make_kernel &&
 		 cmd_make_kmodules &&
-		 cmd_make_rootfs &&
-		 cmd_make_rfs_tar
-		) || {
+		 cmd_make_rootfs) || {
 			V_RET_CODE=1;
 		};
 		;;
