@@ -9,14 +9,8 @@
 # In order to enable or disable this script just change the execution
 # bits.
 #
-# By default this script does nothing.
 
-# Generate the SSH keys if non-existent
-test -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server
-
-# Disable runtime power management to avoid deadlock
+# Disable runtime power management to avoid dealock
 echo "Disabling runtime PM"
-echo "0 1" > /sys/devices/soc0/soc/soc:busfreq/enable
-
-exit 0
+echo 0 > /sys/devices/soc0/soc/soc:busfreq/enable
 
