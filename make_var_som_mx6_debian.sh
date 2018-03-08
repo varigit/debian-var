@@ -587,7 +587,6 @@ rm -f cleanup
 	chmod +x cleanup
 	LANG=C chroot ${ROOTFS_BASE} /cleanup
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
-	return 0;
 
 ## kill latest dbus-daemon instance due to qemu-arm-static
 	QEMU_PROC_ID=$(ps axf | grep dbus-daemon | grep qemu-arm-static | awk '{print $1}')
@@ -599,6 +598,8 @@ rm -f cleanup
 	rm ${ROOTFS_BASE}/usr/bin/qemu-arm-static
 	rm ${ROOTFS_BASE}/chroot_script*
 	rm -rf ${ROOTFS_BASE}/usr/local/src/*
+
+	return 0
 }
 
 # make tarbar arx from footfs
