@@ -28,7 +28,7 @@ readonly LOOP_MAJOR=7
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
 readonly DEB_RELEASE="stretch"
-readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
+readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.gz"
 
 ## base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
@@ -160,9 +160,9 @@ function usage() {
 	echo "       kernel      -- build or rebuild linux kernel for this board"
 	echo "       modules     -- build or rebuild linux kernel modules and install in rootfs directory for this board"
 	echo "       rootfs      -- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
-	echo "                       make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
+	echo "                       make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.gz)"
 	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
-	echo "       rtar        -- generate or regenerate rootfs.tar.bz2 image from rootfs folder "
+	echo "       rtar        -- generate or regenerate rootfs.tar.gz image from rootfs folder "
 	echo "       clean       -- clean all build artifacts (not delete sources code and resulted images (output folder))"
 	echo "       sdcard      -- create bootting sdcard for this device"
 	echo "  -o|--output -- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
@@ -614,7 +614,7 @@ function make_tarbar() {
 
 	pr_info "Create $2"
 
-	tar jcf $2 .
+	tar czf $2 .
 	success=$?
 	[ $success -eq 0 ] || {
 	# fail
@@ -903,7 +903,7 @@ function make_sdcard() {
 		sync
 
 		pr_info "Flashing \"rootfs\" partition"
-		tar -xjf ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME} -C ${P2_MOUNT_DIR}/
+		tar -xpf ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME} -C ${P2_MOUNT_DIR}/
 	}
 
 	function copy_debian_images

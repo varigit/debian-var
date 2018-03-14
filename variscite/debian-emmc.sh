@@ -133,7 +133,7 @@ function install_rootfs
 	echo "Installing rootfs"
 	mkdir -p ${mountdir_prefix}${rootfspart}
 	mount ${node}${part}${rootfspart} ${mountdir_prefix}${rootfspart}
-	tar xvpf ${imagesdir}/rootfs.tar.bz2 -C ${mountdir_prefix}${rootfspart} |
+	tar xvpf ${imagesdir}/rootfs.tar.gz -C ${mountdir_prefix}${rootfspart} |
 	while read line; do
 		x=$((x+1))
 		echo -en "$x files extracted\r"
