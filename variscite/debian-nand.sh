@@ -4,6 +4,7 @@
 #
 
 #### global constants ####
+readonly SPL_IMAGE='SPL.nand'
 readonly UBOOT_IMAGE='u-boot.img.nand'
 readonly KERNEL_IMAGE='zImage'
 KERNEL_DTB='imx7d-var-som-nand.dtb'
@@ -53,15 +54,25 @@ echo "============================================"
 
 function install_bootloader()
 {
+	[ ! -f ${IMAGES_PATH}/$SPL_IMAGE ] && {
+		echo "\"${IMAGES_PATH}/$SPL_IMAGE\"" does not exist! exit.
+		exit 1
+	};
+
 	[ ! -f ${IMAGES_PATH}/$UBOOT_IMAGE ] && {
 		echo "\"${IMAGES_PATH}/$UBOOT_IMAGE\"" does not exist! exit.
 		exit 1
 	};
 
 	echo
-	echo "Installing U-BOOT from \"${IMAGES_PATH}/$UBOOT_IMAGE\"..."
+	echo "Installing SPL from \"${IMAGES_PATH}/$SPL_IMAGE\"... "
 	flash_erase /dev/mtd0 0 0 2>/dev/null
-	kobs-ng init -x ${IMAGES_PATH}/$UBOOT_IMAGE --search_exponent=1 -v > /dev/null
+	kobs-ng init -x ${IMAGES_PATH}/$SPL_IMAGE --search_exponent=1 -v > /dev/null
+
+	echo
+	echo "Installing U-BOOT from \"${IMAGES_PATH}/$UBOOT_IMAGE\"..."
+	flash_erase /dev/mtd1 0 0 2>/dev/null
+	nandwrite -p /dev/mtd1 ${IMAGES_PATH}/$UBOOT_IMAGE; sync
 
 	# delete uboot env
 	flash_erase /dev/mtd2 0 0 2>/dev/null
@@ -98,8 +109,8 @@ function install_rootfs()
 
 #Creating 5 MTD partitions on "gpmi-nand":
 #0x000000000000-0x000000200000 : "spl"
-#0x000000200000-0x000000400000 : "uboot"
-#0x000000400000-0x000000600000 : "uboot-env"
+#0x000000200000-0x000000400000 : "u-boot"
+#0x000000400000-0x000000600000 : "u-boot_env"
 #0x000000600000-0x000000e00000 : "kernel"
 #0x000000e00000-0x000040000000 : "rootfs"
 
