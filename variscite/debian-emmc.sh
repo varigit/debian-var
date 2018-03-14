@@ -14,11 +14,16 @@ echo "   Installing Debian to eMMC"
 echo "================================"
 
 cd /opt/images/Debian
+if [ ! -f SPL.mmc ]
+then
+	echo "SPL does not exist! exit."
+	exit 1
+fi
 if [ ! -f u-boot.img.mmc ]
 then
 	echo "u-boot.img does not exist! exit."
 	exit 1
-fi	
+fi
 
 
 help() {
@@ -67,7 +72,8 @@ function flash_yocto
 	echo "==============="
 
 	echo "Flashing U-Boot"
-	dd if=u-boot.img.mmc of=${node} bs=1K seek=1; sync
+	dd if=SPL.mmc of=${node} bs=1K seek=1; sync
+	dd if=u-boot.img.mmc of=${node} bs=1K seek=69; sync
 
 	echo "Flashing Debian BOOT partition"
 	mkdir -p /tmp/media/mmcblk2p1

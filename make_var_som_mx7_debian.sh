@@ -49,10 +49,12 @@ readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-nand.dtb'
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var02"
+readonly G_UBOOT_BRANCH="imx_v2017.03_4.9.11_1.0.0_ga_var01"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx7dvar_som_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx7dvar_som_nand_defconfig'
+readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
+readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
 
 ## Broadcom BT/WIFI firmware ##
@@ -582,7 +584,8 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
 	# copy images
-	cp ${1}/u-boot.imx ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	cp ${1}/SPL		${2}/${G_SPL_NAME_FOR_EMMC}
+	cp ${1}/u-boot.img	${2}/${G_UBOOT_NAME_FOR_EMMC}
 
 ### make nand uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_NAND}"
@@ -596,7 +599,8 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
 	# copy images
-	cp ${1}/u-boot.imx ${2}/${G_UBOOT_NAME_FOR_NAND}
+	cp ${1}/SPL		${2}/${G_SPL_NAME_FOR_NAND}
+	cp ${1}/u-boot.img	${2}/${G_UBOOT_NAME_FOR_NAND}
 
 	return 0;
 }
@@ -707,7 +711,8 @@ function make_sdcard() {
 	function flash_u-boot
 	{
 		pr_info "Flashing U-Boot"
-		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
+		dd if=${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}   of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1;  sync
+		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=69; sync
 	}
 
 	function flash_sdcard
@@ -733,10 +738,12 @@ function make_sdcard() {
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		pr_info "Copying NAND U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_NAND}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.nand
+		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_NAND}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_NAND}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/u-boot.img.mmc
+		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		return 0;
 	}
