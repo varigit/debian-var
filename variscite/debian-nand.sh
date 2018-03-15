@@ -101,9 +101,7 @@ function install_rootfs()
 
 	echo
 	echo "Installing UBI rootfs"
-
-	flash_erase /dev/mtd4 0 0 3>/dev/null
-	ubiformat /dev/mtd4 -f ${IMAGES_PATH}/$ROOTFS_IMAGE -s $UBI_SUB_PAGE_SIZE -O $UBI_VID_HDR_OFFSET
+	ubiformat /dev/mtd4 -f ${IMAGES_PATH}/$ROOTFS_IMAGE -s $UBI_SUB_PAGE_SIZE -O $UBI_VID_HDR_OFFSET -y
 }
 
 
