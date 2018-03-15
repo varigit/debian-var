@@ -364,6 +364,9 @@ protected_install xfce4-goodies
 # network manager
 protected_install network-manager-gnome
 
+# net-tools (ifconfig, etc.)
+protected_install net-tools
+
 ## fix lightdm config (added autologin x_user) ##
 sed -i -e 's/\#autologin-user=/autologin-user=x_user/g' /etc/lightdm/lightdm.conf
 sed -i -e 's/\#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm/lightdm.conf
