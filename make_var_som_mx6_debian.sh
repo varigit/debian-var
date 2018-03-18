@@ -813,6 +813,15 @@ function check_sdcard()
 	local size_bytes=$((${block_size}*$(cat /sys/class/block/${dev}/size)))
 	local size_gib=$(bc <<< "scale=1; ${size_bytes}/(1024*1024*1024)")
 
+	# non removable SD card readers require additional check
+	if [ "${removable}" != "1" ]; then
+		local drive=$(udisksctl info -b /dev/${dev}|grep "Drive:"|cut -d"'" -f 2)
+		local mediaremovable=$(gdbus call --system --dest org.freedesktop.UDisks2 --object-path ${drive} --method org.freedesktop.DBus.Properties.Get org.freedesktop.UDisks2.Drive MediaRemovable)
+		if [[ "${mediaremovable}" = *"true"* ]]; then
+			removable=1
+		fi
+	fi
+
 	# Check that device is either removable or loop
 	if [ "$removable" != "1" -a $(stat -c '%t' /dev/$dev) != ${LOOP_MAJOR} ]; then
 		pr_error "$1 is not a removable device, exiting"
