@@ -31,7 +31,7 @@ readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
 readonly DEB_RELEASE="jessie"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
-## base paths 
+## base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
 readonly DEF_SRC_DIR="${DEF_BUILDENV}/src"
 readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
@@ -53,7 +53,7 @@ readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dt
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_ga_var03"
-readonly G_UBOOT_REV="09e6aa9a3d2851e7c88a1284476185139acf287a"
+readonly G_UBOOT_REV="724493a7c855cc198c19b250b4d7aac7180b93f1"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
