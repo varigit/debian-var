@@ -1,0 +1,183 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          Variscite bcm43xx WIFI
+# Required-Start:    mountkernfs $local_fs urandom
+# Required-Stop:     $local_fs
+# Default-Start:     S
+# Default-Stop:      0 6
+# Short-Description: Initialize bcm43xx WIFI
+# Description:       Initialize bcm43xx WIFI hardware
+### END INIT INFO
+
+WIFI_EN_GPIO=4
+BT_EN_GPIO=14
+WIFI_MMC_HOST=30b50000.usdhc
+WIFI_SDIO_ID_FILE=/sys/bus/mmc/devices/mmc1:0001/mmc1:0001:1/device
+WIFI_5G_SDIO_ID=0x4339
+WIFI_SLEEP=1
+WIFI_SLEEP_5G=5
+
+. /lib/lsb/init-functions
+
+# Check is SOM is DART-6UL-5G
+som_is_dart_6ul_5g()
+{
+   if ! grep -q MX6UL /sys/devices/soc0/soc_id; then
+      return 1
+   fi
+
+   SOM_INFO=`i2cget -y 1 0x51 0xfd`
+   if [[ $(($(($SOM_INFO >> 3)) & 0x3)) == 1 ]] ; then
+      return 0
+   fi
+
+   return 1
+}
+
+wifi_setup()
+{
+	if [ ! -f /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction ]; then
+		echo ${WIFI_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction
+	fi
+
+	if [ ! -f /sys/class/gpio/gpio${BT_EN_GPIO}/direction ]; then
+		echo ${BT_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
+	fi
+
+	if som_is_dart_6ul_5g; then
+		if [ ! -f /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction ]; then
+			echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
+			echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
+		fi
+
+		WIFI_SLEEP=${WIFI_SLEEP_5G}
+	fi
+}
+
+wifi_is_up()
+{
+	for i in `seq 1 20`; do
+		[ -d /sys/class/net/wlan0 ] && return 0
+		sleep 1
+	done
+
+	return 1
+}
+
+# Power up WIFI chip
+wifi_up()
+{
+	if som_is_dart_6ul_5g; then
+		# WIFI power up
+		echo 1 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
+		#usleep 10000
+		sleep 0.01
+
+		# WLAN_EN up
+		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN up
+		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+		# Wait 150ms at least
+		#usleep 200000
+		sleep 0.2
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	else
+		# WLAN_EN up
+		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN up
+		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+		# Wait 150ms at least
+		#usleep 200000
+		sleep 0.2
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	fi
+
+	# Bind WIFI device to MMC controller
+	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
+}
+
+# Power down WIFI chip
+wifi_down()
+{
+	# Unbind WIFI device from MMC controller
+	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+
+	if som_is_dart_6ul_5g; then
+		# WLAN_EN down
+		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+		usleep 10000
+
+		# WIFI power down
+		echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
+	else
+		# WLAN_EN down
+		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	fi
+}
+
+#################################################
+#              Execution starts here            #
+#################################################
+
+# Exit if booting from SD on DART-6UL
+if grep -q MX6UL /sys/devices/soc0/soc_id && \
+   grep -q mmcblk0 /proc/cmdline; then
+   exit 0
+fi
+
+
+case $1 in
+	start|restart)
+		log_daemon_msg "Starting $DESC"
+
+		# Run initial setup sequence
+		wifi_setup
+
+		for i in `seq 1 3`; do
+
+			# Down WIFI
+			wifi_down
+
+			# Wait enough time for discharge
+			sleep ${WIFI_SLEEP}
+
+			# Up WIFI
+			wifi_up
+
+			# Check that WIFI interface is up
+			if wifi_is_up; then
+				log_daemon_msg 0
+				exit 0
+			fi
+		done
+
+		log_end_msg 1
+		exit 1
+                ;;
+        stop)
+                log_daemon_msg "Stop $DESC"
+                log_end_msg 0
+                ;;
+        *)
+                N=${0}
+                echo "Usage: $N {start|stop|restart}" >&2
+                exit 1
+                ;;
+esac
