@@ -50,10 +50,10 @@ enable_bt() {
   if [ ! -d /sys/class/gpio/gpio${BT_GPIO} ]; then
     echo ${BT_GPIO} >/sys/class/gpio/export
     echo "out" > /sys/class/gpio/gpio${BT_GPIO}/direction
-    echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
-    sleep 1
-    echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
   fi
+  echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
+  sleep 1
+  echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
 }
 
 # Find maximum of N numbers
@@ -104,6 +104,7 @@ bt_found || exit 0
 		fi
 
 		# Load BT firmware and set MAC address
+		pidof brcm_patchram_plus > /dev/null && killall -9 brcm_patchram_plus
 		/usr/bin/brcm_patchram_plus --patchram ${BT_FIRMWARE} \
                      --enable_hci --bd_addr ${BT_MACADDR} --no2bytes \
                      --baudrate 3000000 \
