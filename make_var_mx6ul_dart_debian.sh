@@ -446,6 +446,13 @@ EOF
 	ln -s /lib/systemd/system/variscite-bluetooth.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bluetooth.service
 
+### install variscite-wifi service
+	install -d -m 0755 ${ROOTFS_BASE}/etc/wifi
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${G_VARISCITE_PATH}/variscite-wifi.service ${ROOTFS_BASE}/lib/systemd/system
+	ln -s /lib/systemd/system/variscite-wifi.service \
+		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
+
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
 
