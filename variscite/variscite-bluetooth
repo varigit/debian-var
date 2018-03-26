@@ -1,71 +1,41 @@
-#!/bin/sh
-### BEGIN INIT INFO
-# Provides: var-bluetooth
-# Required-Start:    $local_fs $syslog
-# Required-Stop:     $local_fs $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start variscite bluetooth daemons
-### END INIT INFO
-#
-# variscite bluetooth DART-6UL
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# This script activate the Bluetooth for Variscite SOM MX6
-# I/O
-#
-#Check if device exist
-#
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DESC=variscite-bluetooth
+#!/bin/sh -e
 
-. /lib/lsb/init-functions
+# WIFI/BT chip identification
+WIFI_5G_SDIO_ID=0x4339
+WIFI_SDIO_ID_FILE=/sys/bus/mmc/devices/mmc0:0001/mmc0:0001:1/device
 
-
-set -e
-
+# BT initialization parameters
 BT_GPIO=132
 BT_TTY_DEV=/dev/ttymxc1
-DART_6UL_FIRMWARE=/lib/firmware/bcm/bcm43430a1.hcd
-DART_6UL_5G_FIRMWARE=/lib/firmware/bcm/bcm4339.hcd
-WIFI_MMC_DTS_DIR="/proc/device-tree/soc/aips-bus@02100000/usdhc@02190000"
-WIFI_MMC_DTS_FILE="${WIFI_MMC_DTS_DIR}/no-1-8-v"
+BT_FIRMWARE=/lib/firmware/bcm/bcm43430a1.hcd
+BT_FIRMWARE_5G=/lib/firmware/bcm/bcm4339.hcd
 
-#Check if BT/WIFI is up
-dmesg | grep "tuple 0x80" && {
-	log_daemon_msg "$DESC: BT found"
-} || {
-	log_daemon_msg "$DESC: No BT found"
-	log_end_msg 0
-	exit 0
-};
-
-max() {
-  printf "%s\n" "$@" | sort -g -r | head -n1
-}
-
-# Detect DART-6UL-5G chip
-som_is_dart_6ul_5g() {
-  if [ -d ${WIFI_MMC_DTS_DIR} -a ! -f ${WIFI_MMC_DTS_FILE} ]; then
-    return 0
-  fi
+# Check if BT/WIFI is available
+bt_found() {
+  for i in `seq 1 10`; do 
+     if [ -f ${WIFI_SDIO_ID_FILE} ]; then
+       return 0
+     fi
+     sleep 1
+  done
 
   return 1
 }
 
-# Get firmware file
-get_bt_firmware() {
-  if som_is_dart_6ul_5g; then
-    echo ${DART_6UL_5G_FIRMWARE}
-  else
-    echo ${DART_6UL_FIRMWARE}
+# Enable BT via GPIO
+enable_bt() {
+  if [ ! -d /sys/class/gpio/gpio${BT_GPIO} ]; then
+    echo ${BT_GPIO} >/sys/class/gpio/export
+    echo "out" > /sys/class/gpio/gpio${BT_GPIO}/direction
   fi
+  echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
+  sleep 1
+  echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
+}
+
+# Find maximum of N numbers
+max() {
+  printf "%s\n" "$@" | sort -g -r | head -n1
 }
 
 # Get BT MAC address
@@ -79,46 +49,38 @@ get_bt_macaddr() {
   echo $bt_addr | sed 's/\(..\)/\1:/g;s/:$//'
 }
 
-# Enable BT via GPIO
-enable_bt() {
-  echo ${BT_GPIO} > /sys/class/gpio/export && :;
-  echo "out" > /sys/class/gpio/gpio${BT_GPIO}/direction
-  echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
-  sleep 1
-  echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
-  sleep 1
+# Detect SOM with 5G WIFI chip
+som_has_5g_wifi() {
+  if [ "`cat ${WIFI_SDIO_ID_FILE}`" = "${WIFI_5G_SDIO_ID}" ]; then
+    return 0
+  fi
+
+  return 1
 }
 
-case $1 in
-	start|restart)
-		log_daemon_msg "Starting $DESC"
+#########################
+# Execution starts here #
+#########################
 
-		enable_bt
+# Exit if BT is not available
+bt_found || exit 0
 
-		mac_addr=$(get_bt_macaddr)
-		fw_file=$(get_bt_firmware)
+# Enable BT hardware
+enable_bt
 
-		brcm_patchram_plus --patchram ${fw_file} \
-				   --enable_hci \
-				   --bd_addr ${mac_addr} \
-				   --no2bytes \
-				   --baudrate 3000000 \
-				   --scopcm=1,0,0,0,0,0,0,0,0,0 \
-				   --tosleep 1000 ${BT_TTY_DEV} &
-		sleep 2
+# Get BT MAC address
+BT_MACADDR=$(get_bt_macaddr)
 
-		log_end_msg 0
-		;;
-	stop)
-		log_daemon_msg "Stop $DESC"
-		log_end_msg 0
-		;;
-	*)
-		N=${0}
-		echo "Usage: $N {start|stop|restart}" >&2
-		exit 1
-		;;
-esac
+# On SOMs with 5G WIFI use different firmware binary
+if som_has_5g_wifi; then
+	BT_FIRMWARE=${BT_FIRMWARE_5G}
+fi
 
-exit 0
+# Load BT firmware and set MAC address
+pidof brcm_patchram_plus > /dev/null && killall -9 brcm_patchram_plus
+/usr/bin/brcm_patchram_plus --patchram ${BT_FIRMWARE} \
+                     --enable_hci --bd_addr ${BT_MACADDR} --no2bytes \
+                     --baudrate 3000000 \
+                     --scopcm=1,0,0,0,0,0,0,0,0,0 \
+                     --tosleep 1000 ${BT_TTY_DEV} &
 
