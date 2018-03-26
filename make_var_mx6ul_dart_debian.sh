@@ -470,6 +470,11 @@ EOF
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth enable 2 3 4 5
 
+### install variscite-wifi init script
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/init.d/
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi defaults
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi enable S
+
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
 
