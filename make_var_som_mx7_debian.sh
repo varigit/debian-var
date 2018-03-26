@@ -438,11 +438,13 @@ EOF
 	LANG=C chroot ${ROOTFS_BASE} /third-stage
 
 ## fourth-stage ##
-### install variscite-bluetooth init script
-	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus ${ROOTFS_BASE}/usr/bin/
-	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
-	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
-	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth enable 2 3 4 5
+### install variscite-bluetooth service
+	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus ${ROOTFS_BASE}/usr/bin
+	install -d -m 0755 ${ROOTFS_BASE}/etc/bluetooth
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/bluetooth
+	install -m 0644 ${G_VARISCITE_PATH}/variscite-bluetooth.service ${ROOTFS_BASE}/lib/systemd/system
+	ln -s /lib/systemd/system/variscite-bluetooth.service \
+		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bluetooth.service
 
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {

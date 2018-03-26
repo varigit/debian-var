@@ -1,27 +1,4 @@
-#!/bin/sh -e
-
-### BEGIN INIT INFO
-# Provides: var-bluetooth
-# Required-Start:    $local_fs $syslog
-# Required-Stop:     $local_fs $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start Variscite bluetooth hardware
-### END INIT INFO
-#
-# Bluetooth hardware init for Variscite VAR-SOM-MX7
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DESC=variscite-bluetooth
-
-. /lib/lsb/init-functions
+#!/bin/sh -ex
 
 # WIFI/BT chip identification
 WIFI_5G_SDIO_ID=0x4339
@@ -35,14 +12,14 @@ BT_FIRMWARE_5G=/lib/firmware/bcm/bcm4339.hcd
 
 # Check if BT/WIFI is available
 bt_found() {
-  if [ -f ${WIFI_SDIO_ID_FILE} ]; then
-    log_daemon_msg "$DESC: BT found"
-    return 0
-  else
-    log_daemon_msg "$DESC: No BT found"
-    log_end_msg 0
-    return 1
-  fi
+  for i in `seq 1 10`; do 
+     if [ -f ${WIFI_SDIO_ID_FILE} ]; then
+       return 0
+     fi
+     sleep 1
+  done
+
+  return 1
 }
 
 # Enable BT via GPIO
@@ -50,10 +27,10 @@ enable_bt() {
   if [ ! -d /sys/class/gpio/gpio${BT_GPIO} ]; then
     echo ${BT_GPIO} >/sys/class/gpio/export
     echo "out" > /sys/class/gpio/gpio${BT_GPIO}/direction
-    echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
-    sleep 1
-    echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
   fi
+  echo 0 > /sys/class/gpio/gpio${BT_GPIO}/value
+  sleep 1
+  echo 1 > /sys/class/gpio/gpio${BT_GPIO}/value
 }
 
 # Find maximum of N numbers
@@ -88,41 +65,21 @@ som_has_5g_wifi() {
 # Exit if BT is not available
 bt_found || exit 0
 
- case $1 in
-	start|restart)
-		log_daemon_msg "Starting $DESC"
+# Enable BT hardware
+enable_bt
 
-		# Enable BT hardware
-		enable_bt
+# Get BT MAC address
+BT_MACADDR=$(get_bt_macaddr)
 
-		# Get BT MAC address
-		BT_MACADDR=$(get_bt_macaddr)
+# On SOMs with 5G WIFI use different firmware binary
+if som_has_5g_wifi; then
+	BT_FIRMWARE=${BT_FIRMWARE_5G}
+fi
 
-		# On SOMs with 5G WIFI use different firmware binary
-		if som_has_5g_wifi; then
-		  BT_FIRMWARE=${BT_FIRMWARE_5G}
-		fi
-
-		# Load BT firmware and set MAC address
-		/usr/bin/brcm_patchram_plus --patchram ${BT_FIRMWARE} \
+# Load BT firmware and set MAC address
+pidof brcm_patchram_plus > /dev/null && killall -9 brcm_patchram_plus
+/usr/bin/brcm_patchram_plus --patchram ${BT_FIRMWARE} \
                      --enable_hci --bd_addr ${BT_MACADDR} --no2bytes \
                      --baudrate 3000000 \
                      --scopcm=1,0,0,0,0,0,0,0,0,0 \
                      --tosleep 1000 ${BT_TTY_DEV} &
-		sleep 2
-
-		log_end_msg 0
-		;;
-	stop)
-		log_daemon_msg "Stop $DESC"
-		log_end_msg 0
-		;;
-	*)
-		N=${0}
-		echo "Usage: $N {start|stop|restart}" >&2
-		exit 1
-		;;
-esac
-
-exit 0
-
