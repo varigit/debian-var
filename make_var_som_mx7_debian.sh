@@ -42,7 +42,7 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx_4.9.11_1.0.0_ga-var01"
-readonly G_LINUX_KERNEL_REV="46a5cab4df6b501eebcc820c55689493119ea69f"
+readonly G_LINUX_KERNEL_REV="a1ac1724c29c3d2051b68d8c0d743de22e0632e3"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
 readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-emmc-m4.dtb imx7d-var-som-nand.dtb imx7d-var-som-nand-m4.dtb'
 
@@ -53,10 +53,10 @@ readonly G_UBOOT_BRANCH="imx_v2017.03_4.9.11_1.0.0_ga_var01"
 readonly G_UBOOT_REV="3b5f889cb501c9fbe44c750c657dcd9ea4875176"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx7dvar_som_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx7dvar_som_nand_defconfig'
-readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
-readonly G_SPL_NAME_FOR_NAND='SPL.nand'
+readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
 readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
+readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
