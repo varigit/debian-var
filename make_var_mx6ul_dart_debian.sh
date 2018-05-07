@@ -31,7 +31,7 @@ readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
 readonly DEB_RELEASE="jessie"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
-## base paths 
+## base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
 readonly DEF_SRC_DIR="${DEF_BUILDENV}/src"
 readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
@@ -53,7 +53,7 @@ readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dt
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/twonav/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.10_dart_6ul_var1-twonav"
+readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_twonav"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
@@ -463,6 +463,11 @@ EOF
 	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth enable 2 3 4 5
+
+### install variscite-wifi init script
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/init.d/
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi defaults
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi enable S
 
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
