@@ -85,7 +85,7 @@ readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnue
 readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
 
 ############## user rootfs packages ##########
-readonly G_USER_PACKAGES="libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev"
+readonly G_USER_PACKAGES="libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev"
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -814,6 +814,9 @@ function make_sdcard() {
 
 	local part=""
 	if [ `echo ${LPARAM_BLOCK_DEVICE} | grep -c mmcblk` -ne 0 ]; then
+		part="p"
+	fi
+	if [ `echo ${LPARAM_BLOCK_DEVICE} | grep -c loop` -ne 0 ]; then
 		part="p"
 	fi
 
