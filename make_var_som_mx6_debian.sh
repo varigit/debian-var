@@ -119,9 +119,6 @@ readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
 readonly G_IMX_GSTREAMER_GIT_SRCREV="ecd884a7199938301307123dc92d5c3cc9b1becb"
 
-## ubi
-readonly G_UBI_FILE_NAME='rootfs.ubi.img'
-
 ## CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILER_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
 readonly G_CROSS_COMPILER_ARCHIVE="${G_CROSS_COMPILER_NAME}.tar.xz"
@@ -160,8 +157,7 @@ function usage() {
 	echo "       kernel      -- build or rebuild linux kernel for this board"
 	echo "       modules     -- build or rebuild linux kernel modules and install in rootfs directory for this board"
 	echo "       rootfs      -- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
-	echo "                       make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.gz)"
-	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
+	echo "                       make and install extern modules (wifi/bt), create rootfs.tar.gz)"
 	echo "       rtar        -- generate or regenerate rootfs.tar.gz image from rootfs folder "
 	echo "       clean       -- clean all build artifacts (not delete sources code and resulted images (output folder))"
 	echo "       sdcard      -- create bootting sdcard for this device"
