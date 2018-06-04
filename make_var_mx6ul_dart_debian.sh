@@ -31,7 +31,7 @@ readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
 readonly DEB_RELEASE="jessie"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
-## base paths 
+## base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
 readonly DEF_SRC_DIR="${DEF_BUILDENV}/src"
 readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
@@ -46,7 +46,6 @@ readonly SDCARD_ROOTFS_DIR=/media/$(logname)/rootfs
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/twonav/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_twonav"
-readonly G_LINUX_KERNEL_REV="05c96047c7bc4654ae3802fba4e228614f13b580"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
 
@@ -54,8 +53,7 @@ readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dt
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/twonav/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.10_dart_6ul_var1-twonav"
-readonly G_UBOOT_REV="570b452d2056ddb8a724f47bc193bfcc55663891"
+readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_twonav"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
@@ -87,7 +85,7 @@ readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnue
 readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
 
 ############## user rootfs packages ##########
-readonly G_USER_PACKAGES=""
+readonly G_USER_PACKAGES="libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev"
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -231,7 +229,9 @@ function get_git_src() {
 	# clone src code
 	git clone ${1} -b ${2} ${3}
 	cd ${3}
-	git reset --hard ${4}
+	if [ ! -z "$4" ]; then
+		git reset --hard ${4}
+	fi
 	RET=$?
 	cd -
 	return $RET
@@ -369,22 +369,11 @@ protected_install bzip2
 # fix config for sshd (added user login for password)
 sed -i -e 's/\PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
 
-# enable graphical desktop
+# enable Xorg
 protected_install Xorg
-protected_install xfce4
-protected_install xfce4-goodies
-protected_install slim
-
-# sound mixer & volune
-protected_install xfce4-mixer
-protected_install xfce4-volumed
 
 # network manager
 protected_install network-manager-gnome
-
-## fix slim config (added autologin x_user) ##
-sed -i -e 's/\#auto_login.*/auto_login\tyes/g' /etc/slim.conf
-sed -i -e 's/\#default_user.*/default_user\tx_user/g' /etc/slim.conf
 
 # added alsa & alsa utilites
 protected_install alsa-base
@@ -458,10 +447,7 @@ rm -rf /usr/share/doc
 
 # create users and set password
 useradd -m -G audio -s /bin/bash user
-useradd -m -G audio -s /bin/bash x_user
-echo "user:user" | chpasswd
-echo "root:root" | chpasswd
-passwd -d x_user
+echo "root:keepcalm" | chpasswd
 
 # sado kill
 rm -f third-stage
@@ -477,6 +463,11 @@ EOF
 	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
 	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth enable 2 3 4 5
+
+### install variscite-wifi init script
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/init.d/
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi defaults
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi enable S
 
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
@@ -499,15 +490,23 @@ rm -f user-stage
 
 };
 
+## fix files links and missing files ##
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libz.so.1.2.8 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libz.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libm.so.6 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libm.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libdl.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdl.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libdbus-1.so.3.8.14 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdbus-1.so
+	ln -sfv libdbus-glib-1.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdbus-glib-1.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libglib-2.0.so.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libglib-2.0.so
+	ln -sfv libnm-glib.so.4 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-glib.so
+	ln -sfv libnm-util.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-util.so
+
 ## binaries rootfs patching ##
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
-
-	install -m 0644 ${G_VARISCITE_PATH}/wallpaper_800x480.png \
-		${ROOTFS_BASE}/usr/share/images/desktop-base/default
+	install -m 0644 ${G_VARISCITE_PATH}/uuid.h ${ROOTFS_BASE}/usr/include/bluetooth/
 
 ## added alsa default configs ##
 	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
@@ -519,6 +518,9 @@ rm -f user-stage
 # added mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
+
+echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
+" > etc/apt/sources.list.save
 
 	pr_info "rootfs: clean"
 
@@ -814,6 +816,9 @@ function make_sdcard() {
 	if [ `echo ${LPARAM_BLOCK_DEVICE} | grep -c mmcblk` -ne 0 ]; then
 		part="p"
 	fi
+	if [ `echo ${LPARAM_BLOCK_DEVICE} | grep -c loop` -ne 0 ]; then
+		part="p"
+	fi
 
 	# Check that we're using a valid device
 	if ! check_sdcard ${LPARAM_BLOCK_DEVICE}; then
@@ -1011,13 +1016,13 @@ function cmd_make_deploy() {
 	# get kernel repository
 	(( `ls ${G_LINUX_KERNEL_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get kernel repository";
-		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
+		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR}
 	};
 
 	# get uboot repository
 	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get uboot repository";
-		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} ${G_UBOOT_SRC_DIR} ${G_UBOOT_REV}
+		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} ${G_UBOOT_SRC_DIR}
 	};
 
 	# get linaro toolchain
