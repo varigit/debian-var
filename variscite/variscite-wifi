@@ -76,33 +76,19 @@ wifi_up()
 		echo 1 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
 		#usleep 10000
 		sleep 0.01
-
-		# WLAN_EN up
-		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-		# BT_EN up
-		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-
-		# Wait 150ms at least
-		#usleep 200000
-		sleep 0.2
-
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	else
-		# WLAN_EN up
-		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-		# BT_EN up
-		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-
-		# Wait 150ms at least
-		#usleep 200000
-		sleep 0.2
-
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 	fi
+	# WLAN_EN up
+	echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+	# BT_EN up
+	echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+	# Wait 150ms at least
+	#usleep 200000
+	sleep 0.2
+
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 
 	# Bind WIFI device to MMC controller
 	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
@@ -114,22 +100,16 @@ wifi_down()
 	# Unbind WIFI device from MMC controller
 	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
 
-	if som_is_dart_6ul_5g; then
-		# WLAN_EN down
-		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+	# WLAN_EN down
+	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
 
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	if som_is_dart_6ul_5g; then
 		usleep 10000
 
 		# WIFI power down
 		echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
-	else
-		# WLAN_EN down
-		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
-
-		# BT_EN down
-		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 	fi
 }
 
