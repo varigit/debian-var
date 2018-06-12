@@ -69,6 +69,7 @@ output
 src
 toolchain
 tmp
+twonav/recovery
 
 *.orig
 *~

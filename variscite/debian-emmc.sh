@@ -50,6 +50,7 @@ moreoptions=1
 node="/dev/mmcblk1"
 part=p
 cal_only=0
+TN_size=-1
 
 if [ ! -e ${node} ]; then
 	help
@@ -62,8 +63,9 @@ function format_debian
 	echo "=========================="
 	umount /run/media/mmcblk1p1 2>/dev/null
 	umount /run/media/mmcblk1p2 2>/dev/null
-	mkfs.vfat ${node}p1 -nBOOT-VARSOM
-	mkfs.ext4 ${node}p2 -Lrootfs
+	mkfs.vfat  ${node}p1 -nBOOT-VARSOM
+	mkfs.ext4  ${node}p2 -Lrootfs
+	mkfs.exfat ${node}p3 -nTwoNavData
 	sync
 }
 
@@ -94,6 +96,32 @@ function flash_debian
 	done
 }
 
+echo
+echo "Checking total disk space"
+
+# Get total card size
+total_size=`sfdisk -s ${node}`
+total_size=`expr ${total_size} / 1024`
+boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
+rootfs_size=`expr ${total_size} - ${boot_rom_sizeb} - ${SPARE_SIZE}`
+
+if [[ $total_size -lt 8000 ]];
+then
+    TN_size=5120
+else
+    TN_size=12288
+fi
+
+echo
+echo "TwoNavData will be $TN_size MB long"
+
+TN_size=$(( ${TN_size} * 512 * 4 ))
+total_size_sectors=$(( ${total_size} * 512 * 4 ))
+part_end=$(( ${total_size_sectors} - ${TN_size} ))
+TNpart_start=$(( ${part_end} + 1 ))
+
+echo
+echo "TN_size: $TN_size, part end: $part_end"
 
 # umount /run/media/mmcblk1p* 2>/dev/null
 
@@ -129,16 +157,18 @@ n
 p
 2
 24576
+$part_end
+n
+p
+3
+$TNpart_start
 
+t
+3
+7
 p
 w
 EOF
-
-# Get total card size
-total_size=`sfdisk -s ${node}`
-total_size=`expr ${total_size} / 1024`
-boot_rom_sizeb=`expr ${BOOT_ROM_SIZE} + ${BOOTLOAD_RESERVE}`
-rootfs_size=`expr ${total_size} - ${boot_rom_sizeb} - ${SPARE_SIZE}`
 
 echo "ROOT SIZE=${rootfs_size} TOTAl SIZE=${total_size} BOOTROM SIZE=${boot_rom_sizeb}"
 echo "======================================================"

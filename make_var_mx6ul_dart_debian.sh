@@ -15,7 +15,7 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.4"
+readonly SCRIPT_VERSION="0.5"
 
 
 #### Exports Variables ####
@@ -38,6 +38,7 @@ readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
 readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
+readonly G_TWONAV_PATH="${DEF_BUILDENV}/twonav"
 readonly SDCARD_ZIMAGE_DIR=/media/$(logname)/BOOT-VARSOM
 readonly SDCARD_ROOTFS_DIR=/media/$(logname)/rootfs
 
@@ -85,7 +86,8 @@ readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnue
 readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
 
 ############## user rootfs packages ##########
-readonly G_USER_PACKAGES="libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev"
+#We need the binaries to make it run, but we need the *dev packages to compile it. Maybe we can split into two packages types: rootfs and sysroot
+readonly G_USER_PACKAGES="vim bash-completion libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev exfat-utils exfat-fuse" 
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -298,11 +300,25 @@ echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
 " > etc/fstab
 
-echo "imx6ul-var-dart" > etc/hostname
+echo "twonav" > etc/hostname
 
 echo "auto lo
 iface lo inet loopback
 " > etc/network/interfaces
+
+## twonav extra paths and files
+
+mkdir etc/twonav
+echo "1234-5678-7654" > etc/twonav/VeloDevID.txt
+
+mkdir opt/twonav
+cp -r ${G_TWONAV_PATH}/recovery opt/twonav
+
+echo "
+if [ -f /etc/bash_completion ]; then
+ . /etc/bash_completion
+fi
+" >> etc/profile
 
 echo "
 locales locales/locales_to_be_generated multiselect en_US.UTF-8 UTF-8
@@ -343,7 +359,7 @@ function protected_install() {
 
         echo ""
         echo "###########################"
-        echo "## Fix missing packeges ###"
+        echo "## Fix missing packages ###"
         echo "###########################"
         echo ""
 
@@ -419,8 +435,9 @@ protected_install can-utils
 # psmisc utils (killall and etc)
 protected_install psmisc
 
-# nano
+# editors
 protected_install nano
+protected_install vim
 
 # delete unused packages ##
 apt-get -y remove xscreensaver
@@ -446,7 +463,6 @@ rm -rf /usr/share/doc
 
 
 # create users and set password
-useradd -m -G audio -s /bin/bash user
 echo "root:keepcalm" | chpasswd
 
 # sado kill
@@ -512,7 +528,7 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 
-	## Revert regular booting
+## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
 # added mirror to source list
@@ -890,9 +906,11 @@ function make_sdcard() {
 		cp ${G_VARISCITE_PATH}/debian-emmc.sh	${P2_MOUNT_DIR}/usr/sbin/
 		cp ${G_VARISCITE_PATH}/debian-nand.sh	${P2_MOUNT_DIR}/usr/sbin/
 		cp ${G_VARISCITE_PATH}/kobs-ng		${P2_MOUNT_DIR}/usr/sbin/
+		### For future use. Now it breaks boot.
+		#cp ${G_VARISCITE_PATH}/rc.flasher		${P2_MOUNT_DIR}/etc/rc.local 
 	
 		# added exec options
-		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng 
+		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng
 	}
 
 	function ceildiv
