@@ -11,6 +11,9 @@
 #
 # By default this script does nothing.
 
+echo "Disabling runtime PM"
+echo "0 1" > /sys/devices/platform/soc/soc:busfreq/enable
+
 #set creation date
 DATETIME=`date +%Y%m%d`
 echo $DATETIME > /etc/twonav/creation_date

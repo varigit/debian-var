@@ -10,19 +10,10 @@
 # bits.
 #
 # By default this script does nothing.
-Xorg & 
-rm -rf /etc/twonav/DeviceTester.ini
-sleep 1
-#DISPLAY=:0 DeviceInstaller &
-sh /opt/twonav/recovery/update_script.sh &
-pid_installer=$! # Process Id of the previous running command
-while kill -0 $pid_installer
-do
-    sleep 0.1
-done
-echo "Setting right permissions and owner"
-chown syslog:adm /var/log/syslog
-chown syslog:adm /var/log/kern.log
-sync
-reboot
+
+echo "Disabling runtime PM"
+echo "0 1" > /sys/devices/platform/soc/soc:busfreq/enable
+
+sh /opt/twonav/enableBacklight.sh &
+sh /opt/twonav/install_packages.sh &
 exit 0

@@ -313,6 +313,8 @@ echo "1234-5678-7654" > etc/twonav/VeloDevID.txt
 
 mkdir opt/twonav
 cp -r ${G_TWONAV_PATH}/recovery opt/twonav
+cp -r ${G_TWONAV_PATH}/tools/* bin
+cp -r ${G_TWONAV_PATH}/scripts/* opt/twonav
 
 echo "
 if [ -f /etc/bash_completion ]; then
@@ -520,7 +522,8 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.local ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.installer ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
 	install -m 0644 ${G_VARISCITE_PATH}/uuid.h ${ROOTFS_BASE}/usr/include/bluetooth/
 
@@ -908,6 +911,7 @@ function make_sdcard() {
 		cp ${G_VARISCITE_PATH}/kobs-ng		${P2_MOUNT_DIR}/usr/sbin/
 		### For future use. Now it breaks boot.
 		#cp ${G_VARISCITE_PATH}/rc.flasher		${P2_MOUNT_DIR}/etc/rc.local 
+		cp ${G_VARISCITE_PATH}/rc.local		${P2_MOUNT_DIR}/etc/rc.local 
 	
 		# added exec options
 		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng
