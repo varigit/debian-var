@@ -134,7 +134,7 @@ function install_rootfs
 	mkdir -p ${mountdir_prefix}${rootfspart}
 	mount ${node}${part}${rootfspart} ${mountdir_prefix}${rootfspart}
 	printf "Extracting files"
-	tar xpf ${imagesdir}/rootfs.tar.gz -C ${mountdir_prefix}${rootfspart} --checkpoint=.1200
+	tar --warning=no-timestamp -xpf ${imagesdir}/rootfs.tar.gz -C ${mountdir_prefix}${rootfspart} --checkpoint=.1200
 	echo
 	echo
 	sync
