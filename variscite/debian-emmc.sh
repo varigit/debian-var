@@ -111,8 +111,8 @@ function install_bootloader
 {
 	echo
 	echo "Installing bootloader to eMMC"
-	sudo dd if=${imagesdir}/SPL.mmc of=${node} bs=1K seek=1; sync
-	sudo dd if=${imagesdir}/u-boot.img.mmc of=${node} bs=1K seek=69; sync
+	dd if=${imagesdir}/SPL.mmc of=${node} bs=1K seek=1; sync
+	dd if=${imagesdir}/u-boot.img.mmc of=${node} bs=1K seek=69; sync
 }
 
 function install_kernel
