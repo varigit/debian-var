@@ -345,8 +345,8 @@ protected_install nfs-common
 # packages required when flashing emmc
 protected_install dosfstools
 
-# fix config for sshd (added user login for password)
-sed -i -e 's/\PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
+# fix config for sshd (permit root login)
+sed -i -e 's/#PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
 
 # enable graphical desktop
 protected_install xorg
