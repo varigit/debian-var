@@ -11,9 +11,8 @@
 #
 # By default this script does nothing.
 echo "Running flasher..."
-debian-emmc.sh
-echo "Flashing done. Change boot order and boot again"
-shutdown -h now
+Xorg &
+DISPLAY=:0 DeviceFlasher &
 exit 0
 
 
