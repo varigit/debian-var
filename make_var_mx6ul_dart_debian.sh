@@ -910,11 +910,10 @@ function make_sdcard() {
 		cp ${G_VARISCITE_PATH}/debian-nand.sh	${P2_MOUNT_DIR}/usr/sbin/
 		cp ${G_VARISCITE_PATH}/kobs-ng		${P2_MOUNT_DIR}/usr/sbin/
 		### For future use. Now it breaks boot.
-		#cp ${G_VARISCITE_PATH}/rc.flasher		${P2_MOUNT_DIR}/etc/rc.local 
-		cp ${G_VARISCITE_PATH}/rc.local		${P2_MOUNT_DIR}/etc/rc.local 
+		cp ${G_VARISCITE_PATH}/rc.flasher	${P2_MOUNT_DIR}/etc/rc.local 
 	
 		# added exec options
-		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng
+		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng ${P2_MOUNT_DIR}/etc/rc.local
 	}
 
 	function ceildiv
