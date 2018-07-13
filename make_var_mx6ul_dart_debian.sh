@@ -517,6 +517,7 @@ rm -f user-stage
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libglib-2.0.so.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libglib-2.0.so
 	ln -sfv libnm-glib.so.4 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-glib.so
 	ln -sfv libnm-util.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-util.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libuuid.so.1.3.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libuuid.so
 
 ## binaries rootfs patching ##
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
