@@ -88,7 +88,7 @@ function flash_debian
 	echo "Flashing Debian Root File System"
 	rm -rf /tmp/media/mmcblk1p2/*
 	printf "Extracting files"
-	tar xpf rootfs.tar.gz -C /tmp/media/mmcblk1p2/ --checkpoint=.1200
+	tar --warning=no-timestamp -xpf rootfs.tar.gz -C /tmp/media/mmcblk1p2/ --checkpoint=.1200
 	echo
 }
 
