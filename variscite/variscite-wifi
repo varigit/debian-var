@@ -59,6 +59,11 @@ wifi_is_up()
 # Power up WIFI chip
 wifi_up()
 {
+	# Unbind WIFI device from MMC controller
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+	fi
+
 	if som_is_dart_6ul_5g; then
 		# WIFI power up
 		echo 1 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
@@ -128,7 +133,7 @@ wifi_down()
 
 # Exit if booting from SD on DART-6UL
 if grep -q MX6UL /sys/devices/soc0/soc_id && \
-   grep -q mmcblk0 /proc/cmdline; then
+   ! grep -q WIFI /sys/devices/soc0/machine; then
    exit 0
 fi
 
@@ -137,12 +142,6 @@ wifi_setup
 
 for i in `seq 1 3`; do
 
-	# Down WIFI
-	wifi_down
-
-	# Wait enough time for discharge
-	sleep ${WIFI_SLEEP}
-
 	# Up WIFI
 	wifi_up
 
@@ -150,6 +149,12 @@ for i in `seq 1 3`; do
 	if wifi_is_up; then
 		exit 0
 	fi
+
+	# Down WIFI
+	wifi_down
+
+	# Wait enough time for discharge
+	sleep ${WIFI_SLEEP}
 done
 
 exit 1
