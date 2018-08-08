@@ -450,6 +450,7 @@ EOF
 	install -d -m 0755 ${ROOTFS_BASE}/etc/wifi
 	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/variscite-wifi.service ${ROOTFS_BASE}/lib/systemd/system
+	install -m 0644 ${G_VARISCITE_PATH}/brcmfmac.conf ${ROOTFS_BASE}/etc/modprobe.d
 	ln -s /lib/systemd/system/variscite-wifi.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
 

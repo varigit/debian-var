@@ -99,11 +99,17 @@ wifi_up()
 
 	# Bind WIFI device to MMC controller
 	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
+
+	# Load WIFI driver
+	modprobe brcmfmac
 }
 
 # Power down WIFI chip
 wifi_down()
 {
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
 	# Unbind WIFI device from MMC controller
 	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
 
