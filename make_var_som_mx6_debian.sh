@@ -83,6 +83,7 @@ readonly G_WILINK8_FW_BT_GIT_SRCREV="0ee619b598d023fffc77679f099bc2a4815510e4"
 readonly G_IMX_GPU_DRV_SRC_DIR="${DEF_SRC_DIR}/imx/kernel-module-imx-gpu-viv"
 readonly G_IMX_GPU_DRV_GIT="git://github.com/Freescale/kernel-module-imx-gpu-viv.git"
 readonly G_IMX_GPU_DRV_GIT_BRANCH="master"
+readonly G_IMX_GPU_DRV_GIT_SRCREV="a05d9b23b9902f6ce87d23772de2fdb2ecfb37a7"
 # Freescale mirror
 readonly G_FSL_MIRROR="http://www.freescale.com/lgfiles/NMG/MAD/YOCTO"
 # apt-get install gstreamer1.0-x gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa
@@ -117,6 +118,7 @@ readonly G_IMX_XORG_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_XORG_PKG}.tar.gz"
 readonly G_IMX_VPU_API_SRC_DIR="${DEF_SRC_DIR}/imx/libimxvpuapi"
 readonly G_IMX_VPU_API_GIT="git://github.com/Freescale/libimxvpuapi.git"
 readonly G_IMX_VPU_API_GIT_BRANCH="master"
+readonly G_IMX_VPU_API_GIT_SRCREV="4afb52f97e28c731c903a8538bf99e4a6d155b42"
 # much more standard replacement for Freescale's imx-gst1.0-plugin
 readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
 readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
@@ -850,6 +852,9 @@ function cmd_make_deploy() {
 	(( `ls ${G_IMX_GPU_DRV_SRC_DIR} | wc -l` == 0 )) && {
 		pr_info "Get iMX GPU driver repository";
 		get_git_src ${G_IMX_GPU_DRV_GIT} ${G_IMX_GPU_DRV_GIT_BRANCH} ${G_IMX_GPU_DRV_SRC_DIR}
+		cd ${G_IMX_GPU_DRV_SRC_DIR}
+		git checkout ${G_IMX_GPU_DRV_GIT_SRCREV}
+		cd -
 	};
 
 	# get wilink8 backports repository
@@ -949,6 +954,9 @@ function cmd_make_deploy() {
 	(( `ls ${G_IMX_VPU_API_SRC_DIR} | wc -l` == 0 )) && {
 		pr_info "Get iMX VPU API repository";
 		get_git_src ${G_IMX_VPU_API_GIT} ${G_IMX_VPU_API_GIT_BRANCH} ${G_IMX_VPU_API_SRC_DIR}
+		cd ${G_IMX_VPU_API_SRC_DIR}
+		git checkout ${G_IMX_VPU_API_GIT_SRCREV}
+		cd -
 	};
 
 	# get gstreamer-imx repository
