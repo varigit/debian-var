@@ -603,8 +603,8 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
 	# copy images
-	cp ${1}/SPL		${2}/${G_SPL_NAME_FOR_EMMC}
-	cp ${1}/u-boot.img	${2}/${G_UBOOT_NAME_FOR_EMMC}
+	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
+	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_EMMC}
 
 ### make nand uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_NAND}"
@@ -618,8 +618,8 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
 	# copy images
-	cp ${1}/SPL		${2}/${G_SPL_NAME_FOR_NAND}
-	cp ${1}/u-boot.img	${2}/${G_UBOOT_NAME_FOR_NAND}
+	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_NAND}
+	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_NAND}
 
 	return 0;
 }
@@ -783,7 +783,7 @@ function make_sdcard() {
 	function flash_u-boot
 	{
 		pr_info "Flashing U-Boot"
-		dd if=${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}   of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1;  sync
+		dd if=${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
 		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=69; sync
 	}
 
