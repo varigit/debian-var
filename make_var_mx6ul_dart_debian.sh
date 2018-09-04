@@ -482,7 +482,7 @@ rm -f user-stage
 	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
 
-	install -m 0644 ${G_VARISCITE_PATH}/wallpaper_800x480.png \
+	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
 		${ROOTFS_BASE}/usr/share/images/desktop-base/default
 
 ## added alsa default configs ##
