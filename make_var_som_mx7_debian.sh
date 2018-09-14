@@ -76,12 +76,12 @@ readonly G_BCM_DRV_GIT_REV="58a1896d37ec04bd16af8ab784145ae3c85d3c4b"
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
 
 ## CROSS_COMPILER config and paths
-readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf/bin"
+readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf'
+readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/${G_EXT_CROSS_COMPILER_NAME}/bin"
 #readonly G_CROSS_COMPILEER_PREFFIX="arm-none-eabi-"
 readonly G_CROSS_COMPILEER_PREFFIX="arm-linux-gnueabihf-"
 readonly G_CROSS_COMPILEER_JOPTION="-j 4"
-readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz'
-readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
+readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}.tar.xz"
 
 ############## user rootfs packages ##########
 readonly G_USER_PACKAGES=""
