@@ -48,7 +48,7 @@ wifi_setup()
 
 wifi_is_up()
 {
-	for i in `seq 1 20`; do
+	for i in `seq 1 8`; do
 		[ -d /sys/class/net/wlan0 ] && return 0
 		sleep 1
 	done
