@@ -48,7 +48,8 @@ readonly SDCARD_ROOTFS_DIR=/media/$(logname)/rootfs
 
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
-readonly G_LINUX_KERNEL_GIT="https://github.com/twonav/linux-2.6-imx.git"
+G_LINUX_KERNEL_GIT="https://github.com/twonav/linux-2.6-imx.git"
+readonly G_LINUX_KERNEL_GIT_UP="https://repo_username:repo_password@github.com/twonav/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_twonav"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart-twonav_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
@@ -56,7 +57,8 @@ readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dt
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
-readonly G_UBOOT_GIT="https://github.com/twonav/uboot-imx.git"
+G_UBOOT_GIT="https://github.com/twonav/uboot-imx.git"
+readonly G_UBOOT_GIT_UP="https://repo_username:repo_password@github.com/twonav/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_twonav"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
@@ -67,13 +69,15 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
-readonly G_BCM_FW_GIT="git://github.com/twonav/bcm_4343w_fw.git"
+G_BCM_FW_GIT="https://github.com/twonav/bcm_4343w_fw.git"
+readonly G_BCM_FW_GIT_UP="https://repo_username:repo_password@github.com/twonav/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="3.5.5.18"
 readonly G_BCM_FW_GIT_REV="423be46b06b5629e45a4943f98a3053c819091ce"
 
 ## Broadcom BT/WIFI driver ##
 readonly G_BCM_DRV_SRC_DIR="${DEF_SRC_DIR}/laird-linux-backports"
-readonly G_BCM_DRV_GIT="git://github.com/twonav/laird-linux-backports"
+G_BCM_DRV_GIT="https://github.com/twonav/laird-linux-backports.git"
+readonly G_BCM_DRV_GIT_UP="https://repo_username:repo_password@github.com/twonav/laird-linux-backports.git"
 readonly G_BCM_DRV_GIT_BRANCH="3.5.5.8"
 readonly G_BCM_DRV_GIT_REV="58a1896d37ec04bd16af8ab784145ae3c85d3c4b"
 
@@ -99,6 +103,11 @@ PARAM_DEBUG="0"
 PARAM_REBUILD="0"
 PARAM_CMD="all"
 PARAM_BLOCK_DEVICE="na"
+PARAM_KERNEL_NAME=""
+PARAM_CREDENTIALS="0"
+PARAM_USERNAME=""
+PARAM_PASSWORD=""
+PARAM_DEVICE="ALL"
 
 
 ### usage ###
@@ -115,6 +124,8 @@ function usage() {
 	echo "  -c|--cmd <command>"
 	echo "     Supported commands:"
 	echo "       deploy      		-- prepare environment for all commands"
+	echo "       -u		      		-- set username to checkout repositories. It does not work with e-mails"
+	echo "       -p      			-- set password to checkout repositories"
 	echo "       all         		-- build or rebuild kernel/bootloader/rootfs"
 	echo "       bootloader  		-- build or rebuild bootloader (u-boot+SPL)"
 	echo "       kernel      		-- build or rebuild linux kernel for this board"
@@ -139,8 +150,8 @@ function usage() {
 }
 
 ###### parse input arguments ##
-readonly SHORTOPTS="c:o:d:h:r"
-readonly LONGOPTS="cmd:,output:,dev:,help,debug,rebuild"
+readonly SHORTOPTS="c:o:u:p:d:h:r"
+readonly LONGOPTS="cmd:,output:,username:,password:,dev:,help,debug,rebuild"
 
 ARGS=$(getopt -s bash --options ${SHORTOPTS}  \
   --longoptions ${LONGOPTS} --name ${SCRIPT_NAME} -- "$@" )
@@ -156,6 +167,16 @@ while true; do
 		-o|--output ) # select output dir
 			shift
 			PARAM_OUTPUT_DIR="$1";
+			;;
+		-u|--username ) # set username for pull repo
+			shift
+			PARAM_CREDENTIALS=1;
+			PARAM_USERNAME="$1";
+			;;
+		-p|--password ) # set password for pull repo
+			shift
+			PARAM_CREDENTIALS=1;
+			PARAM_PASSWORD="$1";
 			;;
 		-d|--dev ) # block device (for create sdcard)
 			shift
@@ -237,6 +258,17 @@ function get_git_src() {
 	if [ ! -z "$4" ]; then
 		git reset --hard ${4}
 	fi
+	RET=$?
+	cd -
+	return $RET
+}
+
+# update sources from git repository
+# $1 - output dir
+# $2 - credential url
+function git_update() {
+	cd ${1}
+	git pull
 	RET=$?
 	cd -
 	return $RET
@@ -1036,25 +1068,41 @@ function cmd_make_deploy() {
 	make_prepare;
 
 	# get bcm firmware repository
-	(( `ls ${G_BCM_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
+	(( `ls ${G_BCM_FW_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
+		[ "${PARAM_CREDENTIALS}" = "1" ] && {
+			G_BCM_FW_GIT=${G_BCM_FW_GIT_UP/repo_username/$PARAM_USERNAME}
+			G_BCM_FW_GIT=${G_BCM_FW_GIT/repo_password/$PARAM_PASSWORD}
+		};
 		pr_info "Get bcmhd firmware repository";
 		get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} ${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
 	};
 
 	# get bcm wifi driver repository
-	(( `ls ${G_BCM_DRV_SRC_DIR} | wc -l` == 0 )) && {
+	(( `ls ${G_BCM_DRV_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
+		[ "${PARAM_CREDENTIALS}" = "1" ] && {
+			G_BCM_DRV_GIT=${G_BCM_DRV_GIT_UP/repo_username/$PARAM_USERNAME}
+			G_BCM_DRV_GIT=${G_BCM_DRV_GIT/repo_password/$PARAM_PASSWORD}
+		};
 		pr_info "Get Laird backports repository";
 		get_git_src ${G_BCM_DRV_GIT} ${G_BCM_DRV_GIT_BRANCH} ${G_BCM_DRV_SRC_DIR} ${G_BCM_DRV_GIT_REV}
 	};
 
 	# get kernel repository
 	(( `ls ${G_LINUX_KERNEL_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
+		[ "${PARAM_CREDENTIALS}" = "1" ] && {
+			G_LINUX_KERNEL_GIT=${G_LINUX_KERNEL_GIT_UP/repo_username/$PARAM_USERNAME}
+			G_LINUX_KERNEL_GIT=${G_LINUX_KERNEL_GIT/repo_password/$PARAM_PASSWORD}
+		};
 		pr_info "Get kernel repository";
 		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR}
 	};
 
 	# get uboot repository
 	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
+		[ "${PARAM_CREDENTIALS}" = "1" ] && {
+			G_UBOOT_GIT=${G_UBOOT_GIT_UP/repo_username/$PARAM_USERNAME}
+			G_UBOOT_GIT=${G_UBOOT_GIT/repo_password/$PARAM_PASSWORD}
+		};
 		pr_info "Get uboot repository";
 		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} ${G_UBOOT_SRC_DIR}
 	};
@@ -1066,6 +1114,26 @@ function cmd_make_deploy() {
 		tar -xJf ${G_TMP_DIR}/${G_EXT_CROSS_COMPILER_NAME} -C ${G_TOOLS_PATH}/
 		rm -rf ${G_TMP_DIR}/${G_EXT_CROSS_COMPILER_NAME} && :;
 	};
+
+	return 0;
+}
+
+function cmd_update_repositories() {
+	make_prepare;
+
+	##Deactivated backports for now
+	
+	#pr_info "Updating bcmhd firmware repository";
+	#git_update ${G_BCM_FW_GIT}
+
+	#pr_info "Updating Laird backports repository";
+	#git_update ${G_BCM_DRV_GIT}
+
+	pr_info "Updating kernel repository";
+	git_update ${G_LINUX_KERNEL_SRC_DIR}
+
+	pr_info "Updating uboot repository";
+	git_update ${G_UBOOT_SRC_DIR}
 
 	return 0;
 }
@@ -1231,7 +1299,7 @@ function cmd_make_clean() {
 #################### main function #######################
 
 ## test for root access support (msrc not allowed)
-[ "$PARAM_CMD" != "deploy" ] && [ ${EUID} -ne 0 ] && {
+[ "$PARAM_CMD" != "deploy" ] && [ "$PARAM_CMD" != "update" ] && [ ${EUID} -ne 0 ] && {
 	pr_error "this command must be run as root (or sudo/su)"
 	exit 1;
 };
@@ -1263,6 +1331,12 @@ case $PARAM_CMD in
 		;;
 	modules )
 		cmd_make_kmodules || {
+			V_RET_CODE=1;
+		};
+		;;
+	update )
+		(cmd_make_clean &&
+		 cmd_update_repositories ) || {
 			V_RET_CODE=1;
 		};
 		;;
