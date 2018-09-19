@@ -14,8 +14,11 @@
 # -e  Exit immediately if a command exits with a non-zero status.
 set -e
 
+UBUNTU_VERSION=`cat /etc/lsb-release | grep RELEASE | awk -F= '{ print $2 }' | awk -F. '{ print $1 }'`
+
 SCRIPT_NAME=${0##*/}
 readonly SCRIPT_VERSION="0.5"
+readonly KERNEL_VERSION="1.0.0"
 
 
 #### Exports Variables ####
@@ -27,7 +30,7 @@ readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
+readonly DEF_DEBIAN_MIRROR="http://deb.debian.org/debian"
 readonly DEB_RELEASE="jessie"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
@@ -47,7 +50,7 @@ readonly SDCARD_ROOTFS_DIR=/media/$(logname)/rootfs
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/twonav/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_twonav"
-readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart_defconfig'
+readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart-twonav_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
 
 
@@ -87,7 +90,7 @@ readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolch
 
 ############## user rootfs packages ##########
 #We need the binaries to make it run, but we need the *dev packages to compile it. Maybe we can split into two packages types: rootfs and sysroot
-readonly G_USER_PACKAGES="minicom tree bash-completion libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev exfat-utils exfat-fuse" 
+readonly G_USER_PACKAGES="minicom tree bash-completion libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev exfat-utils exfat-fuse libssl-dev libstdc++-4.9-dev" 
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -599,6 +602,15 @@ function make_kernel() {
 	pr_info "make ${3} file"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILEER_JOPTION} -C ${4} ${3}
 
+	cd ${4}
+	if [ "$UBUNTU_VERSION" -ge 16 ]; then
+		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd linux_headers linux_image
+	else
+		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd --zImage linux_headers linux_image
+	fi
+	mv ../*.deb ${5}/;
+	cd -
+
 	pr_info "Copy kernel and dtb files to output dir: ${5}"
 	cp ${4}/arch/arm/boot/zImage ${5}/;
 	cp ${4}/arch/arm/boot/dts/*.dtb ${5}/;
@@ -947,13 +959,13 @@ n
 p
 1
 8192
-24575
+262143
 t
 c
 n
 p
 2
-24576
+262144
 
 p
 w
