@@ -14,7 +14,7 @@
 # -e  Exit immediately if a command exits with a non-zero status.
 set -e
 
-UBUNTU_VERSION=`lsb_release -r | awk -F: '{ print $2 }' | awk -F. '{ print $1 }' | tr -d '[:space:]'`
+UBUNTU_VERSION=`cat /etc/lsb-release | grep RELEASE | awk -F= '{ print $2 }' | awk -F. '{ print $1 }''`
 
 SCRIPT_NAME=${0##*/}
 readonly SCRIPT_VERSION="0.5"
