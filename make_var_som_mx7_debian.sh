@@ -1041,6 +1041,11 @@ function cmd_make_kmodules() {
 		return 2;
 	};
 
+	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} || {
+		pr_error "Failed #$? in function install_kernel_modules"
+		return 2;
+	};
+
 	return 0;
 }
 
