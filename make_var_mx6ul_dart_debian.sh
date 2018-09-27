@@ -20,6 +20,9 @@ SCRIPT_NAME=${0##*/}
 readonly SCRIPT_VERSION="0.5"
 readonly KERNEL_VERSION="1.0.0"
 
+#Provisional until we will define different kernels on the go.
+readonly KERNEL_NAME="4.1.15-twonav-aventura-2018"
+
 
 #### Exports Variables ####
 #### global variables ####
@@ -640,7 +643,13 @@ function make_kernel() {
 	else
 		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd --zImage linux_headers linux_image
 	fi
+
+	cp ${4}/arch/arm/boot/dts/*-var-dart-*emmc_wifi.dtb ${4}/debian/linux-image-$KERNEL_NAME/boot
+	cp ${4}/arch/arm/boot/zImage ${4}/debian/linux-image-$KERNEL_NAME/boot
+	dpkg --build ${4}/debian/linux-image-$KERNEL_NAME ..
+
 	mv ../*.deb ${5}/;
+
 	cd -
 
 	pr_info "Copy kernel and dtb files to output dir: ${5}"
@@ -736,9 +745,13 @@ function make_uboot() {
 	# make uboot
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
+	# make uboot-imx
+	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} u-boot.imx
+
 	# copy images
 	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
 	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	cp ${1}/u-boot.imx ${2}/${G_UBOOT_NAME_FOR_EMMC}.imx
 
 ### make nand uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_NAND}"
@@ -992,8 +1005,6 @@ p
 1
 8192
 262143
-t
-c
 n
 p
 2

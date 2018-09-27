@@ -63,7 +63,7 @@ function format_debian
 	echo "=========================="
 	umount /run/media/mmcblk1p1 2>/dev/null
 	umount /run/media/mmcblk1p2 2>/dev/null
-	mkfs.vfat  ${node}p1 -nBOOT-VARSOM
+	mkfs.ext4  ${node}p1 -LBOOT-VARSOM
 	mkfs.ext4  ${node}p2 -Lrootfs
 	mkfs.exfat ${node}p3 -nTwoNavData
 	sync
@@ -81,7 +81,7 @@ function flash_debian
 	echo "Flashing Debian BOOT partition"
 	mkdir -p /tmp/media/mmcblk1p1
 	mkdir -p /tmp/media/mmcblk1p2
-	mount -t vfat ${node}p1  /tmp/media/mmcblk1p1
+	mount ${node}p1  /tmp/media/mmcblk1p1
 	mount ${node}p2  /tmp/media/mmcblk1p2
 
 	cp ${DTB_FILES} /tmp/media/mmcblk1p1/
@@ -151,8 +151,6 @@ p
 1
 8192
 262143
-t
-c
 n
 p
 2
