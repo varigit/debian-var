@@ -71,7 +71,7 @@ readonly G_WILINK8_FW_WIFI_GIT_SRCREV="d153edae2a75393937da43159b7e6251c2cd01b6"
 readonly G_WILINK8_FW_BT_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_bt"
 readonly G_WILINK8_FW_BT_GIT="git://git.ti.com/ti-bt/service-packs.git"
 readonly G_WILINK8_FW_BT_GIT_BRANCH="master"
-readonly G_WILINK8_FW_BT_GIT_SRCREV="0ee619b598d023fffc77679f099bc2a4815510e4"
+readonly G_WILINK8_FW_BT_GIT_SRCREV="31a43dc1248a6c19bb886006f8c167e2fd21cb78"
 
 ## imx accelerations ##
 # much more standard replacement for Freescale's imx-gst1.0-plugin
