@@ -719,12 +719,12 @@ function install_imx_packages() {
 	pr_info "Installing vpu firmware"
 	cp ${G_IMX_FW_LOCAL_DIR}/firmware/vpu/vpu_fw_imx6*.bin ${VPU_FW_DIR}
 
-	cp -r ${G_IMX_VPU_LOCAL_DIR} ${IMX_DIR}
-	cp -r ${G_IMX_CODEC_LOCAL_DIR} ${IMX_DIR}
-	cp -r ${G_IMX_VPU_API_SRC_DIR} ${IMX_DIR}
-	cp -r ${G_IMX_GSTREAMER_SRC_DIR} ${IMX_DIR}
+	cp -dr ${G_IMX_VPU_LOCAL_DIR} ${IMX_DIR}
+	cp -dr ${G_IMX_CODEC_LOCAL_DIR} ${IMX_DIR}
+	cp -dr ${G_IMX_VPU_API_SRC_DIR} ${IMX_DIR}
+	cp -dr ${G_IMX_GSTREAMER_SRC_DIR} ${IMX_DIR}
 
-	cp -r ${G_VARISCITE_PATH}/deb/* ${DEB_DIR}
+	cp -dr ${G_VARISCITE_PATH}/deb/* ${DEB_DIR}
 
 	return 0;
 }
