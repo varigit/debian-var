@@ -41,8 +41,8 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx_4.9.11_1.0.0_ga-var01"
-readonly G_LINUX_KERNEL_REV="86c54d808ad9f1b39f8641d2da2e6da4bfff9f30"
+readonly G_LINUX_KERNEL_BRANCH="imx_4.9.88_2.0.0_ga-var01"
+readonly G_LINUX_KERNEL_REV="1b28049c72c9f9300b6eb0ca96a4fb47233831c5"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
 readonly G_LINUX_DTB='imx6dl-var-som-cap.dtb imx6dl-var-som-res.dtb imx6dl-var-som-solo-cap.dtb imx6dl-var-som-solo-res.dtb imx6dl-var-som-solo-vsc.dtb imx6dl-var-som-vsc.dtb imx6q-var-dart.dtb imx6q-var-som-cap.dtb imx6q-var-som-res.dtb imx6q-var-som-vsc.dtb imx6qp-var-som-cap.dtb imx6qp-var-som-res.dtb imx6qp-var-som-vsc.dtb'
 
@@ -78,36 +78,36 @@ readonly G_WILINK8_FW_BT_GIT_SRCREV="31a43dc1248a6c19bb886006f8c167e2fd21cb78"
 # Freescale mirror
 readonly G_FSL_MIRROR="http://www.freescale.com/lgfiles/NMG/MAD/YOCTO"
 # apt-get install gstreamer1.0-x gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa
-# sh firmware-imx-6.0.bin --auto-accept
-readonly G_IMX_FW_PKG="firmware-imx-6.0"
+# sh firmware-imx-7.5.bin --auto-accept
+readonly G_IMX_FW_PKG="firmware-imx-7.5"
 readonly G_IMX_FW_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_FW_PKG}"
 readonly G_IMX_FW_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_FW_PKG}.bin"
 readonly G_IMX_FW_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_FW_PKG}.bin"
-# sh imx-vpu-5.4.37.bin --auto-accept
-readonly G_IMX_VPU_PKG="imx-vpu-5.4.37"
+# sh imx-vpu-5.4.38.bin --auto-accept
+readonly G_IMX_VPU_PKG="imx-vpu-5.4.38"
 readonly G_IMX_VPU_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_VPU_PKG}"
 readonly G_IMX_VPU_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_VPU_PKG}.bin"
 readonly G_IMX_VPU_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_VPU_PKG}.bin"
-# sh imx-codec-4.2.1.bin --auto-accept
-readonly G_IMX_CODEC_PKG="imx-codec-4.2.1"
+# sh imx-codec-4.3.5.bin --auto-accept
+readonly G_IMX_CODEC_PKG="imx-codec-4.3.5"
 readonly G_IMX_CODEC_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_CODEC_PKG}"
 readonly G_IMX_CODEC_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_CODEC_PKG}.bin"
 readonly G_IMX_CODEC_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_CODEC_PKG}.bin"
-# sh imx-gpu-g2d-6.2.2.p0.bin --auto-accept
-readonly G_IMX_GPU_G2D_PKG="imx-gpu-g2d-6.2.2.p0"
+# sh imx-gpu-g2d-6.2.4.p1.2.bin --auto-accept
+readonly G_IMX_GPU_G2D_PKG="imx-gpu-g2d-6.2.4.p1.2"
 readonly G_IMX_GPU_G2D_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_GPU_G2D_PKG}"
 readonly G_IMX_GPU_G2D_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_GPU_G2D_PKG}.bin"
 readonly G_IMX_GPU_G2D_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_GPU_G2D_PKG}.bin"
-# sh imx-gpu-viv-6.2.2.p0-aarch32.bin --auto-accept
-readonly G_IMX_GPU_VIV_PKG="imx-gpu-viv-6.2.2.p0-aarch32"
+# sh imx-gpu-viv-6.2.4.p1.2-aarch32.bin --auto-accept
+readonly G_IMX_GPU_VIV_PKG="imx-gpu-viv-6.2.4.p1.2-aarch32"
 readonly G_IMX_GPU_VIV_LOCAL_DIR="${DEF_SRC_DIR}/imx/${G_IMX_GPU_VIV_PKG}"
 readonly G_IMX_GPU_VIV_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_GPU_VIV_PKG}.bin"
 readonly G_IMX_GPU_VIV_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_GPU_VIV_PKG}.bin"
 # i.MX X.org Video Driver for i.MX Graphics 2D acceleration
 readonly G_IMX_XORG_DRV_SRC_DIR="${DEF_SRC_DIR}/imx/xf86-video-imx-vivante"
 readonly G_IMX_XORG_DRV_GIT="https://source.codeaurora.org/external/imx/xf86-video-imx-vivante.git"
-readonly G_IMX_XORG_DRV_GIT_BRANCH="nxp/imx_4.9.11_1.0.0_ga"
-readonly G_IMX_XORG_DRV_GIT_SRCREV="07ef065dfe09f1c05a1a188c371577faa3677a17"
+readonly G_IMX_XORG_DRV_GIT_BRANCH="imx_exa_viv6_g2d"
+readonly G_IMX_XORG_DRV_GIT_SRCREV="946e8603ed9a52f36d305405dbb2ab8ff90943d0"
 # replacement for Freescale's closed-development libfslvapwrapper library
 readonly G_IMX_VPU_API_SRC_DIR="${DEF_SRC_DIR}/imx/libimxvpuapi"
 readonly G_IMX_VPU_API_GIT="git://github.com/Freescale/libimxvpuapi.git"
@@ -117,7 +117,7 @@ readonly G_IMX_VPU_API_GIT_SRCREV="4afb52f97e28c731c903a8538bf99e4a6d155b42"
 readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
 readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
-readonly G_IMX_GSTREAMER_GIT_SRCREV="ecd884a7199938301307123dc92d5c3cc9b1becb"
+readonly G_IMX_GSTREAMER_GIT_SRCREV="889b8352ca09cd224be6a2f8d53efd59a38fa9cb"
 
 ## CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILER_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
@@ -325,7 +325,15 @@ function make_debian_rootfs() {
 ## added mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
+deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
+deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
 " > etc/apt/sources.list
+
+## raise backports priority
+echo "Package: *
+Pin: release n=${DEB_RELEASE}-backports
+Pin-Priority: 500
+" > etc/apt/preferences.d/backports
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -455,23 +463,6 @@ protected_install udhcpd
 # can support
 protected_install can-utils
 
-# delete unused packages ##
-apt-get -y remove xserver-xorg-video-ati
-apt-get -y remove xserver-xorg-video-radeon
-apt-get -y remove hddtemp
-
-apt-get -y autoremove
-
-# Remove foreign man pages and locales
-rm -rf /usr/share/man/??
-rm -rf /usr/share/man/??_*
-rm -rf /var/cache/man/??
-rm -rf /var/cache/man/??_*
-(cd /usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
-
-# Remove document files
-rm -rf /usr/share/doc
-
 # create users and set password
 useradd -m -G audio -s /bin/bash user
 useradd -m -G audio -s /bin/bash x_user
@@ -557,9 +548,20 @@ rm -f user-stage
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_base.sh
 	sleep 1; sync
 
-## apply drm-update-arm.patch
-	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_patched-drm-prebuilt.sh
+## install xorg libs
+	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_patched-xorg-server.sh
 	sleep 1; sync
+
+## install iMX GPU libs
+	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_imx-gpu.sh
+	sleep 1; sync
+
+### install vivante init scripts
+	cp ${G_VARISCITE_PATH}/xorg.conf ${ROOTFS_BASE}/usr/share/X11/xorg.conf.d/90-vivante.conf
+	install -m 0755 ${G_VARISCITE_PATH}/vivante ${ROOTFS_BASE}/etc/init.d/
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d vivante defaults
+	install -m 0755 ${G_VARISCITE_PATH}/rc.autohdmi ${ROOTFS_BASE}/etc/init.d
+	LANG=C chroot ${ROOTFS_BASE} update-rc.d rc.autohdmi defaults
 
 ## install iMX VPU libs
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_gst.sh
@@ -718,6 +720,9 @@ function install_imx_packages() {
 
 	cp -dr ${G_IMX_VPU_LOCAL_DIR} ${IMX_DIR}
 	cp -dr ${G_IMX_CODEC_LOCAL_DIR} ${IMX_DIR}
+	cp -dr ${G_IMX_GPU_G2D_LOCAL_DIR} ${IMX_DIR}
+	cp -dr ${G_IMX_GPU_VIV_LOCAL_DIR} ${IMX_DIR}
+	cp -dr ${G_IMX_XORG_DRV_SRC_DIR} ${IMX_DIR}
 	cp -dr ${G_IMX_VPU_API_SRC_DIR} ${IMX_DIR}
 	cp -dr ${G_IMX_GSTREAMER_SRC_DIR} ${IMX_DIR}
 
@@ -1096,6 +1101,9 @@ function cmd_make_deploy() {
 	(( `ls ${G_IMX_XORG_DRV_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get XORG driver repository";
 		get_git_src ${G_IMX_XORG_DRV_GIT} ${G_IMX_XORG_DRV_GIT_BRANCH} ${G_IMX_XORG_DRV_SRC_DIR} ${G_IMX_XORG_DRV_GIT_SRCREV}
+		cd ${G_IMX_XORG_DRV_SRC_DIR}
+		patch -p1 < ${DEF_BUILDENV}/patches/imx/xf86-video-imx-vivante/makefile.patch
+		cd -
 	};
 
 	# get imx vpu api repository

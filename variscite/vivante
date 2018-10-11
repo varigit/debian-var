@@ -1,0 +1,19 @@
+#!/bin/sh -e
+### BEGIN INIT INFO
+# Provides:          vivante
+# Required-Start:    $all
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+log_daemon_msg  "I: force mesa symbolic links"
+
+cd /usr/lib/arm-linux-gnueabihf
+ln -sf vivante/libEGL.so.1 libEGL.so.1
+ln -sf vivante/libGLESv2.so.2 libGLESv2.so.2
+ln -sf vivante/libGL.so.1 libGL.so.1
+
+exit 0

@@ -1,0 +1,12 @@
+--- a/hw/xfree86/common/xf86platformBus.c
++++ b/hw/xfree86/common/xf86platformBus.c
+@@ -298,6 +298,9 @@
+     for (i = 0; i < xf86_num_platform_devices; i++) {
+         char *busid = xf86_platform_odev_attributes(i)->busid;
+ 
++        if (!busid) {
++            xf86Msg(X_INFO, "Scanning PCI: empty busid for device %d\n", i);
++        } else
+         if (pci && (strncmp(busid, "pci:", 4) == 0)) {
+             platform_find_pci_info(&xf86_platform_devices[i], busid);
+         }

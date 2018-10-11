@@ -1,8 +1,10 @@
+#!/bin/bash
+
 # ref https://github.com/Freescale/gstreamer-imx/blob/master/docs/debian-ubuntu.md
 echo "I: install gstreamer-imx dependencies"
 apt-get install -y gstreamer1.0-x gstreamer1.0-plugins-base-apps libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev
 apt-get install -y gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-plugins-good
-apt-get install -y autoconf automake build-essential libtool pkg-config python
+apt-get install -y autoconf automake build-essential libtool pkg-config python libpango1.0-dev
 
 echo "I: install libvpu"
 cd /usr/local/src/imx/imx-vpu*
@@ -29,7 +31,7 @@ cd /usr/local/src/imx/libimxvpuapi
 echo "I: install gstreamer-imx"
 cd /usr/local/src/imx/gstreamer-imx
 export CFLAGS=-I/usr/include/vivante
-export LDFLAGS=-L/usr/lib/arm-linux-gnueabihf/vivante/x11
+export LDFLAGS=-L/usr/lib/arm-linux-gnueabihf/vivante
 ./waf configure --prefix=/usr --kernel-headers=/usr/local/include
 ./waf -j1
 ./waf install

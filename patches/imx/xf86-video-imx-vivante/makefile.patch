@@ -1,0 +1,16 @@
+diff --git a/EXA/src/makefile.linux b/EXA/src/makefile.linux
+index 5f44807..ebc68fe 100644
+--- a/EXA/src/makefile.linux
++++ b/EXA/src/makefile.linux
+@@ -101,9 +101,9 @@ CFLAGS  += -DSMALL_THRESHOLD -DADD_FSL_XRANDR
+ CFLAGS += -fvisibility=hidden -fPIC -DPIC
+ CFLAGS += -I. -I.. -I$(ROOTFS_USR)/include -I$(ROOTFS_USR)/include/xorg \
+           -I$(ROOTFS_USR)/include/X11/dri -I$(ROOTFS_USR)/include/$(PIXMAN)
+-CFLAGS += -I./vivante_gal -I./vivante_fbdev -I./vivante_util -I./vivante_exa -I./vivante_extension -I$(ROOTFS_USR)/include/HAL
++CFLAGS += -I./vivante_gal -I./vivante_fbdev -I./vivante_util -I./vivante_exa -I./vivante_extension -I$(ROOTFS_USR)/include/vivante -I$(ROOTFS_USR)/include/vivante/HAL
+ 
+-LFLAGS += -fPIC -Wall -Wl,-soname,vivante_drv.so -lm -ldl -L$(SDK_DIR)/drivers -lGAL
++LFLAGS += -fPIC -Wall -Wl,-soname,vivante_drv.so -lm -ldl -L$(SDK_DIR)/drivers -lGAL -L/usr/lib/arm-linux-gnueabihf/vivante
+ ifeq ($(HAVE_G2D),1)
+     LFLAGS  += -lg2d
+ endif

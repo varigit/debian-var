@@ -1,0 +1,23 @@
+From 4882c259562ea7f36cee599c7165fb3b9cd2fca2 Mon Sep 17 00:00:00 2001
+From: Timo Aaltonen <tjaalton@debian.org>
+Date: Wed, 16 Aug 2017 09:49:26 +0300
+Subject: [PATCH] rules: Drop dh_strip override, dbgsym transition is done.
+
+---
+ debian/rules     | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/debian/rules b/debian/rules
+index 67b244fb4..11f8ff48a 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -292,7 +292,3 @@
+ 	install -d debian/xserver-xorg-core-udeb/lib/udev/rules.d
+ 	install -m 644 debian/local/64-xorg-xkb.rules debian/xserver-xorg-core-udeb/lib/udev/rules.d
+ endif
+-
+-override_dh_strip:
+-	dh_strip -pxserver-xorg-core --dbgsym-migration="xserver-xorg-core-dbg (<< 2:1.19.0-3~)"
+-	dh_strip -s -Nxserver-xorg-core -Nxserver-xorg-core-dbg
+-- 
+2.19.1
