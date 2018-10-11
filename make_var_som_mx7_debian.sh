@@ -491,9 +491,6 @@ rm -f user-stage
 ## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
-## added fixed systemd-hostnamed unit file
-	install -m 0644 ${G_VARISCITE_PATH}/systemd-hostnamed.service ${ROOTFS_BASE}/lib/systemd/system
-
 	pr_info "rootfs: clean"
 
 ## clenup command
