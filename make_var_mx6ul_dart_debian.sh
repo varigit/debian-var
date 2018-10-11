@@ -270,10 +270,9 @@ function make_debian_rootfs() {
 	echo "user ALL=(root) /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/vi, /sbin/reboot" > ${ROOTFS_BASE}/etc/sudoers.d/user
 	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
 
-
-echo "deb $PARAM_DEB_LOCAL_MIRROR ${DEB_RELEASE} main contrib non-free
+## added mirror to source list
+echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
-
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -494,10 +493,6 @@ rm -f user-stage
 
 ## added fixed systemd-hostnamed unit file
 	install -m 0644 ${G_VARISCITE_PATH}/systemd-hostnamed.service ${ROOTFS_BASE}/lib/systemd/system
-
-## added mirror to source list
-echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
-" > etc/apt/sources.list
 
 	pr_info "rootfs: clean"
 
