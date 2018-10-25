@@ -253,7 +253,6 @@ function pr_debug() {
 	echo "D: $1"
 }
 
-
 ### work functions ###
 
 # get sources from git repository
@@ -278,6 +277,22 @@ function get_remote_file() {
 	# download remote file
 	wget -c ${1} -O ${2}
 	return $?
+}
+
+function make_prepare() {
+## create src dirs
+	mkdir -p ${DEF_SRC_DIR}/imx && :;
+	mkdir -p ${DEF_SRC_DIR}/wilink8 && :;
+	mkdir -p ${G_TOOLS_PATH} && :;
+
+## create rootfs dir
+	mkdir -p ${G_ROOTFS_DIR} && :;
+
+## create out dir
+	mkdir -p ${PARAM_OUTPUT_DIR} && :;
+
+## create tmp dir
+	mkdir -p ${G_TMP_DIR} && :;
 }
 
 # unpack fsl package
@@ -423,6 +438,8 @@ protected_install xfce4-goodies
 
 # network manager
 protected_install network-manager-gnome
+
+# net-tools (ifconfig, etc.)
 protected_install net-tools
 
 ## fix lightdm config (added autologin x_user) ##
@@ -462,6 +479,23 @@ protected_install udhcpd
 
 # can support
 protected_install can-utils
+
+# delete unused packages ##
+apt-get -y remove xserver-xorg-video-ati
+apt-get -y remove xserver-xorg-video-radeon
+apt-get -y remove hddtemp
+
+apt-get -y autoremove
+
+# Remove foreign man pages and locales
+rm -rf /usr/share/man/??
+rm -rf /usr/share/man/??_*
+rm -rf /var/cache/man/??
+rm -rf /var/cache/man/??_*
+(cd /usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
+
+# Remove document files
+rm -rf /usr/share/doc
 
 # create users and set password
 useradd -m -G audio -s /bin/bash user
@@ -524,19 +558,11 @@ rm -f user-stage
 ## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
-	cp ${G_VARISCITE_PATH}/chroot_script* ${ROOTFS_BASE}
-
 ## install kernel modules in rootfs
 	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} ${ROOTFS_BASE} || {
 		pr_error "Failed #$? in function install_kernel_modules"
 		return 2;
 	}
-
-## install wl18xx stuff
-	install_wl18xx_packages ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}
-
-## copy imx sources to rootfs for native compilation
-	install_imx_packages
 
 ## copy custom files
 	cp ${G_VARISCITE_PATH}/kobs-ng ${ROOTFS_BASE}/usr/bin
@@ -544,6 +570,14 @@ rm -f user-stage
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
+
+	cp ${G_VARISCITE_PATH}/chroot_script* ${ROOTFS_BASE}
+
+## install wl18xx stuff
+	install_wl18xx_packages ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}
+
+## copy imx sources to rootfs for native compilation
+	install_imx_packages
 
 	LANG=C LC_ALL=C chroot ${ROOTFS_BASE} /chroot_script_base.sh
 	sleep 1; sync
@@ -589,7 +623,7 @@ rm -f cleanup
 	rm ${ROOTFS_BASE}/chroot_script*
 	rm -rf ${ROOTFS_BASE}/usr/local/src/*
 
-	return 0
+	return 0;
 }
 
 # make tarbar arx from footfs
@@ -818,7 +852,7 @@ function check_sdcard()
 	# Check that device is either removable or loop
 	if [ "$removable" != "1" -a $(stat -c '%t' /dev/$dev) != ${LOOP_MAJOR} ]; then
 		pr_error "$1 is not a removable device, exiting"
-		#return 1
+		return 1
 	fi
 
 	# Check that device is attached
@@ -869,10 +903,6 @@ function make_sdcard() {
 			umount ${LPARAM_BLOCK_DEVICE}${part}$i
 		fi
 	done
-
-	# Call sfdisk to get total card size
-	local TOTAL_SIZE=`sfdisk -s ${LPARAM_BLOCK_DEVICE}`
-	local TOTAL_SIZE=`expr ${TOTAL_SIZE} / 1024`
 
 	function format_sdcard
 	{
@@ -1015,12 +1045,7 @@ EOF
 #################### commands ################
 
 function cmd_make_deploy() {
-	mkdir -p ${DEF_SRC_DIR}/imx
-	mkdir -p ${DEF_SRC_DIR}/wilink8
-	mkdir -p ${G_TOOLS_PATH}
-	mkdir -p ${G_ROOTFS_DIR}
-	mkdir -p ${G_TMP_DIR}
-	mkdir -p ${PARAM_OUTPUT_DIR}
+	make_prepare;
 
 	# get linaro toolchain
 	(( `ls ${G_CROSS_COMPILER_PATH} 2>/dev/null | wc -l` == 0 )) && {
@@ -1122,6 +1147,8 @@ function cmd_make_deploy() {
 }
 
 function cmd_make_rootfs() {
+	make_prepare;
+
 	## make debian rootfs
 	cd ${G_ROOTFS_DIR}
 	make_debian_rootfs ${G_ROOTFS_DIR} || {
@@ -1158,8 +1185,14 @@ function cmd_make_kernel() {
 	return 0;
 }
 
-
 function cmd_make_kmodules() {
+	make_prepare;
+
+	rm -rf ${G_ROOTFS_DIR}/lib/modules/* || {
+		pr_error "Failed #$? prepare modules dir"
+		return 1;
+	};
+
 	make_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} || {
 		pr_error "Failed #$? in function make_kernel_modules"
 		return 2;
