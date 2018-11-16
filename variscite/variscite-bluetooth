@@ -96,7 +96,9 @@ bt_found || exit 0
 		enable_bt
 
 		# Get BT MAC address
-		BT_MACADDR=$(get_bt_macaddr)
+		#BT_MACADDR=$(get_bt_macaddr)
+		# Provisional fix to fake max address
+		BT_MACADDR="de:ad:be:ef:ca:fe"
 
 		# On SOMs with 5G WIFI use different firmware binary
 		if som_has_5g_wifi; then
