@@ -65,7 +65,7 @@ function format_debian
 	umount /run/media/mmcblk1p2 2>/dev/null
 	mkfs.ext4  ${node}p1 -LBOOT-VARSOM
 	mkfs.ext4  ${node}p2 -Lrootfs
-	mkfs.exfat ${node}p3 -nTwoNavData
+	mkfs.vfat ${node}p3 -nTwoNavData
 	sync
 }
 
@@ -163,7 +163,7 @@ $TNpart_start
 
 t
 3
-7
+b
 p
 w
 EOF

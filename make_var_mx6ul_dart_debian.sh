@@ -97,7 +97,7 @@ readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolch
 
 ############## user rootfs packages ##########
 #We need the binaries to make it run, but we need the *dev packages to compile it. Maybe we can split into two packages types: rootfs and sysroot
-readonly G_USER_PACKAGES="minicom tree bash-completion libc6 libglu1-mesa-dev libcurl4-gnutls-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libfreetype6-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libapt-pkg-dev libbluetooth-dev dosfstools gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev exfat-utils exfat-fuse libssl-dev libstdc++-4.9-dev" 
+readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev"
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -132,6 +132,7 @@ function usage() {
 	echo "       all         		-- build or rebuild kernel/bootloader/rootfs"
 	echo "       bootloader  		-- build or rebuild bootloader (u-boot+SPL)"
 	echo "       kernel      		-- build or rebuild linux kernel for this board"
+	echo "       package      		-- build or rebuild linux kernel package for this board"
 	echo "       modules     		-- build or rebuild linux kernel modules and install in rootfs directory for this board"
 	echo "       kernel_to_sd     	-- copy kernel and modules contents to sdcard"
 	echo "       -r|--rebuild     	-- rebuild kernel and modules"
@@ -563,7 +564,6 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.local ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.installer ${ROOTFS_BASE}/etc/
-	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
 	install -m 0644 ${G_VARISCITE_PATH}/uuid.h ${ROOTFS_BASE}/usr/include/bluetooth/
 
 ## added alsa default configs ##
@@ -637,21 +637,6 @@ function make_kernel() {
 	pr_info "make ${3} file"
 	make CROSS_COMPILE=${1} ARCH=arm ${G_CROSS_COMPILEER_JOPTION} -C ${4} ${3}
 
-	cd ${4}
-	if [ "$UBUNTU_VERSION" -ge 16 ]; then
-		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd linux_headers linux_image
-	else
-		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd --zImage linux_headers linux_image
-	fi
-
-	cp ${4}/arch/arm/boot/dts/*-var-dart-*emmc_wifi.dtb ${4}/debian/linux-image-$KERNEL_NAME/boot
-	cp ${4}/arch/arm/boot/zImage ${4}/debian/linux-image-$KERNEL_NAME/boot
-	dpkg --build ${4}/debian/linux-image-$KERNEL_NAME ..
-
-	mv ../*.deb ${5}/;
-
-	cd -
-
 	pr_info "Copy kernel and dtb files to output dir: ${5}"
 	cp ${4}/arch/arm/boot/zImage ${5}/;
 	cp ${4}/arch/arm/boot/dts/*.dtb ${5}/;
@@ -697,6 +682,35 @@ function make_kernel_modules() {
 	pr_info "Installing WIFI modules"
 	make ARCH=arm CROSS_COMPILE=${1} KLIB_BUILD=${3} KLIB=${4} INSTALL_MOD_PATH=${4} -C ${G_BCM_DRV_SRC_DIR} modules_install
 
+	return 0;
+}
+
+# build linux kernel package
+# $1 -- cross compiller prefix
+# $2 -- linux dirname
+# $3 -- rootfs dirname
+# $4 -- out patch
+function build_kernel_package() {
+
+	cd ${2}
+	if [ "$UBUNTU_VERSION" -ge 16 ]; then
+		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd linux_headers linux_image
+	else
+		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd --zImage linux_headers linux_image
+	fi
+
+	cp -r ${3}/lib/modules/$KERNEL_NAME/updates ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
+	#cp ${3}/lib/modules/$KERNEL_NAME/modules.*  ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
+	cp ${2}/arch/arm/boot/dts/*-var-dart-*emmc_wifi.dtb ${2}/debian/linux-image-$KERNEL_NAME/boot
+	cp ${2}/arch/arm/boot/zImage ${2}/debian/linux-image-$KERNEL_NAME/boot
+	dpkg --build ${2}/debian/linux-image-$KERNEL_NAME ..
+
+	mv ../*.deb ${4}/;
+	cp ${4}/*.deb $G_TWONAV_PATH/recovery
+	cp ${4}/*.deb ${3}/opt/twonav/recovery
+
+	cd -
+	
 	return 0;
 }
 
@@ -1173,6 +1187,12 @@ function cmd_make_rootfs() {
 		return 4;
 	};
 
+	## make kernel package
+	build_kernel_package ${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} ${PARAM_OUTPUT_DIR} || {
+		pr_error "Failed #$? in function build_kernel_package"
+		return 1;
+	};
+
 	## pack rootfs
 	make_tarbar ${G_ROOTFS_DIR} ${G_ROOTFS_TARBAR_PATH} || {
 		pr_error "Failed #$? in function make_tarbar"
@@ -1208,6 +1228,18 @@ function cmd_make_kernel() {
 	};
 
 	return 0;
+}
+
+function cmd_build_kernel_package() {
+	make_prepare;
+
+	build_kernel_package ${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} ${PARAM_OUTPUT_DIR} || {
+		pr_error "Failed #$? in function build_kernel_package"
+		return 1;
+	};
+
+	return 0;
+
 }
 
 
@@ -1337,6 +1369,13 @@ case $PARAM_CMD in
 		;;
 	kernel )
 		cmd_make_kernel || {
+			V_RET_CODE=1;
+		};
+		;;
+	package )
+		(cmd_make_kernel &&
+		cmd_make_kmodules &&
+		cmd_build_kernel_package ) || {
 			V_RET_CODE=1;
 		};
 		;;
