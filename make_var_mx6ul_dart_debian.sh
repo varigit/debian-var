@@ -132,7 +132,7 @@ function usage() {
 	echo "       all         		-- build or rebuild kernel/bootloader/rootfs"
 	echo "       bootloader  		-- build or rebuild bootloader (u-boot+SPL)"
 	echo "       kernel      		-- build or rebuild linux kernel for this board"
-	echo "       package      		-- build or linux kernel package for this board"
+	echo "       package      		-- build or rebuild linux kernel package for this board"
 	echo "       modules     		-- build or rebuild linux kernel modules and install in rootfs directory for this board"
 	echo "       kernel_to_sd     	-- copy kernel and modules contents to sdcard"
 	echo "       -r|--rebuild     	-- rebuild kernel and modules"

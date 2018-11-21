@@ -8,8 +8,5 @@ while kill -0 $pid_installer
 do
     sleep 0.1
 done
-echo "Setting right permissions and owner"
-chown syslog:adm /var/log/syslog
-chown syslog:adm /var/log/kern.log
 sync
 reboot
