@@ -548,15 +548,45 @@ rm -f user-stage
 };
 
 ## fix files links and missing files ##
-	ln -sfv ../../../lib/arm-linux-gnueabihf/libz.so.1.2.8 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libz.so
-	ln -sfv ../../../lib/arm-linux-gnueabihf/libm.so.6 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libm.so
-	ln -sfv ../../../lib/arm-linux-gnueabihf/libdl.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdl.so
-	ln -sfv ../../../lib/arm-linux-gnueabihf/libdbus-1.so.3.8.14 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdbus-1.so
-	ln -sfv libdbus-glib-1.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdbus-glib-1.so
-	ln -sfv ../../../lib/arm-linux-gnueabihf/libglib-2.0.so.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libglib-2.0.so
-	ln -sfv libnm-glib.so.4 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-glib.so
-	ln -sfv libnm-util.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-util.so
-	ln -sfv ../../../lib/arm-linux-gnueabihf/libuuid.so.1.3.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libuuid.so
+	USR_LIB_ARM_PATH = ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libz.so.1.2.8 $USR_LIB_ARM_PATH/libz.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libm.so.6 $USR_LIB_ARM_PATH/libm.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libdl.so.2 $USR_LIB_ARM_PATH/libdl.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libdbus-1.so.3.8.14 $USR_LIB_ARM_PATH/libdbus-1.so
+	ln -sfv libdbus-glib-1.so.2 $USR_LIB_ARM_PATH/libdbus-glib-1.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libglib-2.0.so.0 $USR_LIB_ARM_PATH/libglib-2.0.so
+	ln -sfv libnm-glib.so.4 $USR_LIB_ARM_PATH/libnm-glib.so
+	ln -sfv libnm-util.so.2 $USR_LIB_ARM_PATH/libnm-util.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libuuid.so.1.3.0 $USR_LIB_ARM_PATH/libuuid.so
+
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libanl.so.1 $USR_LIB_ARM_PATH/libanl.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libBrokenLocale.so.1 $USR_LIB_ARM_PATH/libBrokenLocale.so 
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libcidn.so.1 $USR_LIB_ARM_PATH/libcidn.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libcrypt.so.1 $USR_LIB_ARM_PATH/libcrypt.so 
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libhistory.so.6 $USR_LIB_ARM_PATH/libhistory.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libiw.so.30 $USR_LIB_ARM_PATH/libiw.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnsl.so.1 $USR_LIB_ARM_PATH/libnsl.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_compat.so.2 $USR_LIB_ARM_PATH/libnss_compat.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_dns.so.2 $USR_LIB_ARM_PATH/libnss_dns.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_files.so.2 $USR_LIB_ARM_PATH/libnss_files.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_hesiod.so.2 $USR_LIB_ARM_PATH/libnss_hesiod.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_nisplus.so.2 $USR_LIB_ARM_PATH/libnss_nisplus.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_nis.so.2 $USR_LIB_ARM_PATH/libnss_nis.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libpcre.so.3 $USR_LIB_ARM_PATH/libpcre.so
+	ln -sfv $USR_LIB_ARM_PATH/libpng12.so.0 $USR_LIB_ARM_PATH/libpng12.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libpng12.so.0 $USR_LIB_ARM_PATH/libpng12.so.0
+	ln -sfv $USR_LIB_ARM_PATH/libpng12.so $USR_LIB_ARM_PATH/libpng.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libreadline.so.6 $USR_LIB_ARM_PATH/libreadline.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libresolv.so.2 $USR_LIB_ARM_PATH/libresolv.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/librt.so.1 $USR_LIB_ARM_PATH/librt.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libslang.so.2 $USR_LIB_ARM_PATH/libslang.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libthread_db.so.1 $USR_LIB_ARM_PATH/libthread_db.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libtinfo.so.5 $USR_LIB_ARM_PATH/libtinfo.so
+	ln -sfv ../../../var/lib/dpkg/alternatives/libtxc-dxtn-arm-linux-gnueabihf $USR_LIB_ARM_PATH/libtxc_dxtn.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libudev.so.1.5.0 $USR_LIB_ARM_PATH/libudev.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libusb-0.1.so.4 $USR_LIB_ARM_PATH/libusb-0.1.so.4
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libusb-0.1.so.4.4.4 $USR_LIB_ARM_PATH/libusb.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libutil.so.1 $USR_LIB_ARM_PATH/libutil.so
 
 ## binaries rootfs patching ##
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
