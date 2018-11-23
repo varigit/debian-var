@@ -33,7 +33,7 @@ readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="http://deb.debian.org/debian"
+readonly DEF_DEBIAN_MIRROR="http://ftp.de.debian.org/debian/"
 readonly DEB_RELEASE="jessie"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
@@ -548,6 +548,7 @@ rm -f user-stage
 };
 
 ## fix files links and missing files ##
+	echo "Fixing softlinks..."
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libz.so.1.2.8 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libz.so
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libm.so.6 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libm.so
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libdl.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libdl.so
@@ -557,6 +558,36 @@ rm -f user-stage
 	ln -sfv libnm-glib.so.4 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-glib.so
 	ln -sfv libnm-util.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnm-util.so
 	ln -sfv ../../../lib/arm-linux-gnueabihf/libuuid.so.1.3.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libuuid.so
+
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libanl.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libanl.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libBrokenLocale.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libBrokenLocale.so 
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libcidn.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libcidn.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libcrypt.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libcrypt.so 
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libhistory.so.6 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libhistory.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libiw.so.30 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libiw.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnsl.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnsl.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_compat.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnss_compat.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_dns.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnss_dns.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_files.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnss_files.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_hesiod.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnss_hesiod.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_nisplus.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnss_nisplus.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libnss_nis.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libnss_nis.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libpcre.so.3 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libpcre.so
+	ln -sfv libpng12.so.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libpng12.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libpng12.so.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libpng12.so.0
+	ln -sfv libpng12.so ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libpng.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libreadline.so.6 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libreadline.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libresolv.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libresolv.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/librt.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/librt.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libslang.so.2 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libslang.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libthread_db.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libthread_db.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libtinfo.so.5 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libtinfo.so
+	ln -sfv ../../../var/lib/dpkg/alternatives/libtxc-dxtn-arm-linux-gnueabihf ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libtxc_dxtn.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libudev.so.1.5.0 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libudev.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libusb-0.1.so.4 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libusb-0.1.so.4
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libusb-0.1.so.4.4.4 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libusb.so
+	ln -sfv ../../../lib/arm-linux-gnueabihf/libutil.so.1 ${ROOTFS_BASE}/usr/lib/arm-linux-gnueabihf/libutil.so
+	echo "Softlinks Fixed"
 
 ## binaries rootfs patching ##
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
