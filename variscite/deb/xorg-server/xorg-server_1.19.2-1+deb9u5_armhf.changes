@@ -1,0 +1,98 @@
+Format: 1.8
+Date: Wed, 31 Oct 2018 17:58:03 +0100
+Source: xorg-server
+Binary: xserver-xorg-core xserver-xorg-core-udeb xserver-xorg-dev xdmx xdmx-tools xnest xvfb xserver-xephyr xserver-common xorg-server-source xwayland xserver-xorg-legacy
+Architecture: armhf all
+Version: 2:1.19.2-1+deb9u5
+Distribution: stretch
+Urgency: medium
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Changed-By: Andreas Boll <aboll@debian.org>
+Description:
+ xdmx       - distributed multihead X server
+ xdmx-tools - Distributed Multihead X tools
+ xnest      - Nested X server
+ xorg-server-source - Xorg X server - source files
+ xserver-common - common files used by various X servers
+ xserver-xephyr - nested X server
+ xserver-xorg-core - Xorg X server - core server
+ xserver-xorg-core-udeb - Xorg X server - core server (udeb)
+ xserver-xorg-dev - Xorg X server - development files
+ xserver-xorg-legacy - setuid root Xorg server wrapper
+ xvfb       - Virtual Framebuffer 'fake' X server
+ xwayland   - Xwayland X server
+Closes: 908601
+Changes:
+ xorg-server (2:1.19.2-1+deb9u5) stretch; urgency=medium
+ .
+   * Cherry-pick c2954b16c (glx: do not pick sRGB config for 32-bit RGBA
+     visual) from upstream. Fixes various blending issues with kwin and
+     Mesa >= 18.0 (i.e. Mesa from stretch-backports) (Closes: #908601).
+     Thanks to Nicholas D Steeves and Robert Trebula for testing!
+Checksums-Sha1:
+ 9e2446aedd91e6ae2de56d6bb36e34509f239b20 5151238 xdmx-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 5cddbbb8d6d9b73043270871d46144fa2390598e 195580 xdmx-tools-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 2d288db18990bb47ea66a9662b82afaf9ebb8b10 2082296 xdmx-tools_1.19.2-1+deb9u5_armhf.deb
+ 42e3938070281212ec505858832b6620eea42ca8 2683958 xdmx_1.19.2-1+deb9u5_armhf.deb
+ 9a084da6a0ce35b337523b6b8313677413dde7a6 3694892 xnest-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 4c49bf312fca5d1ae9475806c71c31e4e576709b 2571404 xnest_1.19.2-1+deb9u5_armhf.deb
+ 6e1de614db83dc47ba976ff1dc87b826b9fdac67 6964252 xorg-server-source_1.19.2-1+deb9u5_all.deb
+ 24e5f0558916be0a91df05ab4685eb83ca413e4c 17320 xorg-server_1.19.2-1+deb9u5_armhf.buildinfo
+ 15b8e076b5898d891835388cba484e84fe8691fd 2059466 xserver-common_1.19.2-1+deb9u5_all.deb
+ 09705e8723d46ad0c4d543a14dddbbe02fca2e94 6979042 xserver-xephyr-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 49a1caa459f39c2d94506f578324fe7c5fea6b23 2803038 xserver-xephyr_1.19.2-1+deb9u5_armhf.deb
+ c40b7e00f8be897ea0c1539c95a5e381655e4dba 9633624 xserver-xorg-core-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 85effd53674ebe5234b6886c778c4bad8ca45122 777566 xserver-xorg-core-udeb_1.19.2-1+deb9u5_armhf.udeb
+ a343944c89175de56283ad67a83250cced6fe59f 3152350 xserver-xorg-core_1.19.2-1+deb9u5_armhf.deb
+ eb24e2700c1c438e311c1f2fc1f2bdb6d1f2318f 2231050 xserver-xorg-dev_1.19.2-1+deb9u5_armhf.deb
+ fbb746be5ad9838006bfb225dfffc01b7af86af1 9850 xserver-xorg-legacy-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 5ecc24a54ac9073d5703bf2b0f2aca35b4a14bbe 2067404 xserver-xorg-legacy_1.19.2-1+deb9u5_armhf.deb
+ cc7bd44be443977ed58cb2ae0c6b7a801efb186a 4497824 xvfb-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ df9631be2908a2ba36eded0a17981cca5a3ed4ec 2687436 xvfb_1.19.2-1+deb9u5_armhf.deb
+ 9ce15040b3df23cdd63af95955fe00959508691b 6525182 xwayland-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ e85a506afc3c6ba0293fc28531d6cb142ff28217 2748658 xwayland_1.19.2-1+deb9u5_armhf.deb
+Checksums-Sha256:
+ 6c71d8c680a6012b9c28160b0057ead07da9bc48109729bb7850755a5116765e 5151238 xdmx-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 7fbbe16ac7910911d595d0ae48aa2240762f7ba8557b996099b0dcc6f984827f 195580 xdmx-tools-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ aa2d6d0f7ade9f86527c3b53ef5e44d9d332b3af698e104da353d3a349c8a0aa 2082296 xdmx-tools_1.19.2-1+deb9u5_armhf.deb
+ 255f924cca8957995476c68cfdd992ba6c75a18397b1d49aafb9fc9c6d03cc4c 2683958 xdmx_1.19.2-1+deb9u5_armhf.deb
+ f0a7559ab759624697559fb6173682b269515c5b231250386572b27a6bfff7cd 3694892 xnest-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ c560d7ec7c5fed05e27cafcd517f2b48f8a7f4fae2c2ce44377c5983fc583f8e 2571404 xnest_1.19.2-1+deb9u5_armhf.deb
+ efb540377c980b93a982dca2639a1a445e1258a2e631a613f3245b121d9cc5c8 6964252 xorg-server-source_1.19.2-1+deb9u5_all.deb
+ df49e7777dc4e2bb66eb3dc86ef058cb6684062be21fb114a5c4094bbc92225e 17320 xorg-server_1.19.2-1+deb9u5_armhf.buildinfo
+ 5a890903baa656bab224a10ae8d5718b31de328d292755267fbd319fa8d516b8 2059466 xserver-common_1.19.2-1+deb9u5_all.deb
+ 4488428d13382681913f1c0ec343cf028e14949515afa266cd20ea4acbdc0f76 6979042 xserver-xephyr-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 0a79c6688b2f15f5164f9d25d308113be4c570eb5c2435f0cd7346b01c50e96f 2803038 xserver-xephyr_1.19.2-1+deb9u5_armhf.deb
+ 6639dbca5144d42e84d6fcd8850c8cd58d656bac2100bda59a9236e07af695a4 9633624 xserver-xorg-core-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 5290d7184b25221f9f8cac66202fb3313398cfad717b39e34c4efe5ffa9ee929 777566 xserver-xorg-core-udeb_1.19.2-1+deb9u5_armhf.udeb
+ 9b894621b1fe1f764b6979a9b980d90de87404890df8dcb8c438b7d9b3159218 3152350 xserver-xorg-core_1.19.2-1+deb9u5_armhf.deb
+ f75b10bc87062649a2e9396ef5e49a5aac6b30830c56fd1a14ac3ec3208a14dd 2231050 xserver-xorg-dev_1.19.2-1+deb9u5_armhf.deb
+ 4f8329a1d00c1fd4471b7320dbfaf47d804b2e06f640815ddcb51f05533bbaed 9850 xserver-xorg-legacy-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 9606dcea5ebb115d2fd13f64528ca5be7fc2fbd0bd2a6beb15ca9a36011aa418 2067404 xserver-xorg-legacy_1.19.2-1+deb9u5_armhf.deb
+ 9db079c2c0729ad39615262ed41d1759df8148ff4cdf3db2010f3f91cdfcd6ee 4497824 xvfb-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 86e14bd268a61c1f9427bb3c18cd4d696d84673b6d5ce62e0a954fe70dc35039 2687436 xvfb_1.19.2-1+deb9u5_armhf.deb
+ 745c86d0389134d8f881b482d740dfca5cb1991d604969b3b44f62419a84a87f 6525182 xwayland-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 7e9c40d2e2f8a684d5d5e478a653a7a3fb67c9662fb4cc39cd463295fe7f664f 2748658 xwayland_1.19.2-1+deb9u5_armhf.deb
+Files:
+ 01912949482830580b6a20e1e78489f1 5151238 debug optional xdmx-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 38fb3da8aab00580bcd6bf039ad27f77 195580 debug optional xdmx-tools-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 4c3cecb84a71ed7222b1c45e62b323ea 2082296 x11 optional xdmx-tools_1.19.2-1+deb9u5_armhf.deb
+ 06316eb36872221e0febe0829d3edc0b 2683958 x11 optional xdmx_1.19.2-1+deb9u5_armhf.deb
+ 3f51cb0033e0ea456ce51c2362f14af4 3694892 debug optional xnest-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 431cb3cba535c41629bac7a7e7b96b5a 2571404 x11 optional xnest_1.19.2-1+deb9u5_armhf.deb
+ c57ca36ad2f134023215d23e9dbb6bf1 6964252 x11 optional xorg-server-source_1.19.2-1+deb9u5_all.deb
+ 454e4d89471479aaed34d548572e772b 17320 x11 optional xorg-server_1.19.2-1+deb9u5_armhf.buildinfo
+ b2c68b6bf65b76b13d2d5f230a43b019 2059466 x11 optional xserver-common_1.19.2-1+deb9u5_all.deb
+ 1ac5a2c93ad623587afdce7f584206dd 6979042 debug optional xserver-xephyr-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ e3caa6158a3d2d9364db7aa8ab96e0f8 2803038 x11 optional xserver-xephyr_1.19.2-1+deb9u5_armhf.deb
+ 5f25205a7f4a7ea35f1cc37fc3d2e2af 9633624 debug optional xserver-xorg-core-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 30cf7e272d498a2261151d39e2cbfe02 777566 debian-installer optional xserver-xorg-core-udeb_1.19.2-1+deb9u5_armhf.udeb
+ 2b124eba5c31a478e6a903f6cec96e72 3152350 x11 optional xserver-xorg-core_1.19.2-1+deb9u5_armhf.deb
+ c69dca7051e7501208fd67bc50b00caf 2231050 x11 optional xserver-xorg-dev_1.19.2-1+deb9u5_armhf.deb
+ 2135d89a2c0af59e6af28ca19b5de1b7 9850 debug optional xserver-xorg-legacy-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ b00e7a4d2fa2f50f1332698b88fc98e1 2067404 x11 extra xserver-xorg-legacy_1.19.2-1+deb9u5_armhf.deb
+ 678574a747a62a778c263add66cfaa47 4497824 debug optional xvfb-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 52f3b0c2ffa4877d2d5c222336089f65 2687436 x11 optional xvfb_1.19.2-1+deb9u5_armhf.deb
+ 33fcb8183453ecf1281622da838b351e 6525182 debug optional xwayland-dbgsym_1.19.2-1+deb9u5_armhf.deb
+ 3ff0d7976d8f057bb346edee03b02e8b 2748658 x11 optional xwayland_1.19.2-1+deb9u5_armhf.deb
+Package-Type: udeb
