@@ -70,19 +70,6 @@ readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
 readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
 readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
-## Broadcom BT/WIFI firmware ##
-readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
-G_BCM_FW_GIT="https://github.com/twonav/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_UP="https://repo_username:repo_password@github.com/twonav/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="3.5.5.18"
-readonly G_BCM_FW_GIT_REV="423be46b06b5629e45a4943f98a3053c819091ce"
-
-## Broadcom BT/WIFI driver ##
-readonly G_BCM_DRV_SRC_DIR="${DEF_SRC_DIR}/laird-linux-backports"
-G_BCM_DRV_GIT="https://github.com/twonav/laird-linux-backports.git"
-readonly G_BCM_DRV_GIT_UP="https://repo_username:repo_password@github.com/twonav/laird-linux-backports.git"
-readonly G_BCM_DRV_GIT_BRANCH="3.5.5.8"
-readonly G_BCM_DRV_GIT_REV="58a1896d37ec04bd16af8ab784145ae3c85d3c4b"
 
 ## ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
@@ -280,7 +267,6 @@ function git_update() {
 
 function make_prepare() {
 ## create src dirs
-	mkdir -p ${G_BCM_FW_SRC_DIR} && :;
 	mkdir -p ${G_LINUX_KERNEL_SRC_DIR} && :;
 	mkdir -p ${G_UBOOT_SRC_DIR} && :;
 	mkdir -p ${G_TOOLS_PATH} && :;
@@ -516,15 +502,15 @@ EOF
 
 ## fourth-stage ##
 ### install variscite-bluetooth init script
-	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus ${ROOTFS_BASE}/usr/bin/
-	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
-	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
-	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth enable 2 3 4 5
+#	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus ${ROOTFS_BASE}/usr/bin/
+#	install -m 0755 ${G_VARISCITE_PATH}/variscite-bluetooth ${ROOTFS_BASE}/etc/init.d/
+#	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth defaults
+#	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-bluetooth enable 2 3 4 5
 
 ### install variscite-wifi init script
-	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/init.d/
-	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi defaults
-	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi enable S
+#	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/init.d/
+#	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi defaults
+#	LANG=C chroot ${ROOTFS_BASE} update-rc.d variscite-wifi enable S
 
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
@@ -604,6 +590,11 @@ rm -f user-stage
 ## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
+## Include firmware files for wlan/bt
+	mkdir -p ${ROOTFS_BASE}/lib/firmware/ti-connectivity
+	cp -r ${G_TWONAV_PATH}/firmware/ti-connectivity ${ROOTFS_BASE}/lib/firmware/ti-connectivity
+
+
 # added mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
@@ -658,8 +649,6 @@ function make_kernel() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4}/ ${2}
 
-	# Disable CONFIG_CFG80211 and CONFIG_BRCMFMAC (WIFI support)
-	sed -i 's/CONFIG_CFG80211=y/CONFIG_CFG80211=n/' ${4}/.config
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${4} oldconfig
 
 	pr_info "make kernel"
@@ -694,8 +683,6 @@ function make_kernel_modules() {
 	pr_info "make kernel .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ ${2}
 
-	# Disable CONFIG_CFG80211 and CONFIG_BRCMFMAC (WIFI support)
-	sed -i 's/CONFIG_CFG80211=y/CONFIG_CFG80211=n/' ${3}/.config
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3} oldconfig
 
 	pr_info "Compiling Linux kernel modules"
@@ -703,15 +690,6 @@ function make_kernel_modules() {
 
 	pr_info "Installing Linux kernel modules to ${4}"
 	make CROSS_COMPILE=${1} ARCH=arm INSTALL_MOD_PATH=${4}/ ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ modules_install
-
-	pr_info "Generating lwb-fcc-var defconfig"
-	make ARCH=arm CC=gcc KLIB_BUILD=${3} KLIB=${4} -C ${G_BCM_DRV_SRC_DIR} defconfig-lwb-fcc-var
-
-	pr_info "Compiling WIFI modules modules"
-	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} KLIB_BUILD=${3} KLIB=${4} -C ${G_BCM_DRV_SRC_DIR} modules
-
-	pr_info "Installing WIFI modules"
-	make ARCH=arm CROSS_COMPILE=${1} KLIB_BUILD=${3} KLIB=${4} INSTALL_MOD_PATH=${4} -C ${G_BCM_DRV_SRC_DIR} modules_install
 
 	return 0;
 }
@@ -730,7 +708,7 @@ function build_kernel_package() {
 		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd --zImage linux_headers linux_image
 	fi
 
-	cp -r ${3}/lib/modules/$KERNEL_NAME/updates ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
+	#cp -r ${3}/lib/modules/$KERNEL_NAME/updates ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
 	#cp ${3}/lib/modules/$KERNEL_NAME/modules.*  ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
 	cp ${2}/arch/arm/boot/dts/*-var-dart-*emmc_wifi.dtb ${2}/debian/linux-image-$KERNEL_NAME/boot
 	cp ${2}/arch/arm/boot/zImage ${2}/debian/linux-image-$KERNEL_NAME/boot
@@ -797,21 +775,6 @@ function make_uboot() {
 	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
 	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	cp ${1}/u-boot.imx ${2}/${G_UBOOT_NAME_FOR_EMMC}.imx
-
-### make nand uboot ###
-	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_NAND}"
-	# clean work directory
-	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} mrproper
-
-	# make uboot config for nand
-	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} ${G_UBOOT_DEF_CONFIG_NAND}
-
-	# make uboot
-	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
-
-	# copy images
-	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_NAND}
-	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_NAND}
 
 	return 0;
 }
@@ -995,10 +958,6 @@ function make_sdcard() {
 
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
-		pr_info "Copying NAND U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_NAND}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_NAND}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
-
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
@@ -1016,7 +975,7 @@ function make_sdcard() {
 		cp ${G_VARISCITE_PATH}/rc.flasher	${P2_MOUNT_DIR}/etc/rc.local 
 	
 		# added exec options
-		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/debian-nand.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng ${P2_MOUNT_DIR}/etc/rc.local
+		chmod +x ${P2_MOUNT_DIR}/usr/sbin/debian-emmc.sh ${P2_MOUNT_DIR}/usr/sbin/kobs-ng ${P2_MOUNT_DIR}/etc/rc.local
 	}
 
 	function ceildiv
@@ -1102,46 +1061,10 @@ EOF
 	return 0;
 }
 
-# make firmware for wl bcm module
-# $1 -- bcm git directory
-# $2 -- rootfs output dir
-function make_bcm_fw() {
-	pr_info "Make and install bcm configs and firmware"
-
-	install -d ${2}/lib/firmware/bcm
-	install -d ${2}/lib/firmware/brcm
-	install -m 0644 ${1}/brcm/* ${2}/lib/firmware/brcm/
-	install -m 0644 ${1}/*.hcd ${2}/lib/firmware/bcm/
-	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
-	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
-
-	return 0;
-}
-
 #################### commands ################
 
 function cmd_make_deploy() {
 	make_prepare;
-
-	# get bcm firmware repository
-	(( `ls ${G_BCM_FW_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
-		[ "${PARAM_CREDENTIALS}" = "1" ] && {
-			G_BCM_FW_GIT=${G_BCM_FW_GIT_UP/repo_username/$PARAM_USERNAME}
-			G_BCM_FW_GIT=${G_BCM_FW_GIT/repo_password/$PARAM_PASSWORD}
-		};
-		pr_info "Get bcmhd firmware repository";
-		get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} ${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
-	};
-
-	# get bcm wifi driver repository
-	(( `ls ${G_BCM_DRV_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
-		[ "${PARAM_CREDENTIALS}" = "1" ] && {
-			G_BCM_DRV_GIT=${G_BCM_DRV_GIT_UP/repo_username/$PARAM_USERNAME}
-			G_BCM_DRV_GIT=${G_BCM_DRV_GIT/repo_password/$PARAM_PASSWORD}
-		};
-		pr_info "Get Laird backports repository";
-		get_git_src ${G_BCM_DRV_GIT} ${G_BCM_DRV_GIT_BRANCH} ${G_BCM_DRV_SRC_DIR} ${G_BCM_DRV_GIT_REV}
-	};
 
 	# get kernel repository
 	(( `ls ${G_LINUX_KERNEL_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
@@ -1177,14 +1100,6 @@ function cmd_make_deploy() {
 function cmd_update_repositories() {
 	make_prepare;
 
-	##Deactivated backports for now
-	
-	#pr_info "Updating bcmhd firmware repository";
-	#git_update ${G_BCM_FW_GIT}
-
-	#pr_info "Updating Laird backports repository";
-	#git_update ${G_BCM_DRV_GIT}
-
 	pr_info "Updating kernel repository";
 	git_update ${G_LINUX_KERNEL_SRC_DIR}
 
@@ -1211,12 +1126,6 @@ function cmd_make_rootfs() {
 		pr_error "Failed #$? in function make_kernel_modules"
 		return 2;
 	}
-
-	## make bcm firmwares
-	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_tarbar"
-		return 4;
-	};
 
 	## make kernel package
 	build_kernel_package ${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} ${PARAM_OUTPUT_DIR} || {
@@ -1335,17 +1244,6 @@ function cmd_make_sdcard() {
 	return 0;
 }
 
-function cmd_make_bcmfw() {
-	make_prepare
-
-	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_bcm_fw"
-		return 1;
-	};
-
-	return 0;
-}
-
 function cmd_make_clean() {
 
 	## clean kernel, dtb, modules
@@ -1423,11 +1321,6 @@ case $PARAM_CMD in
 		;;
 	kernel_to_sd )
 		cmd_copy_kernel || {
-			V_RET_CODE=1;
-		};
-		;;
-	bcmfw )
-		cmd_make_bcmfw || {
 			V_RET_CODE=1;
 		};
 		;;

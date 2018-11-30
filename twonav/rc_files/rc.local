@@ -25,7 +25,7 @@ echo $DATETIME > /etc/twonav/creation_date
 #do
 #    sleep 0.1
 #done
-mv /etc/rc.installer /etc/rc.local
-sync
-poweroff
+#mv /etc/rc.installer /etc/rc.local
+#sync
+#poweroff
 exit 0
