@@ -141,8 +141,8 @@ function usage() {
 }
 
 ###### parse input arguments ##
-readonly SHORTOPTS="c:o:u:p:d:h:r"
-readonly LONGOPTS="cmd:,output:,username:,password:,dev:,help,debug,rebuild"
+readonly SHORTOPTS="k:c:o:u:p:d:h:r"
+readonly LONGOPTS="instpkg:,cmd:,output:,username:,password:,dev:,help,debug,rebuild"
 
 ARGS=$(getopt -s bash --options ${SHORTOPTS}  \
   --longoptions ${LONGOPTS} --name ${SCRIPT_NAME} -- "$@" )
@@ -151,6 +151,10 @@ eval set -- "$ARGS"
 
 while true; do
 	case $1 in
+		-k|--instpkg ) # param pkg to install
+			shift
+			PARAM_INSTALL_PKG="$1";
+			;;
 		-c|--cmd ) # script command
 			shift
 			PARAM_CMD="$1";
@@ -1063,6 +1067,17 @@ EOF
 
 #################### commands ################
 
+function cmd_install_package() {	
+	cp /usr/bin/qemu-arm-static ${G_ROOTFS_DIR}/usr/bin/
+	mount -o bind /proc ${G_ROOTFS_DIR}/proc
+	mount -o bind /dev ${G_ROOTFS_DIR}/dev
+	mount -o bind /dev/pts ${G_ROOTFS_DIR}/dev/pts
+	mount -o bind /sys ${G_ROOTFS_DIR}/sys
+	LANG=C chroot $G_ROOTFS_DIR apt-get update
+	LANG=C chroot $G_ROOTFS_DIR apt-get -y install $1
+	umount ${G_ROOTFS_DIR}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
+}
+
 function cmd_make_deploy() {
 	make_prepare;
 
@@ -1281,6 +1296,11 @@ V_RET_CODE=0;
 pr_info "Command: \"$PARAM_CMD\" start..."
 
 case $PARAM_CMD in
+	instpkg )
+		cmd_install_package || {
+			V_RET_CODE=1;
+		};
+		;;
 	deploy )
 		cmd_make_deploy || {
 			V_RET_CODE=1;
