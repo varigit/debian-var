@@ -1068,6 +1068,8 @@ EOF
 #################### commands ################
 
 function cmd_install_package() {	
+# example:
+# $ sudo ./make_var_mx6ul_dart_debian.sh -c instpkg -k libmad0-dev
 	cp /usr/bin/qemu-arm-static ${G_ROOTFS_DIR}/usr/bin/
 	mount -o bind /proc ${G_ROOTFS_DIR}/proc
 	mount -o bind /dev ${G_ROOTFS_DIR}/dev
