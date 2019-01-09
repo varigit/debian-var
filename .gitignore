@@ -70,6 +70,7 @@ src
 toolchain
 tmp
 twonav/recovery/*
+!twonav/recovery/readme.txt
 twonav/tools/*
 
 *.orig
