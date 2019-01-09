@@ -62,13 +62,10 @@ readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dt
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 G_UBOOT_GIT="https://github.com/twonav/uboot-imx.git"
 readonly G_UBOOT_GIT_UP="https://repo_username:repo_password@github.com/twonav/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2015.04_4.1.15_1.1.0_twonav"
-readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
+readonly G_UBOOT_BRANCH="imx_v2016.03_4.1.15_2.0.0_twonav"
+readonly G_UBOOT_DEF_CONFIG_MMC='mx6ull_14x14_evk_emmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
-readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
-readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
-readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
-readonly G_SPL_NAME_FOR_NAND='SPL.nand'
+readonly G_UBOOT_NAME_FOR_EMMC='u-boot.imx'
 
 
 ## ubi
@@ -84,7 +81,7 @@ readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolch
 
 ############## user rootfs packages ##########
 #We need the binaries to make it run, but we need the *dev packages to compile it. Maybe we can split into two packages types: rootfs and sysroot
-readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev libreadline-dev libxi-dev libxinerama-dev libxcursor-dev libxrandr-dev libudev-dev libusb-dev libibus-1.0-dev libsdl2-mixer-dev evtest libjack-dev libgbm-dev"
+readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev libreadline-dev libxi-dev libxinerama-dev libxcursor-dev libxrandr-dev libudev-dev libusb-dev libibus-1.0-dev evtest libjack-dev libgbm-dev libmad0 libsdl2-mixer-2.0-0"
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -590,6 +587,7 @@ rm -f user-stage
 ## added alsa default configs ##
 	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
+	install -m 0664 ${G_TWONAV_PATH}/mixer/.asoundrc ${ROOTFS_BASE}/root/
 
 ## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
@@ -772,13 +770,8 @@ function make_uboot() {
 	# make uboot
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
 
-	# make uboot-imx
-	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} u-boot.imx
-
 	# copy images
-	cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
-	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_EMMC}
-	cp ${1}/u-boot.imx ${2}/${G_UBOOT_NAME_FOR_EMMC}.imx
+	cp ${1}/${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 
 	return 0;
 }
@@ -936,8 +929,7 @@ function make_sdcard() {
 	function flash_u-boot
 	{
 		pr_info "Flashing U-Boot"
-		dd if=${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
-		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=69; sync
+		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
 	}
 
 	function flash_sdcard
@@ -963,7 +955,6 @@ function make_sdcard() {
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_SPL_NAME_FOR_EMMC}		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		return 0;
