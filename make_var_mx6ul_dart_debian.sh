@@ -1067,7 +1067,8 @@ function cmd_install_package() {
 	mount -o bind /dev/pts ${G_ROOTFS_DIR}/dev/pts
 	mount -o bind /sys ${G_ROOTFS_DIR}/sys
 	LANG=C chroot $G_ROOTFS_DIR apt-get update
-	LANG=C chroot $G_ROOTFS_DIR apt-get -y install $1
+	echo "LANG=C chroot $G_ROOTFS_DIR apt-get -y install ${PARAM_INSTALL_PKG}"
+	LANG=C chroot $G_ROOTFS_DIR apt-get -y install ${PARAM_INSTALL_PKG}
 	umount ${G_ROOTFS_DIR}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 }
 
