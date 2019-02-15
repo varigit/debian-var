@@ -110,12 +110,12 @@ readonly G_IMX_XORG_DRV_GIT_BRANCH="imx_exa_viv6_g2d"
 readonly G_IMX_XORG_DRV_GIT_SRCREV="946e8603ed9a52f36d305405dbb2ab8ff90943d0"
 # replacement for Freescale's closed-development libfslvapwrapper library
 readonly G_IMX_VPU_API_SRC_DIR="${DEF_SRC_DIR}/imx/libimxvpuapi"
-readonly G_IMX_VPU_API_GIT="git://github.com/Freescale/libimxvpuapi.git"
+readonly G_IMX_VPU_API_GIT="https://github.com/Freescale/libimxvpuapi.git"
 readonly G_IMX_VPU_API_GIT_BRANCH="master"
 readonly G_IMX_VPU_API_GIT_SRCREV="4afb52f97e28c731c903a8538bf99e4a6d155b42"
 # much more standard replacement for Freescale's imx-gst1.0-plugin
 readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
-readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
+readonly G_IMX_GSTREAMER_GIT="https://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
 readonly G_IMX_GSTREAMER_GIT_SRCREV="889b8352ca09cd224be6a2f8d53efd59a38fa9cb"
 
