@@ -1,0 +1,3 @@
+This is the taken from debian snapshots and provide a libdrm version aligned to latest Yocto Sumo from NXP.
+The package add vivante support and include NXP patches from branch libdrm-imx-2.4.91:
+https://source.codeaurora.org/external/imx/libdrm-imx/log/?h=libdrm-imx-2.4.91

@@ -1,0 +1,3 @@
+This is taken from debian snapshots:
+   https://snapshot.debian.org/package/x264/
+The package upgrade is required to support NXP gstreamer.

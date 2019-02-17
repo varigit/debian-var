@@ -1,0 +1,12 @@
+[Unit]
+Description=Variscite Bluetooth setup service
+After=variscite-wifi.service
+Before=bluetooth.target
+
+[Service]
+Type=forking
+ExecStart=/etc/bluetooth/variscite-bt start
+ExecStop=/etc/bluetooth/variscite-bt stop
+
+[Install]
+WantedBy=multi-user.target

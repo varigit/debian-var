@@ -1,0 +1,6 @@
+NXP provide libdrm updated to 2.4.91
+This is a constraint for mesa: we cannot use 18.2.x from Debian Stretch backports.
+Also, in libdrm-imx, NXP added new defines and features and only changed the DRM_CAS define.
+This define has no impact on 18.1.x mesa versions, so we cans use latest 18.1.x version from Debian snapshots:
+   https://snapshot.debian.org/package/mesa/18.1.9-1~bpo9%2B1/
+

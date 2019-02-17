@@ -1,0 +1,14 @@
+[Unit]
+Description=Variscite WIFI setup service
+Before=network.target
+After=sysinit.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/etc/wifi/variscite-wifi start
+ExecStop=/etc/wifi/variscite-wifi stop
+
+[Install]
+WantedBy=network.target
+
