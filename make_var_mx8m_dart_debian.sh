@@ -698,9 +698,9 @@ function make_uboot() {
 	cp ${1}/u-boot.bin ${1}/u-boot-nodtb.bin ${1}/spl/u-boot-spl.bin ${1}/arch/arm/dts/${UBOOT_DTB} .
 
 	# Build SPL+DDR firmware image: u-boot-spl-ddr.bin
-	${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_1d_imem.bin lpddr4_pmu_train_1d_imem_pad.bin
-	${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 lpddr4_pmu_train_1d_dmem.bin lpddr4_pmu_train_1d_dmem_pad.bin
-	${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_2d_imem.bin lpddr4_pmu_train_2d_imem_pad.bin
+	${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_1d_imem.bin lpddr4_pmu_train_1d_imem_pad.bin
+	${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 lpddr4_pmu_train_1d_dmem.bin lpddr4_pmu_train_1d_dmem_pad.bin
+	${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_2d_imem.bin lpddr4_pmu_train_2d_imem_pad.bin
 	cat lpddr4_pmu_train_1d_imem_pad.bin lpddr4_pmu_train_1d_dmem_pad.bin > lpddr4_pmu_train_1d_fw.bin
 	cat lpddr4_pmu_train_2d_imem_pad.bin lpddr4_pmu_train_2d_dmem.bin > lpddr4_pmu_train_2d_fw.bin
 	cat u-boot-spl.bin lpddr4_pmu_train_1d_fw.bin lpddr4_pmu_train_2d_fw.bin > u-boot-spl-ddr.bin
