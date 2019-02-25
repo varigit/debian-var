@@ -9,6 +9,11 @@
 #  sudo apt-get install python-git xterm sed cvs subversion coreutils texi2html
 #  sudo apt-get install docbook-utils python-pysqlite2 help2man make gcc g++ desktop-file-utils libgl1-mesa-dev
 #  sudo apt-get install libglu1-mesa-dev mercurial automake groff curl lzop asciidoc u-boot-tools mtd-utils
+#  NOTE: HOST should have all packages upgraded to the latest version, because it has been observed that not having them
+#  actulalized. unnecessary dependencies are added to the kernel debian package.
+#  IMPORTANT: another debian package needed is:
+#  sudo apt-get install gcc-arm-linux-gnueabihf
+#  This package is necessary to remove the (libc6) dependency
 #
 
 # -e  Exit immediately if a command exits with a non-zero status.
@@ -18,7 +23,7 @@ UBUNTU_VERSION=`cat /etc/lsb-release | grep RELEASE | awk -F= '{ print $2 }' | a
 
 SCRIPT_NAME=${0##*/}
 readonly SCRIPT_VERSION="0.5"
-readonly KERNEL_VERSION="1.0.0"
+readonly KERNEL_VERSION="1.0.1"
 
 #Provisional until we will define different kernels on the go.
 readonly KERNEL_NAME="4.1.15-twonav-aventura-2018"
