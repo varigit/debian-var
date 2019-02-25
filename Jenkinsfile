@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    label 'linuxKernel'
+    label 'linuxKernelTest'
   }
   stages {
     stage('Deploy') {
@@ -25,7 +25,7 @@ pipeline {
     }
     stage('Build Kernel and package') {
       steps {
-        sh 'sudo ./make_var_mx6ul_dart_debian.sh -c kernel'
+        sh 'sudo ./make_var_mx6ul_dart_debian.sh -c package'
       }
     }
     stage('Save Artifacts') {
