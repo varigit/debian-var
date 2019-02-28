@@ -245,7 +245,10 @@ function get_remote_file() {
 }
 
 function make_prepare() {
-## create src dirs
+## create src dir
+	mkdir -p ${DEF_SRC_DIR} && :;
+
+## create toolchain dir
 	mkdir -p ${G_TOOLS_PATH} && :;
 
 ## create rootfs dir
