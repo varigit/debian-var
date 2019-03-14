@@ -587,6 +587,7 @@ rm -f cleanup
 function make_tarbar() {
 	cd $1
 
+	chown root:root .
 	pr_info "make tarbar arx from folder ${1}"
 	pr_info "Remove old arx $2"
 	rm $2 > /dev/null 2>&1 && :;
