@@ -501,6 +501,10 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
 		${ROOTFS_BASE}/usr/share/images/desktop-base/default
 
+## disable light-locker
+	install -m 0755 ${G_VARISCITE_PATH}/disable-lightlocker ${ROOTFS_BASE}/usr/local/bin/
+	install -m 0644 ${G_VARISCITE_PATH}/disable-lightlocker.desktop ${ROOTFS_BASE}/etc/xdg/autostart/
+
 ## added alsa default configs ##
 	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
