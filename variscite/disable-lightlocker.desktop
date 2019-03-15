@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=disable-lightlocker
+Exec=/usr/local/bin/disable-lightlocker
+Terminal=false
+Type=Application
