@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    label 'linuxKernelTest'
+    label 'linuxKernel'
   }
   stages {
     stage('Deploy') {
