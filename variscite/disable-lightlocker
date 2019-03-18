@@ -1,3 +1,12 @@
+#!/bin/bash
+
+FLAGFILE=$HOME/.config/backlight_disabled
+
+# check flagfile presence
+if [ -f $FLAGFILE ]; then
+    exit 0
+fi
+
 # wait that everything is up & running
 sleep 20
 
@@ -14,3 +23,6 @@ xfconf-query -c xfce4-power-manager -n -t int -p /xfce4-power-manager/blank-on-a
 xfconf-query -c xfce4-power-manager -n -t uint -p /xfce4-power-manager/dpms-on-ac-off -s 0
 xfconf-query -c xfce4-power-manager -n -t uint -p /xfce4-power-manager/dpms-on-ac-sleep -s 0
 xfconf-query -c xfce4-power-manager -n -t bool -p /xfce4-power-manager/dpms-enabled -s false
+
+# create flagfile
+touch $FLAGFILE
