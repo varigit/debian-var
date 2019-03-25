@@ -1147,12 +1147,6 @@ function cmd_make_rootfs() {
 		return 1;
 	};
 
-	## pack rootfs
-	make_tarbar ${G_ROOTFS_DIR} ${G_ROOTFS_TARBAR_PATH} || {
-		pr_error "Failed #$? in function make_tarbar"
-		return 4;
-	}
-
 	## pack to ubi
 	make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} ${G_UBI_FILE_NAME}  || {
 		pr_error "Failed #$? in function make_ubi"
