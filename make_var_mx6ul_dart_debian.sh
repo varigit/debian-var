@@ -394,15 +394,15 @@ function protected_install() {
 
     for (( c=0; c<\${repeated_cnt}; c++ ))
     do
-        apt-get install -y \${_name} && {
+        apt-get install -y --force-yes \${_name} && {
             RET_CODE=0;
             break;
         };
 
         echo ""
-        echo "###########################"
-        echo "## Fix missing packages ###"
-        echo "###########################"
+        echo "##################################"
+        echo "## Fix missing packages \${_name} ###"
+        echo "##################################"
         echo ""
 
         sleep 2;
@@ -544,7 +544,6 @@ apt-get update
 apt-get -y install ${G_USER_PACKAGES}
 
 apt-get -y --force-yes install ${G_EXTRAS_PACKAGES}
-rm -rf /lib/modules/4.1.15-twonav-aventura-2018/
 DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
 apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
 
