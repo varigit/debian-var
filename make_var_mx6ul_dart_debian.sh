@@ -86,7 +86,13 @@ readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolch
 
 ############## user rootfs packages ##########
 #We need the binaries to make it run, but we need the *dev packages to compile it. Maybe we can split into two packages types: rootfs and sysroot
-readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev libreadline-dev libxi-dev libxinerama-dev libxcursor-dev libxrandr-dev libudev-dev libusb-dev libibus-1.0-dev evtest libjack-dev libgbm-dev libmad0 libfuse2 fuse exfat-fuse exfat-utils ntfs-3g libevdev2"
+readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev libreadline-dev libxi-dev libxinerama-dev libxcursor-dev libudev-dev libusb-dev libibus-1.0-dev evtest libjack-dev libgbm-dev libmad0 libfuse2 fuse exfat-fuse exfat-utils ntfs-3g libevdev2"
+
+readonly G_EXTRA_PACKAGES="ttf-ubuntu-font-family libsdl2-2.0-0 libsdl2-dev libsdl2-ttf-2.0-0 libxrandr2 xserver-xorg-input-evdev twonav-libraries twonav-compeplugins twonav-datumgrids twonav-factoryutils twonav-libamazonutilities twonav-sounds twonav-system-2018"
+
+readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-twonav-aventura-2018 linux-image-4.1.15-twonav-aventura-2018"
+
+readonly G_TWONAV_PACKAGES="twonav-aventura-2018"
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -326,6 +332,9 @@ function make_debian_rootfs() {
 echo "deb $PARAM_DEB_LOCAL_MIRROR ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/TwoNav/" >> etc/apt/sources.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Kernel/" >> etc/apt/sources.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Extras/" >> etc/apt/sources.list
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -523,6 +532,9 @@ EOF
 
 	pr_info "rootfs: install user defined packages (user-stage)"
 	pr_info "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\" "
+	pr_info "rootfs: G_EXTRAS_PACKAGES \"${G_EXTRAS_PACKAGES}\" "
+	pr_info "rootfs: G_KERNEL_PACKAGES \"${G_KERNEL_PACKAGES}\" "
+	pr_info "rootfs: G_TWONAV_PACKAGES \"${G_TWONAV_PACKAGES}\" "
 
 echo "#!/bin/bash
 # update packages
@@ -530,6 +542,11 @@ apt-get update
 
 # install all user packages
 apt-get -y install ${G_USER_PACKAGES}
+
+apt-get -y --force-yes install ${G_EXTRAS_PACKAGES}
+rm -rf /lib/modules/4.1.15-twonav-aventura-2018/
+DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
+apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
 
 rm -f user-stage
 " > user-stage
@@ -585,8 +602,6 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.local ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.installer ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/uuid.h ${ROOTFS_BASE}/usr/include/bluetooth/
 
 ## added alsa default configs ##
@@ -603,7 +618,7 @@ rm -f user-stage
 
 
 # added mirror to source list
-echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
+echo "#deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -1146,6 +1161,12 @@ function cmd_make_rootfs() {
 		pr_error "Failed #$? in function build_kernel_package"
 		return 1;
 	};
+
+	## pack rootfs
+	make_tarbar ${G_ROOTFS_DIR} ${G_ROOTFS_TARBAR_PATH} || {
+		pr_error "Failed #$? in function make_tarbar"
+		return 4;
+	}
 
 	## pack to ubi
 	make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} ${G_UBI_FILE_NAME}  || {
