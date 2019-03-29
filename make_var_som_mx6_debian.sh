@@ -311,6 +311,10 @@ function make_debian_rootfs() {
 	tar zxf ${G_LINARO_ROOTFS_LOCAL_PATH} -C ${ROOTFS_BASE}
 	mv ${ROOTFS_BASE}/binary/* ${G_ROOTFS_DIR}
 	rmdir ${ROOTFS_BASE}/binary
+	sed '6d' -i ${ROOTFS_BASE}/etc/apt/sources.list
+	sed '5d' -i ${ROOTFS_BASE}/etc/apt/sources.list
+	sed 's/http.debian.net/archive.debian.org/g' -i ${ROOTFS_BASE}/etc/apt/sources.list
+	echo 'Acquire::Check-Valid-Until no;' > ${ROOTFS_BASE}/etc/apt/apt.conf.d/99no-check-valid-until
 	sync
 
 ## install kernel modules in rootfs
