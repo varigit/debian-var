@@ -332,9 +332,9 @@ function make_debian_rootfs() {
 echo "deb $PARAM_DEB_LOCAL_MIRROR ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/TwoNav/" >> etc/apt/sources.list
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Kernel/" >> etc/apt/sources.list
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Extras/" >> etc/apt/sources.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/TwoNav/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Kernel/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Extras/" >> etc/apt/sources.list.d/twonav.list
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -544,7 +544,9 @@ apt-get update
 apt-get -y install ${G_USER_PACKAGES}
 
 apt-get -y --force-yes install ${G_EXTRAS_PACKAGES}
-DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
+apt-get -y --force-yes purge ${G_KERNEL_PACKAGES}
+rm -rf /lib/modules/4.1.15-twonav-aventura-2018
+apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
 apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
 
 rm -f user-stage
@@ -637,6 +639,39 @@ rm -f cleanup
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
 	return 0;
 }
+
+
+
+function test_rootfs() {
+
+	local ROOTFS_BASE=$1
+
+## end packages stage ##
+[ "${G_USER_PACKAGES}" != "" ] && {
+
+	pr_info "rootfs: install kernel and twonav defined packages (user-stage)"
+	pr_info "rootfs: G_KERNEL_PACKAGES \"${G_KERNEL_PACKAGES}\" "
+	pr_info "rootfs: G_TWONAV_PACKAGES \"${G_TWONAV_PACKAGES}\" "
+
+echo "#!/bin/bash
+# update packages
+apt-get update
+
+apt-get -y --force-yes purge ${G_KERNEL_PACKAGES}
+rm -rf /lib/modules/4.1.15-twonav-aventura-2018
+apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
+apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
+
+rm -f user-stage
+" > user-stage
+
+	chmod +x user-stage
+	LANG=C chroot ${ROOTFS_BASE} /user-stage
+
+};
+
+}
+
 
 # make tarbar arx from footfs
 # $1 -- packet folder
@@ -1176,6 +1211,19 @@ function cmd_make_rootfs() {
 	return 0;
 }
 
+function cmd_make_test_rootfs() {
+	make_prepare;
+
+	## make debian rootfs
+	cd ${G_ROOTFS_DIR}
+	test_rootfs ${G_ROOTFS_DIR} || {
+		pr_error "Failed #$? in function test_rootfs"
+		cd -;
+		return 1;
+	}
+	cd -
+}
+
 function cmd_make_uboot() {
 	make_prepare;
 
@@ -1306,6 +1354,9 @@ function cmd_make_clean() {
 
 V_RET_CODE=0;
 
+START_TIME=`date +%s`
+
+
 pr_info "Command: \"$PARAM_CMD\" start..."
 
 case $PARAM_CMD in
@@ -1321,6 +1372,11 @@ case $PARAM_CMD in
 		;;
 	rootfs )
 		cmd_make_rootfs || {
+			V_RET_CODE=1;
+		};
+		;;
+	test )
+		cmd_make_test_rootfs || {
 			V_RET_CODE=1;
 		};
 		;;
@@ -1390,8 +1446,12 @@ case $PARAM_CMD in
 		;;
 esac
 
+END_TIME=`date +%s`
+
+TOTAL_TIME=$((END_TIME-START_TIME))
+
 pr_info ""
-pr_info "Command: \"$PARAM_CMD\" end. Exit code: ${V_RET_CODE}"
+pr_info "Command: \"$PARAM_CMD\" end ($TOTAL_TIME seconds). Exit code: ${V_RET_CODE}"
 pr_info ""
 
 
