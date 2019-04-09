@@ -37,6 +37,12 @@ readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
+# Colors
+readonly BACKGROUND_RED='\e[1;37;41m'
+readonly BACKGROUND_GREEN='\e[1;37;42m'
+readonly BACKGROUND_YELLOW='\e[1;33m'
+readonly BACKGROUND_BLACK='\e[0m'
+
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://ftp.de.debian.org/debian/"
 readonly DEB_RELEASE="jessie"
@@ -541,13 +547,31 @@ echo "#!/bin/bash
 apt-get update
 
 # install all user packages
-apt-get -y install ${G_USER_PACKAGES}
+apt-get -y --force-yes install ${G_USER_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install USER_PACKAGES ${BACKGROUND_BLACK}\"
+fi
 
 apt-get -y --force-yes install ${G_EXTRAS_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install EXTRAS_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
 apt-get -y --force-yes purge ${G_KERNEL_PACKAGES}
-rm -rf /lib/modules/4.1.15-twonav-aventura-2018
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get purge KERNEL_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
+#rm -rf /lib/modules/4.1.15-twonav-aventura-2018
 apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install KERNEL_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
 apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install TWONAV_PACKAGES ${BACKGROUND_BLACK}\"
+fi
 
 rm -f user-stage
 " > user-stage
@@ -639,39 +663,6 @@ rm -f cleanup
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
 	return 0;
 }
-
-
-
-function test_rootfs() {
-
-	local ROOTFS_BASE=$1
-
-## end packages stage ##
-[ "${G_USER_PACKAGES}" != "" ] && {
-
-	pr_info "rootfs: install kernel and twonav defined packages (user-stage)"
-	pr_info "rootfs: G_KERNEL_PACKAGES \"${G_KERNEL_PACKAGES}\" "
-	pr_info "rootfs: G_TWONAV_PACKAGES \"${G_TWONAV_PACKAGES}\" "
-
-echo "#!/bin/bash
-# update packages
-apt-get update
-
-apt-get -y --force-yes purge ${G_KERNEL_PACKAGES}
-rm -rf /lib/modules/4.1.15-twonav-aventura-2018
-apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
-apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
-
-rm -f user-stage
-" > user-stage
-
-	chmod +x user-stage
-	LANG=C chroot ${ROOTFS_BASE} /user-stage
-
-};
-
-}
-
 
 # make tarbar arx from footfs
 # $1 -- packet folder
@@ -1211,19 +1202,6 @@ function cmd_make_rootfs() {
 	return 0;
 }
 
-function cmd_make_test_rootfs() {
-	make_prepare;
-
-	## make debian rootfs
-	cd ${G_ROOTFS_DIR}
-	test_rootfs ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function test_rootfs"
-		cd -;
-		return 1;
-	}
-	cd -
-}
-
 function cmd_make_uboot() {
 	make_prepare;
 
@@ -1372,11 +1350,6 @@ case $PARAM_CMD in
 		;;
 	rootfs )
 		cmd_make_rootfs || {
-			V_RET_CODE=1;
-		};
-		;;
-	test )
-		cmd_make_test_rootfs || {
 			V_RET_CODE=1;
 		};
 		;;
