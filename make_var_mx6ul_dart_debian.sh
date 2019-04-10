@@ -37,6 +37,12 @@ readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
+# Colors
+readonly BACKGROUND_RED='\e[1;37;41m'
+readonly BACKGROUND_GREEN='\e[1;37;42m'
+readonly BACKGROUND_YELLOW='\e[1;33m'
+readonly BACKGROUND_BLACK='\e[0m'
+
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://ftp.de.debian.org/debian/"
 readonly DEB_RELEASE="jessie"
@@ -86,7 +92,13 @@ readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolch
 
 ############## user rootfs packages ##########
 #We need the binaries to make it run, but we need the *dev packages to compile it. Maybe we can split into two packages types: rootfs and sysroot
-readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev libreadline-dev libxi-dev libxinerama-dev libxcursor-dev libxrandr-dev libudev-dev libusb-dev libibus-1.0-dev evtest libjack-dev libgbm-dev libmad0 libsdl2-mixer-dev libfuse2 fuse exfat-fuse exfat-utils ntfs-3g libevdev2 libsdl2-ttf-dev"
+readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev libreadline-dev libxi-dev libxinerama-dev libxcursor-dev libudev-dev libusb-dev libibus-1.0-dev evtest libjack-dev libgbm-dev libmad0 libfuse2 fuse exfat-fuse exfat-utils ntfs-3g libevdev2 libsdl2-ttf-dev libsdl2-mixer-dev"
+
+readonly G_EXTRAS_PACKAGES="ttf-ubuntu-font-family libsdl2-2.0-0 libsdl2-dev libsdl2-ttf-2.0-0 libxrandr2 xserver-xorg-input-evdev twonav-libraries twonav-compeplugins twonav-datumgrids twonav-factoryutils twonav-libamazonutilities twonav-sounds twonav-system-2018"
+
+readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-twonav-aventura-2018 linux-image-4.1.15-twonav-aventura-2018"
+
+readonly G_TWONAV_PACKAGES="twonav-aventura-2018"
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -326,6 +338,9 @@ function make_debian_rootfs() {
 echo "deb $PARAM_DEB_LOCAL_MIRROR ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/TwoNav/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Kernel/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/iMX6Beta/Extras/" >> etc/apt/sources.list.d/twonav.list
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -385,15 +400,15 @@ function protected_install() {
 
     for (( c=0; c<\${repeated_cnt}; c++ ))
     do
-        apt-get install -y \${_name} && {
+        apt-get install -y --force-yes \${_name} && {
             RET_CODE=0;
             break;
         };
 
         echo ""
-        echo "###########################"
-        echo "## Fix missing packages ###"
-        echo "###########################"
+        echo "##################################"
+        echo "## Fix missing packages \${_name} ###"
+        echo "##################################"
         echo ""
 
         sleep 2;
@@ -523,13 +538,46 @@ EOF
 
 	pr_info "rootfs: install user defined packages (user-stage)"
 	pr_info "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\" "
+	pr_info "rootfs: G_EXTRAS_PACKAGES \"${G_EXTRAS_PACKAGES}\" "
+	pr_info "rootfs: G_KERNEL_PACKAGES \"${G_KERNEL_PACKAGES}\" "
+	pr_info "rootfs: G_TWONAV_PACKAGES \"${G_TWONAV_PACKAGES}\" "
 
 echo "#!/bin/bash
 # update packages
 apt-get update
 
 # install all user packages
-apt-get -y install ${G_USER_PACKAGES}
+echo -e \"${BACKGROUND_GREEN} Installing USER_PACKAGES... ${BACKGROUND_BLACK}\"
+apt-get -y --force-yes install ${G_USER_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install USER_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
+echo -e \"${BACKGROUND_GREEN} Installing EXTRAS_PACKAGES... ${BACKGROUND_BLACK}\"
+apt-get -y --force-yes install ${G_EXTRAS_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install EXTRAS_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
+echo -e \"${BACKGROUND_GREEN} Purging KERNEL_PACKAGES... ${BACKGROUND_BLACK}\"
+apt-get -y --force-yes purge ${G_KERNEL_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get purge KERNEL_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
+echo -e \"${BACKGROUND_GREEN} Installing KERNEL_PACKAGES... ${BACKGROUND_BLACK}\"
+DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install KERNEL_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
+echo -e \"${BACKGROUND_GREEN} Installing TWONAV_PACKAGES... ${BACKGROUND_BLACK}\"
+apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
+if [ \$? -gt 0 ]; then
+	echo -e \"${BACKGROUND_RED} ERROR in apt-get install TWONAV_PACKAGES ${BACKGROUND_BLACK}\"
+fi
+
+echo -e \"${BACKGROUND_GREEN} SUCCESS user-stage ${BACKGROUND_BLACK}\"
 
 rm -f user-stage
 " > user-stage
@@ -585,8 +633,6 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/hostapd.conf ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.local ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_TWONAV_PATH}/rc_files/rc.installer ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/uuid.h ${ROOTFS_BASE}/usr/include/bluetooth/
 
 ## added alsa default configs ##
@@ -603,7 +649,7 @@ rm -f user-stage
 
 
 # added mirror to source list
-echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
+echo "#deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -1292,6 +1338,9 @@ function cmd_make_clean() {
 
 V_RET_CODE=0;
 
+START_TIME=`date +%s`
+
+
 pr_info "Command: \"$PARAM_CMD\" start..."
 
 case $PARAM_CMD in
@@ -1376,8 +1425,12 @@ case $PARAM_CMD in
 		;;
 esac
 
+END_TIME=`date +%s`
+
+TOTAL_TIME=$((END_TIME-START_TIME))
+
 pr_info ""
-pr_info "Command: \"$PARAM_CMD\" end. Exit code: ${V_RET_CODE}"
+pr_info "Command: \"$PARAM_CMD\" end ($TOTAL_TIME seconds). Exit code: ${V_RET_CODE}"
 pr_info ""
 
 
