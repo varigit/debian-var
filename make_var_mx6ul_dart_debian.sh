@@ -547,31 +547,37 @@ echo "#!/bin/bash
 apt-get update
 
 # install all user packages
+echo -e \"${BACKGROUND_GREEN} Installing USER_PACKAGES... ${BACKGROUND_BLACK}\"
 apt-get -y --force-yes install ${G_USER_PACKAGES}
 if [ \$? -gt 0 ]; then
 	echo -e \"${BACKGROUND_RED} ERROR in apt-get install USER_PACKAGES ${BACKGROUND_BLACK}\"
 fi
 
+echo -e \"${BACKGROUND_GREEN} Installing EXTRAS_PACKAGES... ${BACKGROUND_BLACK}\"
 apt-get -y --force-yes install ${G_EXTRAS_PACKAGES}
 if [ \$? -gt 0 ]; then
 	echo -e \"${BACKGROUND_RED} ERROR in apt-get install EXTRAS_PACKAGES ${BACKGROUND_BLACK}\"
 fi
 
+echo -e \"${BACKGROUND_GREEN} Purging KERNEL_PACKAGES... ${BACKGROUND_BLACK}\"
 apt-get -y --force-yes purge ${G_KERNEL_PACKAGES}
 if [ \$? -gt 0 ]; then
 	echo -e \"${BACKGROUND_RED} ERROR in apt-get purge KERNEL_PACKAGES ${BACKGROUND_BLACK}\"
 fi
 
-#rm -rf /lib/modules/4.1.15-twonav-aventura-2018
-apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
+echo -e \"${BACKGROUND_GREEN} Installing KERNEL_PACKAGES... ${BACKGROUND_BLACK}\"
+DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install ${G_KERNEL_PACKAGES}
 if [ \$? -gt 0 ]; then
 	echo -e \"${BACKGROUND_RED} ERROR in apt-get install KERNEL_PACKAGES ${BACKGROUND_BLACK}\"
 fi
 
+echo -e \"${BACKGROUND_GREEN} Installing TWONAV_PACKAGES... ${BACKGROUND_BLACK}\"
 apt-get -y --force-yes install ${G_TWONAV_PACKAGES}
 if [ \$? -gt 0 ]; then
 	echo -e \"${BACKGROUND_RED} ERROR in apt-get install TWONAV_PACKAGES ${BACKGROUND_BLACK}\"
 fi
+
+echo -e \"${BACKGROUND_GREEN} SUCCESS user-stage ${BACKGROUND_BLACK}\"
 
 rm -f user-stage
 " > user-stage
