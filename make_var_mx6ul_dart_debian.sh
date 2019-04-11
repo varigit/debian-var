@@ -23,7 +23,7 @@ UBUNTU_VERSION=`cat /etc/lsb-release | grep RELEASE | awk -F= '{ print $2 }' | a
 
 SCRIPT_NAME=${0##*/}
 readonly SCRIPT_VERSION="0.5"
-readonly KERNEL_VERSION="1.0.1"
+readonly KERNEL_VERSION="1.0.2"
 
 #Provisional until we will define different kernels on the go.
 readonly KERNEL_NAME="4.1.15-twonav-aventura-2018"
