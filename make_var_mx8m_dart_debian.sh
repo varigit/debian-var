@@ -42,9 +42,9 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
-readonly G_LINUX_KERNEL_REV="b5b4d4284f532b18838d027b68b15525e56cb8c4"
+readonly G_LINUX_KERNEL_REV="25137f4cd8f21a6d172acce6d78b1cb462d77528"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
-readonly G_LINUX_DTB='freescale/fsl-imx8mq-var-dart-sd-emmc-lvds.dtb freescale/fsl-imx8mq-var-dart-sd-emmc-hdmi.dtb freescale/fsl-imx8mq-var-dart-sd-emmc-dual-display.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-lvds.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-hdmi.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-dual-display.dtb freescale/fsl-imx8mm-var-dart.dtb'
+readonly G_LINUX_DTB='freescale/fsl-imx8mq-var-dart-sd-emmc-lvds.dtb freescale/fsl-imx8mq-var-dart-sd-emmc-hdmi.dtb freescale/fsl-imx8mq-var-dart-sd-emmc-dual-display.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-lvds.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-hdmi.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-dual-display.dtb freescale/fsl-imx8mq-var-dart-m4-sd-emmc-lvds.dtb freescale/fsl-imx8mq-var-dart-m4-sd-emmc-hdmi.dtb freescale/fsl-imx8mq-var-dart-m4-sd-emmc-dual-display.dtb freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-lvds.dtb freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-hdmi.dtb freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-dual-display.dtb freescale/fsl-imx8mm-var-dart.dtb'
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
@@ -988,7 +988,6 @@ function cmd_make_deploy() {
 		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
 		cd ${G_LINUX_KERNEL_SRC_DIR}
 		git am < ${G_VARISCITE_PATH}/patches/kernel/0001-vivante-gpu-revert-to-6.2.4.p1-driver.patch
-		git am < ${G_VARISCITE_PATH}/patches/kernel/0001-imx8-var-dart-compile-imx-sdma-driver-as-module.patch
 		cd -
 	};
 
