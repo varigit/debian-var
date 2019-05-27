@@ -23,11 +23,6 @@ UBUNTU_VERSION=`cat /etc/lsb-release | grep RELEASE | awk -F= '{ print $2 }' | a
 
 SCRIPT_NAME=${0##*/}
 readonly SCRIPT_VERSION="0.5"
-readonly KERNEL_VERSION="1.0.3"
-
-#Provisional until we will define different kernels on the go.
-readonly KERNEL_NAME="4.1.15-twonav-aventura-2018"
-
 
 #### Exports Variables ####
 #### global variables ####
@@ -65,7 +60,6 @@ readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 G_LINUX_KERNEL_GIT="https://github.com/twonav/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_GIT_UP="https://repo_username:repo_password@github.com/twonav/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_twonav"
-readonly G_LINUX_KERNEL_DEF_CONFIG='imx6ul-var-dart-twonav_defconfig'
 readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
 
 
@@ -84,7 +78,6 @@ readonly G_UBI_FILE_NAME='rootfs.ubi.img'
 
 ## CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf/bin"
-#readonly G_CROSS_COMPILEER_PREFFIX="arm-none-eabi-"
 readonly G_CROSS_COMPILEER_PREFFIX="arm-linux-gnueabihf-"
 readonly G_CROSS_COMPILEER_JOPTION="-j 4"
 readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz'
@@ -93,12 +86,7 @@ readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolch
 ############## user rootfs packages ##########
 #We need the binaries to make it run, but we need the *dev packages to compile it. Maybe we can split into two packages types: rootfs and sysroot
 readonly G_USER_PACKAGES="minicom tree bash-completion libc6 gdbserver libelf1 libdw1 libelf-dev libdw-dev uuid-dev libssl-dev libstdc++-4.9-dev libsdl1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev libcurl4-gnutls-dev libapt-pkg-dev libiw-dev libnm-glib-dev libdbus-glib-1-dev libglib2.0-dev libbluetooth-dev libreadline-dev libxi-dev libxinerama-dev libxcursor-dev libudev-dev libusb-dev libibus-1.0-dev evtest libjack-dev libgbm-dev libmad0 libfuse2 fuse exfat-fuse exfat-utils ntfs-3g libevdev2 libsdl2-ttf-dev libsdl2-mixer-dev rsync"
-
 readonly G_EXTRAS_PACKAGES="ttf-ubuntu-font-family libsdl2-2.0-0 libsdl2-dev libsdl2-ttf-2.0-0 libxrandr2 xserver-xorg-input-evdev twonav-libraries twonav-compeplugins twonav-datumgrids twonav-factoryutils twonav-libamazonutilities twonav-sounds twonav-system-2018"
-
-readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-twonav-aventura-2018 linux-image-4.1.15-twonav-aventura-2018"
-
-readonly G_TWONAV_PACKAGES="twonav-aventura-2018"
 
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
@@ -112,6 +100,7 @@ PARAM_CREDENTIALS="0"
 PARAM_USERNAME=""
 PARAM_PASSWORD=""
 PARAM_DEVICE="ALL"
+PARAM_DEVICE_TYPE="twonav-trail-2018"
 
 
 ### usage ###
@@ -122,30 +111,34 @@ function usage() {
 	echo ""
 	echo "Usage:"
 	echo " ./${SCRIPT_NAME} options"
+	echo "Example:"
+	echo " sudo ./${SCRIPT_NAME} -c package -t twonav-aventura-2018"
 	echo ""
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
 	echo "  -c|--cmd <command>"
 	echo "     Supported commands:"
 	echo "       deploy      		-- prepare environment for all commands"
-	echo "       -u		      		-- set username to checkout repositories. It does not work with e-mails"
-	echo "       -p      			-- set password to checkout repositories"
+	echo "       -u          		-- set username to checkout repositories. It does not work with e-mails"
+	echo "       -p          		-- set password to checkout repositories"
 	echo "       all         		-- build or rebuild kernel/bootloader/rootfs"
 	echo "       bootloader  		-- build or rebuild bootloader (u-boot+SPL)"
 	echo "       kernel      		-- build or rebuild linux kernel for this board"
-	echo "       package      		-- build or rebuild linux kernel package for this board"
+	echo "       package     		-- build or rebuild linux kernel package for this board"
 	echo "       modules     		-- build or rebuild linux kernel modules and install in rootfs directory for this board"
-	echo "       kernel_to_sd     	-- copy kernel and modules contents to sdcard"
-	echo "       -r|--rebuild     	-- rebuild kernel and modules"
+	echo "       kernel_to_sd		-- copy kernel and modules contents to sdcard"
+	echo "       -r|--rebuild		-- rebuild kernel and modules"
 	echo "       rootfs      		-- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
-	echo "                       		make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
+	echo "                   		   make and install extern modules (wifi/bt), create rootfs.ubi.img and rootfs.tar.bz2)"
 	echo "       rubi        		-- generate or regenerate rootfs.ubi.img image from rootfs folder "
 	echo "       rtar        		-- generate or regenerate rootfs.tar.bz2 image from rootfs folder "
 	echo "       clean       		-- clean all build artifacts (not delete sources code and resulted images (output folder))"
 	echo "       sdcard      		-- create bootting sdcard for this device"
-	echo "  	-o|--output 		-- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
-	echo "  	-d|--dev    		-- select sdcard device (exmple: -d /dev/sde)"
-	echo "  	--debug     		-- enable debug mode for this script"
+	echo "       -o|--output 		-- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
+	echo "       -d|--dev    		-- select sdcard device (exmple: -d /dev/sde)"
+	echo "       --debug     		-- enable debug mode for this script"
+	echo "       -k|--instpkg		-- install package in rootfs"
+	echo "       -t|--type   		-- twonav-aventura-2018/twonav-trail-2018"
 	echo "Examples of use:"
 	echo "  make only linux kernel for board: sudo ./${SCRIPT_NAME} --cmd kernel"
 	echo "  make only rootfs for board:       sudo ./${SCRIPT_NAME} --cmd rootfs"
@@ -155,8 +148,8 @@ function usage() {
 }
 
 ###### parse input arguments ##
-readonly SHORTOPTS="k:c:o:u:p:d:h:r"
-readonly LONGOPTS="instpkg:,cmd:,output:,username:,password:,dev:,help,debug,rebuild"
+readonly SHORTOPTS="k:c:o:u:p:d:h:r:t:"
+readonly LONGOPTS="instpkg:,cmd:,output:,username:,password:,dev:,help,debug,rebuild,type:"
 
 ARGS=$(getopt -s bash --options ${SHORTOPTS}  \
   --longoptions ${LONGOPTS} --name ${SCRIPT_NAME} -- "$@" )
@@ -166,38 +159,44 @@ eval set -- "$ARGS"
 while true; do
 	case $1 in
 		-k|--instpkg ) # param pkg to install
+			PARAM_INSTALL_PKG="$2";
 			shift
-			PARAM_INSTALL_PKG="$1";
 			;;
 		-c|--cmd ) # script command
+			PARAM_CMD="$2";
 			shift
-			PARAM_CMD="$1";
 			;;
 		-o|--output ) # select output dir
+			PARAM_OUTPUT_DIR="$2";
 			shift
-			PARAM_OUTPUT_DIR="$1";
 			;;
 		-u|--username ) # set username for pull repo
-			shift
 			PARAM_CREDENTIALS=1;
-			PARAM_USERNAME="$1";
+			PARAM_USERNAME="$2";
+			shift
 			;;
 		-p|--password ) # set password for pull repo
-			shift
 			PARAM_CREDENTIALS=1;
-			PARAM_PASSWORD="$1";
+			PARAM_PASSWORD="$2";
+			shift
 			;;
 		-d|--dev ) # block device (for create sdcard)
-			shift
-			[ -e ${1} ] && {
-				PARAM_BLOCK_DEVICE=${1};
+			[ -e ${2} ] && {
+				PARAM_BLOCK_DEVICE=${2};
 			};
+			shift
 			;;
 		-r|--rebuild ) # rebuild kernel
 			PARAM_REBUILD=1;
+			shift
 			;;
 		--debug ) # enable debug
 			PARAM_DEBUG=1;
+			shift
+			;;
+		-t|--type ) # twonav-aventura/trail-2018
+			PARAM_DEVICE_TYPE="$2"
+			shift
 			;;
 		-h|--help ) # get help
 			usage
@@ -223,6 +222,22 @@ done
 
 ## declarate dinamic variables ##
 readonly G_ROOTFS_TARBAR_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}"
+
+## device type: twonav-aventura/trail-2018
+readonly DEVICE="$PARAM_DEVICE_TYPE"
+
+#Provisional until we define different kernels on the go.
+readonly KERNEL_NAME="4.1.15-"$DEVICE
+
+# Parse kernel version from file
+readonly TWONAV_KERNEL_VERSION_PATH="${G_LINUX_KERNEL_SRC_DIR}/twonav_kernel_version"
+readonly KERNEL_VERSION=`cat ${TWONAV_KERNEL_VERSION_PATH}`
+
+## defconfig
+readonly G_LINUX_KERNEL_DEF_CONFIG="imx6ul-var-dart-${DEVICE}_defconfig"
+
+readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-$DEVICE linux-image-4.1.15-$DEVICE"
+readonly G_TWONAV_PACKAGES=$DEVICE
 
 ###### local functions ######
 
@@ -733,7 +748,7 @@ function clean_kernel() {
 # $3 -- linux dirname
 # $4 -- out modules patch
 function make_kernel_modules() {
-	pr_info "make kernel .config"
+	pr_info "make kernel modules .config"
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3}/ ${2}
 
 	make ARCH=arm CROSS_COMPILE=${1} ${G_CROSS_COMPILEER_JOPTION} -C ${3} oldconfig
