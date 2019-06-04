@@ -22,7 +22,7 @@ set -e
 UBUNTU_VERSION=`cat /etc/lsb-release | grep RELEASE | awk -F= '{ print $2 }' | awk -F. '{ print $1 }'`
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.5"
+readonly SCRIPT_VERSION="0.6"
 
 #### Exports Variables ####
 #### global variables ####
@@ -231,7 +231,6 @@ readonly KERNEL_NAME="4.1.15-"$DEVICE
 
 # Parse kernel version from file
 readonly TWONAV_KERNEL_VERSION_PATH="${G_LINUX_KERNEL_SRC_DIR}/twonav_kernel_version"
-readonly KERNEL_VERSION=`cat ${TWONAV_KERNEL_VERSION_PATH}`
 
 ## defconfig
 readonly G_LINUX_KERNEL_DEF_CONFIG="imx6ul-var-dart-${DEVICE}_defconfig"
@@ -769,6 +768,7 @@ function make_kernel_modules() {
 # $4 -- out patch
 function build_kernel_package() {
 
+	readonly KERNEL_VERSION=`cat ${TWONAV_KERNEL_VERSION_PATH}`
 	cd ${2}
 	if [ "$UBUNTU_VERSION" -ge 16 ]; then
 		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd linux_headers linux_image
