@@ -22,7 +22,7 @@ set -e
 UBUNTU_VERSION=`cat /etc/lsb-release | grep RELEASE | awk -F= '{ print $2 }' | awk -F. '{ print $1 }'`
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.5"
+readonly SCRIPT_VERSION="0.6"
 
 #### Exports Variables ####
 #### global variables ####
