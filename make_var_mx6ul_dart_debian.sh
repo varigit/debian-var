@@ -429,6 +429,8 @@ protected_install usbutils
 # added net tools
 protected_install iperf
 
+protected_install rng-tools
+
 #media
 protected_install audacious
 # protected_install parole
