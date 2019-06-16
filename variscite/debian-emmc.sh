@@ -1,16 +1,15 @@
 #!/bin/bash
 #
-# Flash Debian into eMMC for DART-MX6UL
+# Flash Debian into eMMC for DART-MX6UL & VAR-SOM-6UL
 #
 
 # Partitions sizes in MiB
 BOOTLOAD_RESERVE=4
 BOOT_ROM_SIZE=8
 SPARE_SIZE=0
-DTB_FILES='imx6ul-var-dart-emmc_wifi.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb'
 
 echo "================================"
-echo " Variscite i.MX6 UltraLite DART"
+echo " Variscite DART-6UL/VAR-SOM-6UL"
 echo "   Installing Debian to eMMC"
 echo "================================"
 
@@ -76,13 +75,29 @@ function flash_debian
 	dd if=u-boot.img.mmc of=${node} bs=1K seek=69; sync
 	dd if=SPL.mmc of=${node} bs=1K seek=1; sync
 
+	SOC=`cat /sys/bus/soc/devices/soc0/soc_id`
+	if [[ $SOC == i.MX6UL ]] ; then
+		soc="imx6ul"
+	elif [[ $SOC == i.MX6ULL ]] ; then
+		soc="imx6ull"
+	elif [[ $SOC == i.MX6ULZ ]] ; then
+		soc="imx6ulz"
+	fi
+	if grep -iq DART /sys/devices/soc0/machine ; then
+		som="var-dart"
+		carrier="6ulcustomboard"
+	else
+		som="var-som"
+		carrier="concerto-board"
+	fi
+
 	echo "Flashing Debian BOOT partition"
 	mkdir -p /tmp/media/mmcblk1p1
 	mkdir -p /tmp/media/mmcblk1p2
 	mount -t vfat ${node}p1  /tmp/media/mmcblk1p1
 	mount ${node}p2  /tmp/media/mmcblk1p2
 
-	cp ${DTB_FILES} /tmp/media/mmcblk1p1/
+	cp ${soc}-${som}-${carrier}-emmc-*.dtb /tmp/media/mmcblk1p1/
 	cp zImage /tmp/media/mmcblk1p1/
 
 	echo "Flashing Debian Root File System"

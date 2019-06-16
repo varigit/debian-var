@@ -1,5 +1,5 @@
 #!/bin/bash
-# It is designed to build Debian linux for Variscite imx6ul-dart modules
+# It is designed to build Debian linux for Variscite DART-6UL and VAR-SOM-6UL modules
 # prepare host OS system:
 #  sudo apt-get install binfmt-support qemu qemu-user-static debootstrap kpartx
 #  sudo apt-get install lvm2 dosfstools gpart binutils git lib32ncurses5-dev python-m2crypto
@@ -41,22 +41,53 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 ## LINUX kernel: git, config, paths and etc
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx_4.9.88_2.0.0_ga-var01"
-readonly G_LINUX_KERNEL_REV="aaecf096161795f49734bc717998df33475cbeb9"
+readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
+readonly G_LINUX_KERNEL_REV="c228d862094c91c651f2652029d349f8f929f3e5"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
-readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
+readonly G_LINUX_DTB=" \
+	imx6ull-var-dart-6ulcustomboard-emmc-sd-card.dtb \
+	imx6ull-var-dart-6ulcustomboard-emmc-wifi.dtb \
+	imx6ull-var-dart-6ulcustomboard-nand-sd-card.dtb \
+	imx6ull-var-dart-6ulcustomboard-nand-wifi.dtb \
+	imx6ull-var-som-concerto-board-emmc-sd-card.dtb \
+	imx6ull-var-som-concerto-board-emmc-wifi.dtb \
+	imx6ull-var-som-concerto-board-nand-sd-card.dtb \
+	imx6ull-var-som-concerto-board-nand-wifi.dtb \
+	imx6ul-var-dart-6ulcustomboard-emmc-sd-card.dtb \
+	imx6ul-var-dart-6ulcustomboard-emmc-wifi.dtb \
+	imx6ul-var-dart-6ulcustomboard-nand-sd-card.dtb \
+	imx6ul-var-dart-6ulcustomboard-nand-wifi.dtb \
+	imx6ul-var-som-concerto-board-emmc-sd-card.dtb \
+	imx6ul-var-som-concerto-board-emmc-wifi.dtb \
+	imx6ul-var-som-concerto-board-nand-sd-card.dtb \
+	imx6ul-var-som-concerto-board-nand-wifi.dtb \
+	imx6ulz-var-dart-6ulcustomboard-emmc-sd-card.dtb \
+	imx6ulz-var-dart-6ulcustomboard-emmc-wifi.dtb \
+	imx6ulz-var-dart-6ulcustomboard-nand-sd-card.dtb \
+	imx6ulz-var-dart-6ulcustomboard-nand-wifi.dtb \
+	imx6ulz-var-som-concerto-board-emmc-sd-card.dtb \
+	imx6ulz-var-som-concerto-board-emmc-wifi.dtb \
+	imx6ulz-var-som-concerto-board-nand-sd-card.dtb \
+	imx6ulz-var-som-concerto-board-nand-wifi.dtb \
+	"
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2017.03_4.9.11_1.0.0_ga_var01"
-readonly G_UBOOT_REV="a7869c2cde98e5f5b1886d8f54dff321a7aa0597"
+readonly G_UBOOT_BRANCH="imx_v2018.03_4.14.78_1.0.0_ga_var01"
+readonly G_UBOOT_REV="9879e5cb11114ff6a9558ca283e9566034446dd6"
 readonly G_UBOOT_DEF_CONFIG_MMC='mx6ul_var_dart_mmc_defconfig'
 readonly G_UBOOT_DEF_CONFIG_NAND='mx6ul_var_dart_nand_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='u-boot.img.mmc'
 readonly G_SPL_NAME_FOR_EMMC='SPL.mmc'
 readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
 readonly G_SPL_NAME_FOR_NAND='SPL.nand'
+
+## imx-sdma-imx6q firmware ##
+readonly G_IMX_SDMA_FW_SRC_DIR="${DEF_SRC_DIR}/linux-firmware"
+readonly G_IMX_SDMA_FW_GIT="git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git"
+readonly G_IMX_SDMA_FW_GIT_BRANCH="master"
+readonly G_IMX_SDMA_FW_GIT_REV="710963fe53ee3f227556d36839df3858daf6e232"
 
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
@@ -954,6 +985,19 @@ EOF
 	return 0;
 }
 
+# install imx sdma firmware
+# $1 -- git directory
+# $2 -- rootfs output dir
+function make_imx_sdma_fw() {
+	pr_info "Install imx sdma firmware"
+
+	install -d ${2}/lib/firmware/imx/sdma
+	install -m 0644 ${1}/imx/sdma/sdma-imx6q.bin ${2}/lib/firmware/imx/sdma
+	install -m 0644 ${1}/LICENSE.sdma_firmware ${2}/lib/firmware/
+
+	return 0;
+}
+
 # make firmware for wl bcm module
 # $1 -- bcm git directory
 # $2 -- rootfs output dir
@@ -994,6 +1038,12 @@ function cmd_make_deploy() {
 		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
 	};
 
+	# get imx sdma firmware repository
+	(( `ls ${G_IMX_SDMA_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
+		pr_info "Get imx sdma firmware repository";
+		get_git_src ${G_IMX_SDMA_FW_GIT} ${G_IMX_SDMA_FW_GIT_BRANCH} ${G_IMX_SDMA_FW_SRC_DIR} ${G_IMX_SDMA_FW_GIT_REV}
+	};
+
 	# get bcm firmware repository
 	(( `ls ${G_BCM_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get bcmhd firmware repository";
@@ -1014,6 +1064,12 @@ function cmd_make_rootfs() {
 		return 1;
 	}
 	cd -
+
+	## make imx sdma firmware
+	make_imx_sdma_fw ${G_IMX_SDMA_FW_SRC_DIR} ${G_ROOTFS_DIR} || {
+		pr_error "Failed #$? in function make_tarbar"
+		return 4;
+	};
 
 	## make bcm firmwares
 	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR} || {

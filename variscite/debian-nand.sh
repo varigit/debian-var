@@ -7,22 +7,18 @@
 readonly UBOOT_IMAGE='u-boot.img.nand'
 readonly SPL_IMAGE='SPL.nand'
 readonly KERNEL_IMAGE='zImage'
-readonly KERNEL_DTB_UL='imx6ul-var-dart-nand_wifi.dtb'
-readonly KERNEL_DTB_ULL='imx6ull-var-dart-nand_wifi.dtb'
-readonly KERNEL_DTB_UL5G='imx6ul-var-dart-5g-nand_wifi.dtb'
-readonly KERNEL_DTB_ULL5G='imx6ull-var-dart-5g-nand_wifi.dtb'
 readonly ROOTFS_IMAGE='rootfs.ubi.img'
 readonly IMAGES_PATH="/opt/images/Debian"
 readonly UBI_SUB_PAGE_SIZE=2048
 readonly UBI_VID_HDR_OFFSET=2048
 
 echo "================================="
-echo " Variscite i.MX6 UltraLite DART"
+echo " Variscite DART-6UL/VAR-SOM-6UL"
 echo " Installing Debian to NAND flash"
 echo "================================="
 
 usage() {
-	echo "usage: $(basename $0) <mx6ul|mx6ull|mx6ul5g|mx6ull5g>"
+	echo "usage: $(basename $0) <wifi|sd>"
 }
 
 [[ $EUID -ne 0 ]] && {
@@ -35,11 +31,27 @@ if [ $# -ne 1 ]; then
 	exit 1
 fi
 
-if [ "$1" != "mx6ul" -a "$1" != "mx6ull" -a "$1" != "mx6ul5g" -a "$1" != "mx6ull5g" ]; then
+if [ "$1" != "wifi" -a "$1" != "sd" ]; then
 	usage
 	exit 1
 fi
-som=$1
+
+MX6UL_MMC0_DEV=$1
+SOC=`cat /sys/bus/soc/devices/soc0/soc_id`
+if [[ $SOC == i.MX6UL ]] ; then
+	soc="imx6ul"
+elif [[ $SOC == i.MX6ULL ]] ; then
+	soc="imx6ull"
+elif [[ $SOC == i.MX6ULZ ]] ; then
+	soc="imx6ulz"
+fi
+if grep -iq DART /sys/devices/soc0/machine ; then
+	som="var-dart"
+	carrier="6ulcustomboard"
+else
+	som="var-som"
+	carrier="concerto-board"
+fi
 
 function install_bootloader()
 {
@@ -78,21 +90,8 @@ function install_kernel()
 	echo "Installing Kernel"
 	flash_erase /dev/mtd3 0 0 2>/dev/null
 	nandwrite -p /dev/mtd3 ${IMAGES_PATH}/$KERNEL_IMAGE > /dev/null
-	case $som in
-	"mx6ul")
-		dtb=$KERNEL_DTB_UL
-		;;
-	"mx6ull")
-		dtb=$KERNEL_DTB_ULL
-		;;
-	"mx6ul5g")
-		dtb=$KERNEL_DTB_UL5G
-		;;
-	"mx6ull5g")
-		dtb=$KERNEL_DTB_ULL5G
-		;;
-	esac
 
+	dtb=${soc}-${som}-${carrier}-nand-${MX6UL_MMC0_DEV}.dtb
 	nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$dtb > /dev/null
 }
 
