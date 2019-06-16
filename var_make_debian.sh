@@ -464,6 +464,8 @@ protected_install usbutils
 # added net tools
 protected_install iperf
 
+protected_install rng-tools
+
 # mtd
 protected_install mtd-utils
 
