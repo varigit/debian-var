@@ -447,6 +447,9 @@ protected_install gconf2
 protected_install hostapd
 protected_install udhcpd
 
+# disable the hostapd service by default
+systemctl disable hostapd.service
+
 # can support
 protected_install can-utils
 
