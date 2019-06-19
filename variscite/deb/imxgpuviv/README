@@ -1,3 +1,1 @@
-This is the Debianized version of imx-gpu-viv 6.2.4.p1.8 package.
-A newer package (6.2.4.p2.3) is actually available but it's built against GLIBC 2.27.
-Since Debian Stretch provide GLIBC 2.24, the newer package cannot be used.
+This is the Debianized version of imx-gpu-viv 6.2.4.p2.3 package.
