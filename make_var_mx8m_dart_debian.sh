@@ -50,7 +50,7 @@ readonly G_LINUX_DTB='freescale/fsl-imx8mq-var-dart-sd-emmc-lvds.dtb freescale/f
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2018.03_4.14.78_1.0.0_ga_var01"
-readonly G_UBOOT_REV="41435f6db4ef6244d73acea810d369082b791eb8"
+readonly G_UBOOT_REV="0e734b6c1c83aa80ade185471ef0aee5bc11c8b0"
 readonly G_UBOOT_DEF_CONFIG_MMC='imx8m_var_dart_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
