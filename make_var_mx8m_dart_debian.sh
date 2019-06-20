@@ -526,6 +526,7 @@ rm -f user-stage
 	cp ${PARAM_OUTPUT_DIR}/Image.gz ${ROOTFS_BASE}/boot
 	cp ${PARAM_OUTPUT_DIR}/*.dtb ${ROOTFS_BASE}/boot
 	ln -sf fsl-imx8mq-var-dart-sd-emmc-lvds.dtb ${ROOTFS_BASE}/boot/fsl-imx8mq-var-dart.dtb
+	ln -sf fsl-imx8mq-var-dart-sd-emmc-lvds-cb12.dtb ${ROOTFS_BASE}/boot/fsl-imx8mq-var-dart-cb12.dtb
 
 	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
 	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \

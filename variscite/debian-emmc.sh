@@ -135,6 +135,7 @@ install_rootfs_to_emmc()
 	if [[ ${BOARD} = "imx8m-var-dart" ]]; then
 		# Create DTB symlink
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
 
 		# Install blacklist.conf
 		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
