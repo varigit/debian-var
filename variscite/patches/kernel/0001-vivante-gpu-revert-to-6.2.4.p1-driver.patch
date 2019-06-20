@@ -50445,12 +50445,14 @@ index 62624d69b4a4..1d59805f135f 100644
  #endif
  
  #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
-@@ -1492,10 +1447,6 @@ _AdjustParam(
+@@ -1492,12 +1447,6 @@ _AdjustParam(
      )
  {
      patch_param(Platform->device, Args);
 -
--    if (of_find_compatible_node(NULL, NULL, "fsl,imx8mq-gpu") && ((Args->baseAddress + totalram_pages * PAGE_SIZE) > 0x100000000))
+-    if ((of_find_compatible_node(NULL, NULL, "fsl,imx8mq-gpu") ||
+-	 of_find_compatible_node(NULL, NULL, "fsl,imx8mm-gpu")) &&
+-	((Args->baseAddress + totalram_pages * PAGE_SIZE) > 0x100000000))
 -        Platform->flagBits = gcvPLATFORM_FLAG_LIMIT_4G_ADDRESS;
 -
      return gcvSTATUS_OK;
