@@ -42,7 +42,7 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
-readonly G_LINUX_KERNEL_REV="c228d862094c91c651f2652029d349f8f929f3e5"
+readonly G_LINUX_KERNEL_REV="aecdf947c96b59d24bfacbd79a86c35e7c3f2555"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
 readonly G_LINUX_DTB=" \
 	imx6ull-var-dart-6ulcustomboard-emmc-sd-card.dtb \
