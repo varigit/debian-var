@@ -37,6 +37,12 @@ if [ "$1" != "wifi" -a "$1" != "sd" ]; then
 fi
 
 MX6UL_MMC0_DEV=$1
+if [[ $MX6UL_MMC0_DEV == "sd" ]] ; then
+	mx6ul_mmc0_dev="sd-card"
+elif [[ $MX6UL_MMC0_DEV == "wifi" ]] ; then
+	mx6ul_mmc0_dev="wifi"
+fi
+
 SOC=`cat /sys/bus/soc/devices/soc0/soc_id`
 if [[ $SOC == i.MX6UL ]] ; then
 	soc="imx6ul"
@@ -91,7 +97,7 @@ function install_kernel()
 	flash_erase /dev/mtd3 0 0 2>/dev/null
 	nandwrite -p /dev/mtd3 ${IMAGES_PATH}/$KERNEL_IMAGE > /dev/null
 
-	dtb=${soc}-${som}-${carrier}-nand-${MX6UL_MMC0_DEV}.dtb
+	dtb=${soc}-${som}-${carrier}-nand-${mx6ul_mmc0_dev}.dtb
 	nandwrite -p /dev/mtd3 -s 0x7e0000 ${IMAGES_PATH}/$dtb > /dev/null
 }
 
