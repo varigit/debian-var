@@ -14,7 +14,7 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.5"
+readonly SCRIPT_VERSION="0.6"
 
 
 #### Exports Variables ####
@@ -38,28 +38,6 @@ readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 
-## LINUX kernel: git, config, paths and etc
-readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
-readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
-readonly G_LINUX_KERNEL_REV="937f69a7d6a3bdce07d92a8d61c0b40ca1933d0d"
-readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
-G_LINUX_DTB='freescale/fsl-imx8mq-var-dart-sd-emmc-lvds.dtb freescale/fsl-imx8mq-var-dart-sd-emmc-hdmi.dtb freescale/fsl-imx8mq-var-dart-sd-emmc-dual-display.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-lvds.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-hdmi.dtb freescale/fsl-imx8mq-var-dart-emmc-wifi-dual-display.dtb freescale/fsl-imx8mq-var-dart-m4-sd-emmc-lvds.dtb freescale/fsl-imx8mq-var-dart-m4-sd-emmc-hdmi.dtb freescale/fsl-imx8mq-var-dart-m4-sd-emmc-dual-display.dtb freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-lvds.dtb freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-hdmi.dtb freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-dual-display.dtb'
-
-## uboot
-readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
-readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2018.03_4.14.78_1.0.0_ga_var01"
-readonly G_UBOOT_REV="9d79534cd425a9e0b6fe792fc290e8c521c0c20a"
-G_UBOOT_DEF_CONFIG_MMC='imx8m_var_dart_defconfig'
-readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
-
-## Broadcom BT/WIFI firmware ##
-readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
-readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="6.0.0.121"
-readonly G_BCM_FW_GIT_REV="7bce9b69b51ffd967176c1597feed79305927370"
-
 ## CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILER_NAME="gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
 readonly G_CROSS_COMPILER_ARCHIVE="${G_CROSS_COMPILER_NAME}.tar.xz"
@@ -73,33 +51,20 @@ readonly G_USER_PACKAGES=""
 
 export LC_ALL=C
 
-SOM="imx8mm-var-dart"
-
-if [ "${SOM}" = "imx8m-var-dart" ]; then
-	G_UBOOT_DEF_CONFIG_MMC='imx8m_var_dart_defconfig'
-elif [ "${SOM}" = "imx8mm-var-dart" ]; then
-	G_UBOOT_DEF_CONFIG_MMC='imx8mm_var_dart_defconfig'
-	G_LINUX_DTB='freescale/fsl-imx8mm-var-dart.dtb'
-else
-	echo "Unknown target SOM ${SOM}"
-	exit 1
-fi
 #### Input params #####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
 PARAM_OUTPUT_DIR="${DEF_BUILDENV}/output"
 PARAM_DEBUG="0"
 PARAM_CMD="all"
 PARAM_BLOCK_DEVICE="na"
-
-
 ### usage ###
 function usage() {
 	echo "This program version ${SCRIPT_VERSION}"
-	echo " Used for make debian(${DEB_RELEASE}) image for \"imx8m-var-dart\" board"
+	echo " Used for make debian(${DEB_RELEASE}) image for ${MACHINE}  board"
 	echo " and create booted sdcard"
 	echo ""
 	echo "Usage:"
-	echo " ./${SCRIPT_NAME} options"
+	echo " MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som> ./${SCRIPT_NAME} options"
 	echo ""
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
@@ -126,9 +91,26 @@ function usage() {
 	echo ""
 }
 
+if [ "${MACHINE}" = "imx8m-var-dart" ]; then
+	G_UBOOT_DEF_CONFIG_MMC='imx8m_var_dart_defconfig'
+elif [ "${MACHINE}" = "imx8mm-var-dart" ] ||
+	[ "${MACHINE}" = "imx8qxp-var-som" ]; then
+	source variscite/${MACHINE}/${MACHINE}.sh
+else
+	echo "Unknown target MACHINE ${MACHINE}"
+	usage
+	exit 1
+fi
+
+echo "====Build Summary===="
+echo "Building Debian ${DEB_RELEASE}  for ${MACHINE}"
+echo "Kernel Config :	${G_LINUX_KERNEL_DEF_CONFIG}"
+echo "Kernel DTB    : 	${G_LINUX_DTB}"
+echo "Uboot Config  :  	${G_UBOOT_DEF_CONFIG_MMC}"
+
 ###### parse input arguments ##
-readonly SHORTOPTS="c:o:d:s:h"
-readonly LONGOPTS="cmd:,output:,dev:,som:,help,debug"
+readonly SHORTOPTS="c:o:d:h"
+readonly LONGOPTS="cmd:,output:,dev:,help,debug"
 
 ARGS=$(getopt -s bash --options ${SHORTOPTS}  \
   --longoptions ${LONGOPTS} --name ${SCRIPT_NAME} -- "$@" )
@@ -158,10 +140,6 @@ while true; do
 			usage
 			exit 0;
 			;;
-		-s|--som ) # target SOM
-			shift
-			SOM="$1";
-			;;
 		-- )
 			shift
 			break
@@ -180,19 +158,10 @@ done
 	set -x
 };
 
-if [ "${SOM}" = "imx8m-var-dart" ]; then
-	IMXGSTPLG="imx-gst1.0-plugin-mx8mq"
-elif [ "${SOM}" = "imx8mm-var-dart" ]; then
-	IMXGSTPLG="imx-gst1.0-plugin-mx8mm"
+if [ -d ${G_VARISCITE_PATH}/${MACHINE} ]; then
+	echo "Building Debian for MACHINE ${MACHINE}"
 else
-	echo "Unknown target SOM ${SOM}"
-	exit 1
-fi
-
-if [ -d ${G_VARISCITE_PATH}/${SOM} ]; then
-	echo "Building Debian for SOM ${SOM}"
-else
-	echo "Missing custom files for SOM ${SOM}"
+	echo "Missing custom files for MACHINE ${MACHINE}"
 	exit 1
 fi
 
@@ -284,7 +253,8 @@ function make_debian_rootfs() {
 	rm -rf ${ROOTFS_BASE}/* && :;
 
 	pr_info "rootfs: debootstrap"
-	debootstrap --verbose --foreign --arch arm64 ${DEB_RELEASE} ${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
+	debootstrap --verbose --foreign --arch arm64 ${DEB_RELEASE} \
+		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
 
 ## prepare qemu
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
@@ -303,7 +273,59 @@ function make_debian_rootfs() {
 	echo "user ALL=(root) /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/vi, /sbin/reboot" > ${ROOTFS_BASE}/etc/sudoers.d/user
 	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
 	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
-	cp -r ${G_VARISCITE_PATH}/deb/* ${ROOTFS_BASE}/srv/local-apt-repository
+
+#imx-firmware
+	cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#cairo
+	cp -r ${G_VARISCITE_PATH}/deb/cairo/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#libdrm
+	cp -r ${G_VARISCITE_PATH}/deb/libdrm/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#waylandprotocols
+	cp -r ${G_VARISCITE_PATH}/deb/waylandprotocols/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#G2D_Packages
+	if [ ! -z "${G2D_PACKAGE_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G2D_PACKAGE_DIR}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+	fi
+#Vivante GPU libraries
+	if [ ! -z "${G_GPU_IMX_VIV_PACKAGE_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_PACKAGE_DIR}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+	fi
+#imxcodec
+	cp -r ${G_VARISCITE_PATH}/deb/imxcodec/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#imxparser
+	cp -r ${G_VARISCITE_PATH}/deb/imxparser/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#imxvpuhantro
+	cp -r ${G_VARISCITE_PATH}/deb/imxvpuhantro/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#gstpluginsbad
+	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#gstpluginsbase
+	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#gstpluginsgood
+	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#gstreamer
+	cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#imx-vpuwrap
+	cp -r ${G_VARISCITE_PATH}/deb/imxvpuwrap/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#imxgstplugin
+	cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+#weston
+	cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
 
 ## added mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -328,7 +350,7 @@ echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
 " > etc/fstab
 
-echo "${SOM}" > etc/hostname
+echo "${MACHINE}" > etc/hostname
 
 echo "auto lo
 iface lo inet loopback
@@ -416,10 +438,19 @@ protected_install network-manager
 # sdma package
 protected_install imx-firmware-sdma
 
+# VPU package
+protected_install imx-firmware-vpu
+
+# epdc package
+protected_install imx-firmware-epdc
+
 # graphical packages
 protected_install libdrm-vivante1
 protected_install imx-gpu-viv-core
-protected_install imx-gpu-g2d
+if [ ! -z "${G2DPACKAGE}" ]
+then
+	protected_install	${G2DPACKAGE}
+fi
 protected_install weston
 
 # added alsa & gstreamer
@@ -477,31 +508,49 @@ EOF
 
 ## fourth-stage ##
 ### install variscite-bt service
-	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus ${ROOTFS_BASE}/usr/bin
+	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus \
+		${ROOTFS_BASE}/usr/bin
 	install -d -m 0755 ${ROOTFS_BASE}/etc/bluetooth
-	install -m 0644 ${G_VARISCITE_PATH}/${SOM}/variscite-bt.conf ${ROOTFS_BASE}/etc/bluetooth
-	install -m 0755 ${G_VARISCITE_PATH}/variscite-bt ${ROOTFS_BASE}/etc/bluetooth
-	install -m 0644 ${G_VARISCITE_PATH}/variscite-bt.service ${ROOTFS_BASE}/lib/systemd/system
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt.conf \
+		${ROOTFS_BASE}/etc/bluetooth
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-bt \
+		${ROOTFS_BASE}/etc/bluetooth
+	install -m 0644 ${G_VARISCITE_PATH}/variscite-bt.service \
+		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/variscite-bt.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
 
 ### install variscite-wifi service
 	install -d -m 0755 ${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/${SOM}/blacklist.conf ${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/${SOM}/variscite-wifi.conf ${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/${SOM}/variscite-wifi-common.sh ${ROOTFS_BASE}/etc/wifi
-	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi ${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/variscite-wifi.service ${ROOTFS_BASE}/lib/systemd/system
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/blacklist.conf \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi.conf \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi-common.sh \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${G_VARISCITE_PATH}/variscite-wifi.service \
+		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/variscite-wifi.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
 
+#install securetty
+	install -m 0644 ${G_VARISCITE_PATH}/securetty \
+		${ROOTFS_BASE}/etc/securetty
+
 ### install weston service
 	install -d -m 0755 ${ROOTFS_BASE}/etc/xdg/weston
-	install -m 0644 ${G_VARISCITE_PATH}/${SOM}/weston.ini ${ROOTFS_BASE}/etc/xdg/weston
-	install -m 0755 ${G_VARISCITE_PATH}/${SOM}/weston.config ${ROOTFS_BASE}/etc/default/weston
-	install -m 0755 ${G_VARISCITE_PATH}/weston-start ${ROOTFS_BASE}/usr/bin/weston-start
-	install -m 0755 ${G_VARISCITE_PATH}/weston.profile ${ROOTFS_BASE}/etc/profile.d/weston.sh
-	install -m 0644 ${G_VARISCITE_PATH}/weston.service ${ROOTFS_BASE}/lib/systemd/system
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/weston.ini \
+		${ROOTFS_BASE}/etc/xdg/weston
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/weston.config \
+		${ROOTFS_BASE}/etc/default/weston
+	install -m 0755 ${G_VARISCITE_PATH}/weston-start \
+		${ROOTFS_BASE}/usr/bin/weston-start
+	install -m 0755 ${G_VARISCITE_PATH}/weston.profile \
+		${ROOTFS_BASE}/etc/profile.d/weston.sh
+	install -m 0644 ${G_VARISCITE_PATH}/weston.service \
+		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/weston.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/weston.service
 
@@ -534,37 +583,45 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
 	cp ${PARAM_OUTPUT_DIR}/Image.gz ${ROOTFS_BASE}/boot
 	cp ${PARAM_OUTPUT_DIR}/*.dtb ${ROOTFS_BASE}/boot
-	ln -sf fsl-imx8mq-var-dart-sd-emmc-lvds.dtb ${ROOTFS_BASE}/boot/fsl-imx8mq-var-dart.dtb
+	if [ "$DEFAULT_BOOT_DTB" != "$BOOT_DTB" ]; then
+		ln -sf ${DEFAULT_BOOT_DTB} ${ROOTFS_BASE}/boot/${BOOT_DTB}
+	fi
 
 	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
 	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
 		${ROOTFS_BASE}/usr/share/images/desktop-base/default
 
 ## added alsa default configs ##
-	install -m 0644 ${G_VARISCITE_PATH}/asound.state ${ROOTFS_BASE}/var/lib/alsa/
+	install -m 0644 ${G_VARISCITE_PATH}/asound.state \
+		${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 
 ## Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
 ## install kernel modules in rootfs
-	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} ${ROOTFS_BASE} || {
+	install_kernel_modules \
+		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
+		${ROOTFS_BASE} || {
 		pr_error "Failed #$? in function install_kernel_modules"
 		return 2;
 	}
 
 ## copy all kernel headers for development
 	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
-	cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* ${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
-	cp -r ${G_LINUX_KERNEL_SRC_DIR}/include ${ROOTFS_BASE}/usr/local/src/linux-imx/
+	cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* \
+	${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
+	cp -r ${G_LINUX_KERNEL_SRC_DIR}/include \
+		${ROOTFS_BASE}/usr/local/src/linux-imx/
 
 ## copy custom files
 	cp ${G_VARISCITE_PATH}/fw_env.config ${ROOTFS_BASE}/etc
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
-if [ "${SOM}" = "imx8m-var-dart" ]; then
-	cp ${G_VARISCITE_PATH}/${SOM}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
+if [ "${MACHINE}" = "imx8m-var-dart" ]; then
+	cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
 fi
 
 ## clenup command
@@ -694,51 +751,84 @@ function make_uboot() {
 	make env -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
 	make envtools -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
 
-	if [ "${SOM}" = "imx8m-var-dart" ]; then
+	if [ "${MACHINE}" = "imx8m-var-dart" ]; then
 		HDMI=yes
 		TEE_LOAD_ADDR=0xfe000000
 		ATF_LOAD_ADDR=0x00910000
 		UBOOT_DTB="fsl-imx8mq-var-dart.dtb"
 		IMX_BOOT_TOOL_BL_BIN="bl31-imx8mq.bin"
-	else
-		HDMI=no
-		TEE_LOAD_ADDR=0xbe000000
-		ATF_LOAD_ADDR=0x00920000
-		UBOOT_DTB="fsl-imx8mm-var-dart.dtb"
-		IMX_BOOT_TOOL_BL_BIN="bl31-imx8mm.bin"
 	fi
 
-	# Copy u-boot, SPL and DTB
-	cd ${G_VARISCITE_PATH}/${SOM}/imx-boot-tools
-	rm -f u-boot* *.dtb
-	cp ${1}/u-boot.bin ${1}/u-boot-nodtb.bin ${1}/spl/u-boot-spl.bin ${1}/arch/arm/dts/${UBOOT_DTB} .
+	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
+			src/imx-mkimage/iMX8QX/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8qx.bin \
+			src/imx-mkimage/iMX8QX/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qx-ahab-container.img \
+			src/imx-mkimage/iMX8QX/
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make SOC=iMX8QX flash
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+	elif [ "${MACHINE}" = "imx8mm-var-dart" ] ||
+		[ "${MACHINE}" = "imx8m-var-dart" ]; then
+		# Copy u-boot, SPL and DTB
+		cd ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools
+		rm -f u-boot* *.dtb
+		cp ${1}/u-boot.bin ${1}/u-boot-nodtb.bin \
+			${1}/spl/u-boot-spl.bin ${1}/arch/arm/dts/${UBOOT_DTB} .
 
-	# Build SPL+DDR firmware image: u-boot-spl-ddr.bin
-	${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_1d_imem.bin lpddr4_pmu_train_1d_imem_pad.bin
-	${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 lpddr4_pmu_train_1d_dmem.bin lpddr4_pmu_train_1d_dmem_pad.bin
-	${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_2d_imem.bin lpddr4_pmu_train_2d_imem_pad.bin
-	cat lpddr4_pmu_train_1d_imem_pad.bin lpddr4_pmu_train_1d_dmem_pad.bin > lpddr4_pmu_train_1d_fw.bin
-	cat lpddr4_pmu_train_2d_imem_pad.bin lpddr4_pmu_train_2d_dmem.bin > lpddr4_pmu_train_2d_fw.bin
-	cat u-boot-spl.bin lpddr4_pmu_train_1d_fw.bin lpddr4_pmu_train_2d_fw.bin > u-boot-spl-ddr.bin
-	rm -f lpddr4_pmu_train_1d_fw.bin lpddr4_pmu_train_2d_fw.bin lpddr4_pmu_train_1d_imem_pad.bin lpddr4_pmu_train_1d_dmem_pad.bin lpddr4_pmu_train_2d_imem_pad.bin
+		# Build SPL+DDR firmware image: u-boot-spl-ddr.bin
+		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy \
+			 -I binary -O binary --pad-to 0x8000 \
+			--gap-fill=0x0 lpddr4_pmu_train_1d_imem.bin \
+				lpddr4_pmu_train_1d_imem_pad.bin
+		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy \
+			-I binary -O binary --pad-to 0x4000 --gap-fill=0x0 \
+			lpddr4_pmu_train_1d_dmem.bin \
+			lpddr4_pmu_train_1d_dmem_pad.bin
+		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy \
+			-I binary -O binary --pad-to 0x8000 --gap-fill=0x0 \
+			lpddr4_pmu_train_2d_imem.bin  \
+			lpddr4_pmu_train_2d_imem_pad.bin
+		cat lpddr4_pmu_train_1d_imem_pad.bin \
+			lpddr4_pmu_train_1d_dmem_pad.bin >  \
+				lpddr4_pmu_train_1d_fw.bin
+		cat lpddr4_pmu_train_2d_imem_pad.bin \
+			lpddr4_pmu_train_2d_dmem.bin > \
+				lpddr4_pmu_train_2d_fw.bin
+		cat u-boot-spl.bin lpddr4_pmu_train_1d_fw.bin \
+			lpddr4_pmu_train_2d_fw.bin > u-boot-spl-ddr.bin
+		rm -f lpddr4_pmu_train_1d_fw.bin lpddr4_pmu_train_2d_fw.bin \
+			lpddr4_pmu_train_1d_imem_pad.bin \
+			lpddr4_pmu_train_1d_dmem_pad.bin \
+			lpddr4_pmu_train_2d_imem_pad.bin
 
-	# Build u-boot+ATF firmware image: u-boot-atf.bin
-	ln -sf ${IMX_BOOT_TOOL_BL_BIN} bl31.bin
-	cp bl31.bin u-boot-atf.bin
-	dd if=u-boot.bin of=u-boot-atf.bin bs=1K seek=128
+		# Build u-boot+ATF firmware image: u-boot-atf.bin
+		ln -sf ${IMX_BOOT_TOOL_BL_BIN} bl31.bin
+		cp bl31.bin u-boot-atf.bin
+		dd if=u-boot.bin of=u-boot-atf.bin bs=1K seek=128
+		# Build u-boot+DTB+ATF+HDMI firmware FIT image
+		TEE_LOAD_ADDR=${TEE_LOAD_ADDR} ATF_LOAD_ADDR=${ATF_LOAD_ADDR} \
+		./mkimage_fit_atf.sh ${UBOOT_DTB} > u-boot.its
+		./mkimage_uboot -E -p 0x3000 -f u-boot.its u-boot.itb
+		rm -f u-boot.its
 
-	# Build u-boot+DTB+ATF+HDMI firmware FIT image
-	TEE_LOAD_ADDR=${TEE_LOAD_ADDR} ATF_LOAD_ADDR=${ATF_LOAD_ADDR} ./mkimage_fit_atf.sh ${UBOOT_DTB} > u-boot.its
-	./mkimage_uboot -E -p 0x3000 -f u-boot.its u-boot.itb
-	rm -f u-boot.its
+		# Build final image
+		if [ "${HDMI}" = "yes" ]; then
+			./mkimage_imx8 -fit -signed_hdmi signed_hdmi_imx8m.bin \
+			 -loader u-boot-spl-ddr.bin 0x7E1000 \
+			-second_loader u-boot.itb 0x40200000 0x60000 \
+			-out ${G_UBOOT_NAME_FOR_EMMC}
+		else
+			./mkimage_imx8 -fit -loader u-boot-spl-ddr.bin \
+				0x7E1000 -second_loader u-boot.itb \
+				0x40200000 0x60000 \
+				-out ${G_UBOOT_NAME_FOR_EMMC}
+		fi
 
-	# Build final image
-	if [ "${HDMI}" = "yes" ]; then
-		./mkimage_imx8 -fit -signed_hdmi signed_hdmi_imx8m.bin -loader u-boot-spl-ddr.bin 0x7E1000 -second_loader u-boot.itb 0x40200000 0x60000 -out ${G_UBOOT_NAME_FOR_EMMC}
-	else
-		./mkimage_imx8 -fit -loader u-boot-spl-ddr.bin 0x7E1000 -second_loader u-boot.itb 0x40200000 0x60000 -out ${G_UBOOT_NAME_FOR_EMMC}
 	fi
-
 	# copy images
 	cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 
@@ -852,13 +942,15 @@ function make_sdcard() {
 	function flash_u-boot
 	{
 		pr_info "Flashing U-Boot"
-		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=33; sync
+		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} \
+		of=${LPARAM_BLOCK_DEVICE} bs=1K seek=${BOOTLOADER_OFFSET}; sync
 	}
 
 	function flash_sdcard
 	{
 		pr_info "Flashing \"rootfs\" partition"
-		tar -xpf ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME} -C ${P1_MOUNT_DIR}/
+		tar -xpf ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME} \
+			-C ${P1_MOUNT_DIR}/
 	}
 
 	function copy_debian_images
@@ -866,18 +958,20 @@ function make_sdcard() {
 		mkdir -p ${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}
 
 		pr_info "Copying Debian images to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}	${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${DEF_ROOTFS_TARBAR_NAME}
+		cp ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME} \
+			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${DEF_ROOTFS_TARBAR_NAME}
 
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
-
+		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} \
+			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 		return 0;
 	}
 
 	function copy_scripts
 	{
 		pr_info "Copying scripts to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${G_VARISCITE_PATH}/debian-emmc.sh	${P1_MOUNT_DIR}/usr/sbin/
+		cp ${G_VARISCITE_PATH}/debian-emmc.sh \
+			${P1_MOUNT_DIR}/usr/sbin/
 	}
 
 	function ceildiv
@@ -896,7 +990,8 @@ function make_sdcard() {
 	done
 	sync
 
-	((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | fdisk ${LPARAM_BLOCK_DEVICE} &> /dev/null) || true
+	((echo d; echo 1; echo d; echo 2; echo d; echo 3; echo d; echo w) | \
+		fdisk ${LPARAM_BLOCK_DEVICE} &> /dev/null) || true
 	sync
 
 	dd if=/dev/zero of=${LPARAM_BLOCK_DEVICE} bs=1024 count=4096
@@ -984,28 +1079,41 @@ function cmd_make_deploy() {
 	# get linaro toolchain
 	(( `ls ${G_CROSS_COMPILER_PATH} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get and unpack cross compiler";
-		get_remote_file ${G_EXT_CROSS_COMPILER_LINK} ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE}
-		tar -xJf ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE} -C ${G_TOOLS_PATH}/
+		get_remote_file ${G_EXT_CROSS_COMPILER_LINK} \
+			${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE}
+		tar -xJf ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE} \
+			-C ${G_TOOLS_PATH}/
 	};
 
 	# get uboot repository
 	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get uboot repository";
-		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} ${G_UBOOT_SRC_DIR} ${G_UBOOT_REV}
+		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} \
+			${G_UBOOT_SRC_DIR} ${G_UBOOT_REV}
 	};
 
 	# get kernel repository
 	(( `ls ${G_LINUX_KERNEL_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get kernel repository";
-		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} ${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
+		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} \
+			${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
 	};
 
 	# get bcm firmware repository
 	(( `ls ${G_BCM_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get bcmhd firmware repository";
-		get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} ${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
+		get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} \
+			${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
 	};
 
+	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
+		# get bcm firmware repository
+		(( `ls ${G_IMXBOOT_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get imx-boot";
+			get_git_src ${G_IMXBOOT_GIT} \
+			${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
+		};
+	fi
 	return 0;
 }
 
@@ -1046,7 +1154,9 @@ function cmd_make_uboot() {
 }
 
 function cmd_make_kernel() {
-	make_kernel ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} "${G_LINUX_DTB}" ${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
+	make_kernel ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_LINUX_KERNEL_DEF_CONFIG} "${G_LINUX_DTB}" \
+		${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
 		pr_error "Failed #$? in function make_kernel"
 		return 1;
 	};
@@ -1062,12 +1172,16 @@ function cmd_make_kmodules() {
 		return 1;
 	};
 
-	make_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} || {
+	make_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
+		${G_ROOTFS_DIR} || {
 		pr_error "Failed #$? in function make_kernel_modules"
 		return 2;
 	};
 
-	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} || {
+	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_LINUX_KERNEL_DEF_CONFIG} \
+		${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} || {
 		pr_error "Failed #$? in function install_kernel_modules"
 		return 2;
 	};

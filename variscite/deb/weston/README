@@ -1,3 +1,0 @@
-This is the taken from debian snapshots and provide a wayland-protocols version aligned to latest Yocto Sumo from NXP.
-The package include NXP patches from:
-https://source.codeaurora.org/external/imx/weston-imx/log/?h=weston-imx-5.0

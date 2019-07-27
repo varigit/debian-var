@@ -1,0 +1,3 @@
+This is taken from debian snapshots and provide a Gstreamer version aligned to latest Yocto Sumo from NXP.
+The package include NXP patches from branch MM_04.04.05_1902_L4.14.98_GA:
+https://source.codeaurora.org/external/imx/gst-plugins-good/log/?h=MM_04.04.05_1902_L4.14.98_GA

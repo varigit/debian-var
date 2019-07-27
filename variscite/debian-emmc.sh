@@ -35,6 +35,11 @@ check_board()
 		BOARD=imx8m-var-dart
 		DTB_PREFIX=fsl-imx8mq-var-dart
 		BLOCK=mmcblk0
+	elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
+		BOARD=imx8qxp-var-som
+		DTB_PREFIX=fsl-imx8qxp-var-som
+		BOOTLOADER_OFFSET=32
+		BLOCK=mmcblk0
 
 		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
 		      $DISPLAY != "dual-display" ]]; then
@@ -135,6 +140,14 @@ install_rootfs_to_emmc()
 	if [[ ${BOARD} = "imx8m-var-dart" ]]; then
 		# Create DTB symlink
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+
+		# Install blacklist.conf
+		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+	fi
+
+	if [[ ${BOARD} = "imx8qxp-var-som" ]]; then
+		# Create DTB symlink
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi.dtb ${DTB_PREFIX}.dtb)
 
 		# Install blacklist.conf
 		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
