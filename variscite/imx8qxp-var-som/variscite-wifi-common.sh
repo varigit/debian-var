@@ -51,19 +51,19 @@ wifi_up()
 
 	# BT_BUF up
 	echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
-	
+
 	# Wait at least 150ms
 	usleep 200000
-	
+
 	# BT_BUF down
 	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
 
 	# BT_EN down
 	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
-	
+
 	# Bind WIFI device to MMC controller
 	echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
-	
+
 	# Load WIFI driver
 	modprobe brcmfmac
 }
@@ -102,7 +102,7 @@ wifi_should_not_be_started()
         # Do not enable WIFI if it is already up
         [ -d /sys/class/net/wlan0 ] && return 0
 
-        # Do not enable WIFI if booting from SD on VAR-SOM-MX8X         
+        # Do not enable WIFI if booting from SD on VAR-SOM-MX8X
         if grep -q mmcblk1 /proc/cmdline; then
                 return 0
         fi

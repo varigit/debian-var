@@ -48,7 +48,7 @@ check_board()
 		fi
 	else
 		red_bold_echo "ERROR: Unsupported board"
-		exit 1	
+		exit 1
 	fi
 
 
