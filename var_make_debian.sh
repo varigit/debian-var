@@ -91,16 +91,7 @@ function usage() {
 	echo ""
 }
 
-if [ "${MACHINE}" = "imx8m-var-dart" ]; then
-	G_UBOOT_DEF_CONFIG_MMC='imx8m_var_dart_defconfig'
-elif [ "${MACHINE}" = "imx8mm-var-dart" ] ||
-	[ "${MACHINE}" = "imx8qxp-var-som" ]; then
-	source variscite/${MACHINE}/${MACHINE}.sh
-else
-	echo "Unknown target MACHINE ${MACHINE}"
-	usage
-	exit 1
-fi
+source variscite/${MACHINE}/${MACHINE}.sh
 
 echo "====Build Summary===="
 echo "Building Debian ${DEB_RELEASE}  for ${MACHINE}"
@@ -585,6 +576,10 @@ rm -f user-stage
 	cp ${PARAM_OUTPUT_DIR}/*.dtb ${ROOTFS_BASE}/boot
 	if [ "$DEFAULT_BOOT_DTB" != "$BOOT_DTB" ]; then
 		ln -sf ${DEFAULT_BOOT_DTB} ${ROOTFS_BASE}/boot/${BOOT_DTB}
+		if [ ! -z "${BOOT_DTB2}" ]; then
+			ln -sf ${DEFAULT_BOOT_DTB2} \
+				${ROOTFS_BASE}/boot/${BOOT_DTB2}
+		fi
 	fi
 
 	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
