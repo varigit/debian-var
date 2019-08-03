@@ -766,8 +766,29 @@ function make_uboot() {
 		make SOC=iMX8QX flash
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
-	elif [ "${MACHINE}" = "imx8mm-var-dart" ] ||
-		[ "${MACHINE}" = "imx8m-var-dart" ]; then
+	elif [ "${MACHINE}" = "imx8m-var-dart" ]; then
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mq.bin \
+			src/imx-mkimage/iMX8M/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/signed_hdmi_imx8m.bin \
+			src/imx-mkimage/iMX8M/signed_hdmi_imx8m.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_imem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_imem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_dmem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_dmem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_imem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_imem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_dmem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_dmem.bin
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/fsl-imx8mq-evk.dtb
+		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make SOC=iMX8M flash_evk
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+	elif [ "${MACHINE}" = "imx8mm-var-dart" ]; then
 		# Copy u-boot, SPL and DTB
 		cd ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools
 		rm -f u-boot* *.dtb
@@ -1101,14 +1122,12 @@ function cmd_make_deploy() {
 			${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
 	};
 
-	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
-		# get bcm firmware repository
-		(( `ls ${G_IMXBOOT_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
-			pr_info "Get imx-boot";
-			get_git_src ${G_IMXBOOT_GIT} \
-			${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
-		};
-	fi
+	# get IMXBoot Source repository
+	(( `ls ${G_IMXBOOT_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
+		pr_info "Get imx-boot";
+		get_git_src ${G_IMXBOOT_GIT} \
+		${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
+	};
 	return 0;
 }
 
