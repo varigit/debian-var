@@ -36,6 +36,10 @@ BOOTLOADER_OFFSET=33
 BOOT_DTB="fsl-imx8mm-var-dart.dtb"
 DEFAULT_BOOT_DTB="fsl-imx8mm-var-dart.dtb"
 
+readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
+readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
+readonly G_IMXBOOT_BRACH="imx_4.14.78_1.0.0_ga"
+readonly G_IMXBOOT_REV="2cf091c075ea1950afa22a56e224dc4e448db542"
 HDMI=no
 TEE_LOAD_ADDR=0xbe000000
 ATF_LOAD_ADDR=0x00920000

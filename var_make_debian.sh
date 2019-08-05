@@ -734,25 +734,27 @@ function make_uboot() {
 ### make emmc uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_MMC}"
 	# clean work directory
-	make ARCH=arm64 -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION} mrproper
+	make ARCH=arm64 -C ${1} \
+		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_CROSS_COMPILER_JOPTION} mrproper
 
 	# make uboot config for mmc
-	make ARCH=arm64 -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION} ${G_UBOOT_DEF_CONFIG_MMC}
+	make ARCH=arm64 -C ${1} \
+		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_CROSS_COMPILER_JOPTION} ${G_UBOOT_DEF_CONFIG_MMC}
 
 	# make uboot
-	make -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
+	make -C ${1} \
+		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_CROSS_COMPILER_JOPTION}
 
 	# make fw_printenv
-	make env -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
-	make envtools -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
-
-	if [ "${MACHINE}" = "imx8m-var-dart" ]; then
-		HDMI=yes
-		TEE_LOAD_ADDR=0xfe000000
-		ATF_LOAD_ADDR=0x00910000
-		UBOOT_DTB="fsl-imx8mq-var-dart.dtb"
-		IMX_BOOT_TOOL_BL_BIN="bl31-imx8mq.bin"
-	fi
+	make env -C ${1} \
+		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_CROSS_COMPILER_JOPTION}
+	make envtools -C ${1} \
+		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_CROSS_COMPILER_JOPTION}
 
 	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
@@ -789,61 +791,25 @@ function make_uboot() {
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8mm-var-dart" ]; then
-		# Copy u-boot, SPL and DTB
-		cd ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools
-		rm -f u-boot* *.dtb
-		cp ${1}/u-boot.bin ${1}/u-boot-nodtb.bin \
-			${1}/spl/u-boot-spl.bin ${1}/arch/arm/dts/${UBOOT_DTB} .
-
-		# Build SPL+DDR firmware image: u-boot-spl-ddr.bin
-		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy \
-			 -I binary -O binary --pad-to 0x8000 \
-			--gap-fill=0x0 lpddr4_pmu_train_1d_imem.bin \
-				lpddr4_pmu_train_1d_imem_pad.bin
-		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy \
-			-I binary -O binary --pad-to 0x4000 --gap-fill=0x0 \
-			lpddr4_pmu_train_1d_dmem.bin \
-			lpddr4_pmu_train_1d_dmem_pad.bin
-		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX}objcopy \
-			-I binary -O binary --pad-to 0x8000 --gap-fill=0x0 \
-			lpddr4_pmu_train_2d_imem.bin  \
-			lpddr4_pmu_train_2d_imem_pad.bin
-		cat lpddr4_pmu_train_1d_imem_pad.bin \
-			lpddr4_pmu_train_1d_dmem_pad.bin >  \
-				lpddr4_pmu_train_1d_fw.bin
-		cat lpddr4_pmu_train_2d_imem_pad.bin \
-			lpddr4_pmu_train_2d_dmem.bin > \
-				lpddr4_pmu_train_2d_fw.bin
-		cat u-boot-spl.bin lpddr4_pmu_train_1d_fw.bin \
-			lpddr4_pmu_train_2d_fw.bin > u-boot-spl-ddr.bin
-		rm -f lpddr4_pmu_train_1d_fw.bin lpddr4_pmu_train_2d_fw.bin \
-			lpddr4_pmu_train_1d_imem_pad.bin \
-			lpddr4_pmu_train_1d_dmem_pad.bin \
-			lpddr4_pmu_train_2d_imem_pad.bin
-
-		# Build u-boot+ATF firmware image: u-boot-atf.bin
-		ln -sf ${IMX_BOOT_TOOL_BL_BIN} bl31.bin
-		cp bl31.bin u-boot-atf.bin
-		dd if=u-boot.bin of=u-boot-atf.bin bs=1K seek=128
-		# Build u-boot+DTB+ATF+HDMI firmware FIT image
-		TEE_LOAD_ADDR=${TEE_LOAD_ADDR} ATF_LOAD_ADDR=${ATF_LOAD_ADDR} \
-		./mkimage_fit_atf.sh ${UBOOT_DTB} > u-boot.its
-		./mkimage_uboot -E -p 0x3000 -f u-boot.its u-boot.itb
-		rm -f u-boot.its
-
-		# Build final image
-		if [ "${HDMI}" = "yes" ]; then
-			./mkimage_imx8 -fit -signed_hdmi signed_hdmi_imx8m.bin \
-			 -loader u-boot-spl-ddr.bin 0x7E1000 \
-			-second_loader u-boot.itb 0x40200000 0x60000 \
-			-out ${G_UBOOT_NAME_FOR_EMMC}
-		else
-			./mkimage_imx8 -fit -loader u-boot-spl-ddr.bin \
-				0x7E1000 -second_loader u-boot.itb \
-				0x40200000 0x60000 \
-				-out ${G_UBOOT_NAME_FOR_EMMC}
-		fi
-
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mm.bin \
+			src/imx-mkimage/iMX8M/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_imem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_imem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_dmem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_dmem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_imem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_imem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_dmem.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_dmem.bin
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/fsl-imx8mm-evk.dtb
+		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make SOC=iMX8MM flash_evk
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 	fi
 	# copy images
 	cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
