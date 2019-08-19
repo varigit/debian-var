@@ -2,7 +2,7 @@
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
-readonly G_LINUX_KERNEL_REV="937f69a7d6a3bdce07d92a8d61c0b40ca1933d0d"
+readonly G_LINUX_KERNEL_REV="cbdae843e5046c2069fa867297f0dd66e334aadc"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 G_LINUX_DTB="freescale/fsl-imx8mm-var-dart.dtb"
 
