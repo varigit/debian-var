@@ -481,6 +481,9 @@ protected_install udhcpd
 # can support
 protected_install can-utils
 
+# pmount
+protected_install pmount
+
 apt-get -y autoremove
 
 # create users and set password
@@ -615,6 +618,11 @@ rm -f user-stage
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
+	cp ${G_VARISCITE_PATH}/mount.blacklist ${ROOTFS_BASE}/etc/udev/rules.d
+	cp ${G_VARISCITE_PATH}/automount.rules ${ROOTFS_BASE}/etc/udev/rules.d
+	mkdir -p ${ROOTFS_BASE}/etc/udev/scripts/
+	install -m 0755 ${G_VARISCITE_PATH}/mount.sh \
+		${ROOTFS_BASE}/etc/udev/scripts/mount.sh
 if [ "${MACHINE}" = "imx8m-var-dart" ]; then
 	cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
 fi
