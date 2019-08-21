@@ -514,6 +514,31 @@ EOF
 	ln -s /lib/systemd/system/variscite-bt.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
 
+### isntall BT audio and main config
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/audio.conf \
+		${ROOTFS_BASE}/etc/bluetooth/
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/main.conf \
+		${ROOTFS_BASE}/etc/bluetooth/
+
+### install obexd configuration
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/obexd.conf \
+		${ROOTFS_BASE}/etc/dbus-1/system.d
+
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/obex.service \
+		${ROOTFS_BASE}/lib/systemd/system
+	ln -s /lib/systemd/system/obex.service \
+		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
+
+### install pulse audio configuration
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio.service \
+		${ROOTFS_BASE}/lib/systemd/system
+	ln -s /lib/systemd/system/pulseaudio.service \
+		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/pulseaudio.service
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio-bluetooth.conf \
+		${ROOTFS_BASE}/etc//dbus-1/system.d
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
+		${ROOTFS_BASE}/etc/pulse/
+
 ### install variscite-wifi service
 	install -d -m 0755 ${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/blacklist.conf \
