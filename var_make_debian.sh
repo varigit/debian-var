@@ -484,6 +484,9 @@ protected_install can-utils
 # pmount
 protected_install pmount
 
+# pm-utils
+protected_install pm-utils
+
 apt-get -y autoremove
 
 # create users and set password
@@ -573,6 +576,12 @@ EOF
 	ln -s /lib/systemd/system/weston.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/weston.service
 
+#remove pm-utils default scripts and install wifi / bt pm-utils script
+	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
+	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
+	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
+		${ROOTFS_BASE}/etc/pm/sleep.d/
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
 
