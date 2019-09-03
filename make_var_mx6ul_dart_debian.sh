@@ -703,7 +703,7 @@ function make_uboot() {
 	cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_NAND}
 
 	# make fw_printenv
-	make env ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
+	make envtools ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} ${G_CROSS_COMPILER_JOPTION}
 	cp ${1}/tools/env/fw_printenv ${2}
 
 	return 0;
