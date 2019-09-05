@@ -489,6 +489,10 @@ protected_install pm-utils
 
 apt-get -y autoremove
 
+#update iptables alternatives to legacy
+update-alternatives --set iptables /usr/sbin/iptables-legacy
+update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+
 # create users and set password
 useradd -m -G audio -s /bin/bash user
 usermod -a -G video user
