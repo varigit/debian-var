@@ -1044,10 +1044,10 @@ function make_sdcard()
 	}
 
 	# Delete the partitions
-	for ((i=0; i<10; i++))
+	for ((i=0; i<=10; i++))
 	do
-		if [ `ls ${LPARAM_BLOCK_DEVICE}${part}$i 2> /dev/null | grep -c ${LPARAM_BLOCK_DEVICE}${part}$i` -ne 0 ]; then
-			dd if=/dev/zero of=${LPARAM_BLOCK_DEVICE}${part}$i bs=512 count=1024
+		if [ -e ${LPARAM_BLOCK_DEVICE}${part}${i} ]; then
+			dd if=/dev/zero of=${LPARAM_BLOCK_DEVICE}${part}$i bs=512 count=1024 2> /dev/null || true
 		fi
 	done
 	sync
@@ -1056,8 +1056,8 @@ function make_sdcard()
 		fdisk ${LPARAM_BLOCK_DEVICE} &> /dev/null) || true
 	sync
 
-	dd if=/dev/zero of=${LPARAM_BLOCK_DEVICE} bs=1024 count=4096
-	sleep 2; sync;
+	dd if=/dev/zero of=${LPARAM_BLOCK_DEVICE} bs=1M count=${BOOTLOAD_RESERVE_SIZE}
+	sync; sleep 2
 
 	# Create a new partition table
 	pr_info "Creating new partitions"
