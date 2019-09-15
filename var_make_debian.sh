@@ -1114,8 +1114,6 @@ function make_bcm_fw()
 
 function cmd_make_deploy()
 {
-	make_prepare;
-
 	# get linaro toolchain
 	(( `ls ${G_CROSS_COMPILER_PATH} 2>/dev/null | wc -l` == 0 )) && {
 		pr_info "Get and unpack cross compiler";
@@ -1186,8 +1184,6 @@ function cmd_make_kernel()
 
 function cmd_make_kmodules()
 {
-	make_prepare;
-
 	rm -rf ${G_ROOTFS_DIR}/lib/modules/*
 
 	make_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
@@ -1212,8 +1208,6 @@ function cmd_make_sdcard()
 
 function cmd_make_bcmfw()
 {
-	make_prepare
-
 	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 }
 
@@ -1244,6 +1238,8 @@ function cmd_make_clean()
 };
 
 pr_info "Command: \"$PARAM_CMD\" start..."
+
+make_prepare
 
 case $PARAM_CMD in
 	deploy )
