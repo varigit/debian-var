@@ -204,9 +204,7 @@ function get_git_src()
 	git clone ${1} -b ${2} ${3}
 	cd ${3}
 	git reset --hard ${4}
-	RET=$?
 	cd -
-	return $RET
 }
 
 # get remote file
@@ -216,25 +214,24 @@ function get_remote_file()
 {
 	# download remote file
 	wget -c ${1} -O ${2}
-	return $?
 }
 
 function make_prepare()
 {
 	# create src dir
-	mkdir -p ${DEF_SRC_DIR} && :;
+	mkdir -p ${DEF_SRC_DIR}
 
 	# create toolchain dir
-	mkdir -p ${G_TOOLS_PATH} && :;
+	mkdir -p ${G_TOOLS_PATH}
 
 	# create rootfs dir
-	mkdir -p ${G_ROOTFS_DIR} && :;
+	mkdir -p ${G_ROOTFS_DIR}
 
 	# create out dir
-	mkdir -p ${PARAM_OUTPUT_DIR} && :;
+	mkdir -p ${PARAM_OUTPUT_DIR}
 
 	# create tmp dir
-	mkdir -p ${G_TMP_DIR} && :;
+	mkdir -p ${G_TMP_DIR}
 }
 
 # generate rootfs in input dir
@@ -246,10 +243,10 @@ function make_debian_rootfs()
 	pr_info "Make Debian (${DEB_RELEASE}) rootfs start..."
 
 	# umount previus mounts (if fail)
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
 
 	# clear rootfs dir
-	rm -rf ${ROOTFS_BASE}/* && :;
+	rm -rf ${ROOTFS_BASE}/*
 
 	pr_info "rootfs: debootstrap"
 	debootstrap --verbose --foreign --arch arm64 ${DEB_RELEASE} \
@@ -666,10 +663,7 @@ rm -f user-stage
 	install_kernel_modules \
 		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
-		${ROOTFS_BASE} || {
-		pr_error "Failed #$? in function install_kernel_modules"
-		return 2;
-	}
+		${ROOTFS_BASE}
 
 	# copy all kernel headers for development
 	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
@@ -703,7 +697,7 @@ rm -f cleanup
 	pr_info "rootfs: clean"
 	chmod +x cleanup
 	chroot ${ROOTFS_BASE} /cleanup
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
 
 	# kill latest dbus-daemon instance due to qemu-aarch64-static
 	QEMU_PROC_ID=$(ps axf | grep dbus-daemon | grep qemu-aarch64-static | awk '{print $1}')
@@ -712,9 +706,7 @@ rm -f cleanup
 		kill -9 $QEMU_PROC_ID
 	fi
 
-	rm ${ROOTFS_BASE}/usr/bin/qemu-aarch64-static
-
-	return 0;
+	rm -f ${ROOTFS_BASE}/usr/bin/qemu-aarch64-static
 }
 
 # make tarball from footfs
@@ -727,17 +719,18 @@ function make_tarball()
 	chown root:root .
 	pr_info "make tarball from folder ${1}"
 	pr_info "Remove old tarball $2"
-	rm $2 > /dev/null 2>&1 && :;
+	rm -f $2
 
 	pr_info "Create $2"
 
-	tar czf $2 .
-	success=$?
-	[ $success -eq 0 ] || {
-		rm $2 > /dev/null 2>&1 && :;
+	RETVAL=0
+	tar czf $2 . || {
+		RETVAL=1
+		rm -f $2
 	};
 
 	cd -
+	return $RETVAL
 }
 
 # make Linux kernel image & dtbs
@@ -760,8 +753,6 @@ function make_kernel()
 	pr_info "Copy kernel and dtb files to output dir: ${5}"
 	cp ${4}/arch/arm64/boot/Image.gz ${5}/;
 	cp ${4}/arch/arm64/boot/dts/freescale/*.dtb ${5}/;
-
-	return 0;
 }
 
 # clean kernel
@@ -771,8 +762,6 @@ function clean_kernel()
 	pr_info "Clean the Linux kernel"
 
 	make ARCH=arm64 -C ${1}/ mrproper
-
-	return 0;
 }
 
 # make Linux kernel modules
@@ -801,8 +790,6 @@ function install_kernel_modules()
 
 	pr_info "Installing kernel modules to ${4}"
 	make ARCH=arm64 CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} INSTALL_MOD_PATH=${4} modules_install
-
-	return 0;
 }
 
 # make U-Boot
@@ -892,8 +879,6 @@ function make_uboot()
 	cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 
 	cp ${1}/tools/env/fw_printenv ${2}
-
-	return 0;
 }
 
 # clean U-Boot
@@ -902,8 +887,6 @@ function clean_uboot()
 {
 	pr_info "Clean U-Boot"
 	make ARCH=arm64 -C ${1}/ mrproper
-
-	return 0;
 }
 
 # verify the SD card
@@ -973,7 +956,7 @@ function make_sdcard()
 	readonly local SPARE_SIZE=4
 
 	[ "${LPARAM_BLOCK_DEVICE}" = "na" ] && {
-		pr_warning "No valid block device: ${LPARAM_BLOCK_DEVICE}"
+		pr_error "No valid block device: ${LPARAM_BLOCK_DEVICE}"
 		return 1;
 	};
 
@@ -1025,8 +1008,6 @@ function make_sdcard()
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} \
 			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
-
-		return 0;
 	}
 
 	function copy_scripts
@@ -1112,8 +1093,6 @@ EOF
 	rm -rf ${P1_MOUNT_DIR}
 
 	pr_info "The SD card is ready"
-
-	return 0;
 }
 
 # make firmware for wl bcm module
@@ -1129,8 +1108,6 @@ function make_bcm_fw()
 	install -m 0644 ${1}/*.hcd ${2}/lib/firmware/bcm/
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
-
-	return 0;
 }
 
 ################ commands ################
@@ -1176,7 +1153,7 @@ function cmd_make_deploy()
 		${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
 	};
 
-	return 0;
+	return 0
 }
 
 function cmd_make_rootfs()
@@ -1185,131 +1162,75 @@ function cmd_make_rootfs()
 
 	# make Debian rootfs
 	cd ${G_ROOTFS_DIR}
-	make_debian_rootfs ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_debian_rootfs"
-		cd -;
-		return 1;
-	};
+	make_debian_rootfs ${G_ROOTFS_DIR}
 	cd -
 
 	# make bcm firmwares
-	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_bcm_fw"
-		return 4;
-	};
+	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 
 	# pack rootfs
-	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH} || {
-		pr_error "Failed #$? in function make_tarball"
-		return 4;
-	};
-
-	return 0;
+	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH}
 }
 
 function cmd_make_uboot()
 {
-	make_uboot ${G_UBOOT_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
-		pr_error "Failed #$? in function make_uboot"
-		return 1;
-	};
-
-	return 0;
+	make_uboot ${G_UBOOT_SRC_DIR} ${PARAM_OUTPUT_DIR}
 }
 
 function cmd_make_kernel()
 {
 	make_kernel ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_LINUX_KERNEL_DEF_CONFIG} "${G_LINUX_DTB}" \
-		${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
-		pr_error "Failed #$? in function make_kernel"
-		return 1;
-	};
-
-	return 0;
+		${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR}
 }
 
 function cmd_make_kmodules()
 {
 	make_prepare;
 
-	rm -rf ${G_ROOTFS_DIR}/lib/modules/* || {
-		pr_error "Failed #$? prepare modules dir"
-		return 1;
-	};
+	rm -rf ${G_ROOTFS_DIR}/lib/modules/*
 
 	make_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
-		${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_kernel_modules"
-		return 2;
-	};
+		${G_ROOTFS_DIR}
 
 	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_LINUX_KERNEL_DEF_CONFIG} \
-		${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function install_kernel_modules"
-		return 2;
-	};
-
-	return 0;
+		${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR}
 }
 
 function cmd_make_rfs_tar()
 {
 	# pack rootfs
-	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH} || {
-		pr_error "Failed #$? in function make_tarball"
-		return 1;
-	};
-
-	return 0;
+	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH}
 }
 
 function cmd_make_sdcard()
 {
-	make_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR} || {
-		pr_error "Failed #$? in function make_sdcard"
-		return 1;
-	};
-
-	return 0;
+	make_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR}
 }
 
 function cmd_make_bcmfw()
 {
 	make_prepare
 
-	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_bcm_fw"
-		return 1;
-	};
-
-	return 0;
+	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 }
 
 function cmd_make_clean()
 {
 	# clean kernel, dtb, modules
-	clean_kernel ${G_LINUX_KERNEL_SRC_DIR} || {
-		pr_error "Failed #$? in function clean_kernel"
-		return 1;
-	};
+	clean_kernel ${G_LINUX_KERNEL_SRC_DIR}
 
 	# clean U-Boot
-	clean_uboot ${G_UBOOT_SRC_DIR} || {
-		pr_error "Failed #$? in function clean_uboot"
-		return 2;
-	};
+	clean_uboot ${G_UBOOT_SRC_DIR}
 
 	# delete tmp dirs and etc
 	pr_info "Delete tmp dir ${G_TMP_DIR}"
-	rm -rf ${G_TMP_DIR} && :;
+	rm -rf ${G_TMP_DIR}
 
 	pr_info "Delete rootfs dir ${G_ROOTFS_DIR}"
-	rm -rf ${G_ROOTFS_DIR} && :;
-
-	return 0;
+	rm -rf ${G_ROOTFS_DIR}
 }
 
 ################ main function ################
@@ -1322,72 +1243,47 @@ function cmd_make_clean()
 	exit 1;
 };
 
-V_RET_CODE=0;
-
 pr_info "Command: \"$PARAM_CMD\" start..."
 
 case $PARAM_CMD in
 	deploy )
-		cmd_make_deploy || {
-			V_RET_CODE=1;
-		};
+		cmd_make_deploy
 		;;
 	rootfs )
-		cmd_make_rootfs || {
-			V_RET_CODE=1;
-		};
+		cmd_make_rootfs
 		;;
 	bootloader )
-		cmd_make_uboot || {
-			V_RET_CODE=1;
-		}
+		cmd_make_uboot
 		;;
 	kernel )
-		cmd_make_kernel || {
-			V_RET_CODE=1;
-		};
+		cmd_make_kernel
 		;;
 	modules )
-		cmd_make_kmodules || {
-			V_RET_CODE=1;
-		};
+		cmd_make_kmodules
 		;;
 	bcmfw )
-		cmd_make_bcmfw || {
-			V_RET_CODE=1;
-		};
+		cmd_make_bcmfw
 		;;
 	sdcard )
-		cmd_make_sdcard || {
-			V_RET_CODE=1;
-		};
+		cmd_make_sdcard
 		;;
 	rtar )
-		cmd_make_rfs_tar || {
-			V_RET_CODE=1;
-		};
+		cmd_make_rfs_tar
 		;;
 	all )
-		(cmd_make_uboot &&
-		 cmd_make_kernel &&
-		 cmd_make_kmodules &&
-		 cmd_make_rootfs) || {
-			V_RET_CODE=1;
-		};
+		cmd_make_uboot  &&
+		cmd_make_kernel &&
+		cmd_make_kmodules &&
+		cmd_make_rootfs
 		;;
 	clean )
-		cmd_make_clean || {
-			V_RET_CODE=1;
-		};
+		cmd_make_clean
 		;;
 	* )
 		pr_error "Invalid input command: \"${PARAM_CMD}\"";
-		V_RET_CODE=1;
 		;;
 esac
 
-pr_info ""
-pr_info "Command: \"$PARAM_CMD\" end. Exit code: ${V_RET_CODE}"
-pr_info ""
-
-exit ${V_RET_CODE};
+echo
+pr_info "Command: \"$PARAM_CMD\" end."
+echo
