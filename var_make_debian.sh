@@ -1,5 +1,5 @@
 #!/bin/bash
-# It is designed to build Debian linux for Variscite imx8m-dart modules
+# It is designed to build Debian Linux for Variscite iMX modules
 # prepare host OS system:
 #  sudo apt-get install binfmt-support qemu qemu-user-static debootstrap kpartx
 #  sudo apt-get install lvm2 dosfstools gpart binutils git lib32ncurses5-dev python-m2crypto
@@ -14,8 +14,6 @@
 set -e
 
 SCRIPT_NAME=${0##*/}
-readonly SCRIPT_VERSION="0.6"
-
 
 #### Exports Variables ####
 #### global variables ####
@@ -28,9 +26,9 @@ readonly LOOP_MAJOR=7
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
 readonly DEB_RELEASE="buster"
-readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.gz"
+readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
 
-## base paths
+# base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
 readonly DEF_SRC_DIR="${DEF_BUILDENV}/src"
 readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
@@ -38,7 +36,7 @@ readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 
-## CROSS_COMPILER config and paths
+# CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILER_NAME="gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
 readonly G_CROSS_COMPILER_ARCHIVE="${G_CROSS_COMPILER_NAME}.tar.xz"
 readonly G_CROSS_COMPILER_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_NAME}/bin"
@@ -46,60 +44,61 @@ readonly G_CROSS_COMPILER_PREFIX="aarch64-linux-gnu-"
 readonly G_CROSS_COMPILER_JOPTION="-j 4"
 readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/${G_CROSS_COMPILER_ARCHIVE}"
 
-############## user rootfs packages ##########
+#### user rootfs packages ####
 readonly G_USER_PACKAGES=""
 
 export LC_ALL=C
 
-#### Input params #####
+#### Input params ####
 PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
 PARAM_OUTPUT_DIR="${DEF_BUILDENV}/output"
 PARAM_DEBUG="0"
 PARAM_CMD="all"
 PARAM_BLOCK_DEVICE="na"
+
 ### usage ###
-function usage() {
-	echo "This program version ${SCRIPT_VERSION}"
-	echo " Used for make debian(${DEB_RELEASE}) image for ${MACHINE}  board"
-	echo " and create booted sdcard"
-	echo ""
+function usage()
+{
+	echo "Make Debian ${DEB_RELEASE} image and create a bootabled SD card"
+	echo
 	echo "Usage:"
 	echo " MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som> ./${SCRIPT_NAME} options"
-	echo ""
+	echo
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
 	echo "  -c|--cmd <command>"
 	echo "     Supported commands:"
 	echo "       deploy      -- prepare environment for all commands"
 	echo "       all         -- build or rebuild kernel/bootloader/rootfs"
-	echo "       bootloader  -- build or rebuild bootloader (u-boot+SPL)"
-	echo "       kernel      -- build or rebuild linux kernel for this board"
-	echo "       modules     -- build or rebuild linux kernel modules and install in rootfs directory for this board"
-	echo "       rootfs      -- build or rebuild debian rootfs filesystem (includes: make debian apks, make and install kernel moduled,"
-	echo "                       make and install extern modules (wifi/bt), create rootfs.tar.gz)"
-	echo "       rtar        -- generate or regenerate rootfs.tar.gz image from rootfs folder "
-	echo "       clean       -- clean all build artifacts (not delete sources code and resulted images (output folder))"
-	echo "       sdcard      -- create bootting sdcard for this device"
+	echo "       bootloader  -- build or rebuild U-Boot"
+	echo "       kernel      -- build or rebuild the Linux kernel"
+	echo "       modules     -- build or rebuild the Linux kernel modules & headers and install them in the rootfs dir"
+	echo "       rootfs      -- build or rebuild the Debian root filesystem and create rootfs.tar.gz"
+	echo "                       (including: make & install Debian packages, firmware and kernel modules & headers)"
+	echo "       rtar        -- generate or regenerate rootfs.tar.gz image from the rootfs folder"
+	echo "       clean       -- clean all build artifacts (without deleting sources code or resulted images)"
+	echo "       sdcard      -- create a bootable SD card"
 	echo "  -o|--output -- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
-	echo "  -d|--dev    -- select sdcard device (exmple: -d /dev/sde)"
+	echo "  -d|--dev    -- specify SD card device (exmple: -d /dev/sde)"
 	echo "  --debug     -- enable debug mode for this script"
 	echo "Examples of use:"
-	echo "  make only linux kernel for board: sudo ./${SCRIPT_NAME} --cmd kernel"
-	echo "  make only rootfs for board:       sudo ./${SCRIPT_NAME} --cmd rootfs"
-	echo "  create boot sdcard:               sudo ./${SCRIPT_NAME} --cmd sdcard --dev /dev/sdX"
 	echo "  deploy and build:                 ./${SCRIPT_NAME} --cmd deploy && sudo ./${SCRIPT_NAME} --cmd all"
-	echo ""
+	echo "  make the Linux kernel only:       sudo ./${SCRIPT_NAME} --cmd kernel"
+	echo "  make rootfs only:                 sudo ./${SCRIPT_NAME} --cmd rootfs"
+	echo "  create SD card:                   sudo ./${SCRIPT_NAME} --cmd sdcard --dev /dev/sdX"
+	echo
 }
 
-source variscite/${MACHINE}/${MACHINE}.sh
+if [ ! -e ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh ]; then
+	echo "Illegal MACHINE: ${MACHINE}"
+	echo
+	usage
+	exit 1
+fi
 
-echo "====Build Summary===="
-echo "Building Debian ${DEB_RELEASE}  for ${MACHINE}"
-echo "Kernel Config :	${G_LINUX_KERNEL_DEF_CONFIG}"
-echo "Kernel DTB    : 	${G_LINUX_DTB}"
-echo "Uboot Config  :  	${G_UBOOT_DEF_CONFIG_MMC}"
+source ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh
 
-###### parse input arguments ##
+## parse input arguments ##
 readonly SHORTOPTS="c:o:d:h"
 readonly LONGOPTS="cmd:,output:,dev:,help,debug"
 
@@ -118,7 +117,7 @@ while true; do
 			shift
 			PARAM_OUTPUT_DIR="$1";
 			;;
-		-d|--dev ) # block device (for create sdcard)
+		-d|--dev ) # SD card block device
 			shift
 			[ -e ${1} ] && {
 				PARAM_BLOCK_DEVICE=${1};
@@ -143,21 +142,23 @@ while true; do
 	shift
 done
 
-## enable tarce options in debug mode
+# enable trace option in debug mode
 [ "${PARAM_DEBUG}" = "1" ] && {
 	echo "Debug mode enabled!"
 	set -x
 };
 
-if [ -d ${G_VARISCITE_PATH}/${MACHINE} ]; then
-	echo "Building Debian for MACHINE ${MACHINE}"
-else
-	echo "Missing custom files for MACHINE ${MACHINE}"
-	exit 1
-fi
+echo "=============== Build summary ==============="
+echo "Building Debian ${DEB_RELEASE} for ${MACHINE}"
+echo "U-Boot config:      ${G_UBOOT_DEF_CONFIG_MMC}"
+echo "Kernel config:      ${G_LINUX_KERNEL_DEF_CONFIG}"
+echo "Default kernel dtb: ${DEFAULT_BOOT_DTB}"
+echo "kernel dtbs:        ${G_LINUX_DTB}"
+echo "============================================="
+echo
 
-## declarate dinamic variables ##
-readonly G_ROOTFS_TARBAR_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}"
+## declarate dynamic variables ##
+readonly G_ROOTFS_TARBALL_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBALL_NAME}"
 
 ###### local functions ######
 
@@ -165,19 +166,22 @@ readonly G_ROOTFS_TARBAR_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}"
 
 # print error message
 # $1 - printing string
-function pr_error() {
+function pr_error()
+{
 	echo "E: $1"
 }
 
 # print warning message
 # $1 - printing string
-function pr_warning() {
+function pr_warning()
+{
 	echo "W: $1"
 }
 
 # print info message
 # $1 - printing string
-function pr_info() {
+function pr_info()
+{
 	echo "I: $1"
 }
 
@@ -194,7 +198,8 @@ function pr_debug() {
 # $2 - branch name
 # $3 - output dir
 # $4 - commit id
-function get_git_src() {
+function get_git_src()
+{
 	# clone src code
 	git clone ${1} -b ${2} ${3}
 	cd ${3}
@@ -207,47 +212,50 @@ function get_git_src() {
 # get remote file
 # $1 - remote file
 # $2 - local file
-function get_remote_file() {
+function get_remote_file()
+{
 	# download remote file
 	wget -c ${1} -O ${2}
 	return $?
 }
 
-function make_prepare() {
-## create src dir
+function make_prepare()
+{
+	# create src dir
 	mkdir -p ${DEF_SRC_DIR} && :;
 
-## create toolchain dir
+	# create toolchain dir
 	mkdir -p ${G_TOOLS_PATH} && :;
 
-## create rootfs dir
+	# create rootfs dir
 	mkdir -p ${G_ROOTFS_DIR} && :;
 
-## create out dir
+	# create out dir
 	mkdir -p ${PARAM_OUTPUT_DIR} && :;
 
-## create tmp dir
+	# create tmp dir
 	mkdir -p ${G_TMP_DIR} && :;
 }
 
-# function generate rootfs in input dir
+# generate rootfs in input dir
 # $1 - rootfs base dir
-function make_debian_rootfs() {
+function make_debian_rootfs()
+{
 	local ROOTFS_BASE=$1
 
-	pr_info "Make debian(${DEB_RELEASE}) rootfs start..."
+	pr_info "Make Debian (${DEB_RELEASE}) rootfs start..."
 
-## umount previus mounts (if fail)
+	# umount previus mounts (if fail)
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null && :;
 
-## clear rootfs dir
+	# clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/* && :;
 
 	pr_info "rootfs: debootstrap"
 	debootstrap --verbose --foreign --arch arm64 ${DEB_RELEASE} \
 		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
 
-## prepare qemu
+	# prepare qemu
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
 	cp /usr/bin/qemu-aarch64-static ${ROOTFS_BASE}/usr/bin/
 	mount -o bind /proc ${ROOTFS_BASE}/proc
@@ -257,7 +265,7 @@ function make_debian_rootfs() {
 	chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage
 
 	# delete unused folder
-	chroot $ROOTFS_BASE rm -rf  ${ROOTFS_BASE}/debootstrap
+	chroot $ROOTFS_BASE rm -rf ${ROOTFS_BASE}/debootstrap
 
 	pr_info "rootfs: generate default configs"
 	mkdir -p ${ROOTFS_BASE}/etc/sudoers.d/
@@ -265,73 +273,88 @@ function make_debian_rootfs() {
 	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
 	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
 
-#imx-firmware
+	# imx-firmware
 	cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#cairo
+
+	# cairo
 	cp -r ${G_VARISCITE_PATH}/deb/cairo/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#libdrm
+
+	# libdrm
 	cp -r ${G_VARISCITE_PATH}/deb/libdrm/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#waylandprotocols
+
+	# waylandprotocols
 	cp -r ${G_VARISCITE_PATH}/deb/waylandprotocols/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#G2D_Packages
+
+	# G2D_Packages
 	if [ ! -z "${G2D_PACKAGE_DIR}" ]; then
 		cp -r ${G_VARISCITE_PATH}/deb/${G2D_PACKAGE_DIR}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 	fi
-#Vivante GPU libraries
+
+	# Vivante GPU libraries
 	if [ ! -z "${G_GPU_IMX_VIV_PACKAGE_DIR}" ]; then
 		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_PACKAGE_DIR}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 	fi
-#imxcodec
+
+	# imxcodec
 	cp -r ${G_VARISCITE_PATH}/deb/imxcodec/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#imxparser
+
+	# imxparser
 	cp -r ${G_VARISCITE_PATH}/deb/imxparser/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#imxvpuhantro
+
+	# imxvpuhantro
 	cp -r ${G_VARISCITE_PATH}/deb/imxvpuhantro/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#gstpluginsbad
+
+	# gstpluginsbad
 	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#gstpluginsbase
+
+	# gstpluginsbase
 	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#gstpluginsgood
+
+	# gstpluginsgood
 	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#gstreamer
+
+	# gstreamer
 	cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#imx-vpuwrap
+
+	# imx-vpuwrap
 	cp -r ${G_VARISCITE_PATH}/deb/imxvpuwrap/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#imxgstplugin
+
+	# imxgstplugin
 	cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
-#weston
+
+	# weston
 	cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 
-## added mirror to source list
+# add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
 " > etc/apt/sources.list
 
-## raise backports priority
+# raise backports priority
 echo "Package: *
 Pin: release n=${DEB_RELEASE}-backports
 Pin-Priority: 500
 " > etc/apt/preferences.d/backports
 
-## maximize local repo priority
+# maximize local repo priority
 echo "Package: *
 Pin: origin ""
 Pin-Priority: 1000
@@ -356,7 +379,7 @@ openssh-server openssh-server/permit-root-login select true
 " > debconf.set
 
 	pr_info "rootfs: prepare install packages in rootfs"
-## apt-get install without starting
+# apt-get install without starting
 cat > ${ROOTFS_BASE}/usr/sbin/policy-rc.d << EOF
 #!/bin/sh
 exit 101
@@ -364,42 +387,42 @@ EOF
 
 chmod +x ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
-## third packages stage
+# third packages stage
 cat > third-stage << EOF
 #!/bin/bash
 # apply debconfig options
 debconf-set-selections /debconf.set
 rm -f /debconf.set
 
+function protected_install()
+{
+	local _name=\${1}
+	local repeated_cnt=5;
+	local RET_CODE=1;
 
-function protected_install() {
-    local _name=\${1}
-    local repeated_cnt=5;
-    local RET_CODE=1;
+	echo Installing \${_name}
+	for (( c=0; c<\${repeated_cnt}; c++ ))
+	do
+		apt install -y \${_name} && {
+			RET_CODE=0;
+			break;
+		};
 
-    echo Installing \${_name}
-    for (( c=0; c<\${repeated_cnt}; c++ ))
-    do
-        apt install -y \${_name} && {
-            RET_CODE=0;
-            break;
-        };
+		echo
+		echo "##########################"
+		echo "## Fix missing packages ##"
+		echo "##########################"
+		echo
 
-        echo ""
-        echo "###########################"
-        echo "## Fix missing packages ###"
-        echo "###########################"
-        echo ""
+		sleep 2;
 
-        sleep 2;
+		apt --fix-broken install -y && {
+			RET_CODE=0;
+			break;
+		};
+	done
 
-        apt --fix-broken install -y && {
-            RET_CODE=0;
-            break;
-        };
-    done
-
-    return \${RET_CODE}
+	return \${RET_CODE}
 }
 
 # update packages and install base
@@ -440,11 +463,11 @@ protected_install libdrm-vivante1
 protected_install imx-gpu-viv-core
 if [ ! -z "${G2DPACKAGE}" ]
 then
-	protected_install	${G2DPACKAGE}
+	protected_install ${G2DPACKAGE}
 fi
 protected_install weston
 
-# added alsa & gstreamer
+# alsa & gstreamer
 protected_install alsa-utils
 protected_install gstreamer1.0-alsa
 protected_install gstreamer1.0-plugins-bad
@@ -455,13 +478,13 @@ protected_install gstreamer1.0-plugins-good
 protected_install gstreamer1.0-tools
 protected_install ${IMXGSTPLG}
 
-# added i2c tools
+# i2c tools
 protected_install i2c-tools
 
-# added usb tools
+# usb tools
 protected_install usbutils
 
-# added net tools
+# net tools
 protected_install iperf
 
 protected_install rng-tools
@@ -508,15 +531,15 @@ echo "root:root" | chpasswd
 rm -f third-stage
 EOF
 
-	pr_info "rootfs: install selected debian packages (third-stage)"
+	pr_info "rootfs: install selected Debian packages (third-stage)"
 	chmod +x third-stage
 	chroot ${ROOTFS_BASE} /third-stage
 
 ## fourth-stage ##
-### install variscite-bt service
+	# install variscite-bt service
 	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus \
 		${ROOTFS_BASE}/usr/bin
-	install -d -m 0755 ${ROOTFS_BASE}/etc/bluetooth
+	install -d ${ROOTFS_BASE}/etc/bluetooth
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt.conf \
 		${ROOTFS_BASE}/etc/bluetooth
 	install -m 0755 ${G_VARISCITE_PATH}/variscite-bt \
@@ -526,13 +549,13 @@ EOF
 	ln -s /lib/systemd/system/variscite-bt.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
 
-### isntall BT audio and main config
+	# install BT audio and main config
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/audio.conf \
 		${ROOTFS_BASE}/etc/bluetooth/
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/main.conf \
 		${ROOTFS_BASE}/etc/bluetooth/
 
-### install obexd configuration
+	# install obexd configuration
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/obexd.conf \
 		${ROOTFS_BASE}/etc/dbus-1/system.d
 
@@ -541,7 +564,7 @@ EOF
 	ln -s /lib/systemd/system/obex.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
 
-### install pulse audio configuration
+	# install pulse audio configuration
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio.service \
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/pulseaudio.service \
@@ -551,8 +574,8 @@ EOF
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
 		${ROOTFS_BASE}/etc/pulse/
 
-### install variscite-wifi service
-	install -d -m 0755 ${ROOTFS_BASE}/etc/wifi
+	# install variscite-wifi service
+	install -d ${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/blacklist.conf \
 		${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi.conf \
@@ -566,12 +589,12 @@ EOF
 	ln -s /lib/systemd/system/variscite-wifi.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
 
-#install securetty
+	#install securetty
 	install -m 0644 ${G_VARISCITE_PATH}/securetty \
 		${ROOTFS_BASE}/etc/securetty
 
-### install weston service
-	install -d -m 0755 ${ROOTFS_BASE}/etc/xdg/weston
+	# install weston service
+	install -d ${ROOTFS_BASE}/etc/xdg/weston
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/weston.ini \
 		${ROOTFS_BASE}/etc/xdg/weston
 	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/weston.config \
@@ -585,17 +608,17 @@ EOF
 	ln -s /lib/systemd/system/weston.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/weston.service
 
-#remove pm-utils default scripts and install wifi / bt pm-utils script
+	# remove pm-utils default scripts and install wifi / bt pm-utils script
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
 	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
-## end packages stage ##
-[ "${G_USER_PACKAGES}" != "" ] && {
 
-	pr_info "rootfs: install user defined packages (user-stage)"
-	pr_info "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\" "
+	## end packages stage ##
+	if [ "${G_USER_PACKAGES}" != "" ] ; then
+		pr_info "rootfs: install user defined packages (user-stage)"
+		pr_info "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\" "
 
 echo "#!/bin/bash
 # update packages
@@ -608,12 +631,11 @@ apt-get -y install ${G_USER_PACKAGES}
 rm -f user-stage
 " > user-stage
 
-	chmod +x user-stage
-	chroot ${ROOTFS_BASE} /user-stage
+		chmod +x user-stage
+		chroot ${ROOTFS_BASE} /user-stage
+	fi
 
-};
-
-## binaries rootfs patching ##
+	## binaries rootfs patching ##
 	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
 	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
 	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
@@ -632,15 +654,15 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
 		${ROOTFS_BASE}/usr/share/images/desktop-base/default
 
-## added alsa default configs ##
+	# Add alsa default configs
 	install -m 0644 ${G_VARISCITE_PATH}/asound.state \
 		${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 
-## Revert regular booting
+	# Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
-## install kernel modules in rootfs
+	# install kernel modules in rootfs
 	install_kernel_modules \
 		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
@@ -649,14 +671,14 @@ rm -f user-stage
 		return 2;
 	}
 
-## copy all kernel headers for development
+	# copy all kernel headers for development
 	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
 	cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* \
 	${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
 	cp -r ${G_LINUX_KERNEL_SRC_DIR}/include \
 		${ROOTFS_BASE}/usr/local/src/linux-imx/
 
-## copy custom files
+	# copy custom files
 	cp ${G_VARISCITE_PATH}/fw_env.config ${ROOTFS_BASE}/etc
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
@@ -666,9 +688,10 @@ rm -f user-stage
 	mkdir -p ${ROOTFS_BASE}/etc/udev/scripts/
 	install -m 0755 ${G_VARISCITE_PATH}/mount.sh \
 		${ROOTFS_BASE}/etc/udev/scripts/mount.sh
-if [ "${MACHINE}" = "imx8m-var-dart" ]; then
-	cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
-fi
+
+	if [ "${MACHINE}" = "imx8m-var-dart" ]; then
+		cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
+	fi
 
 ## clenup command
 echo "#!/bin/bash
@@ -682,7 +705,7 @@ rm -f cleanup
 	chroot ${ROOTFS_BASE} /cleanup
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev}
 
-## kill latest dbus-daemon instance due to qemu-aarch64-static
+	# kill latest dbus-daemon instance due to qemu-aarch64-static
 	QEMU_PROC_ID=$(ps axf | grep dbus-daemon | grep qemu-aarch64-static | awk '{print $1}')
 	if [ -n "$QEMU_PROC_ID" ]
 	then
@@ -694,15 +717,16 @@ rm -f cleanup
 	return 0;
 }
 
-# make tarbar arx from footfs
+# make tarball from footfs
 # $1 -- packet folder
-# $2 -- output arx full name
-function make_tarbar() {
+# $2 -- output tarball file (full name)
+function make_tarball()
+{
 	cd $1
 
 	chown root:root .
-	pr_info "make tarbar arx from folder ${1}"
-	pr_info "Remove old arx $2"
+	pr_info "make tarball from folder ${1}"
+	pr_info "Remove old tarball $2"
 	rm $2 > /dev/null 2>&1 && :;
 
 	pr_info "Create $2"
@@ -710,20 +734,20 @@ function make_tarbar() {
 	tar czf $2 .
 	success=$?
 	[ $success -eq 0 ] || {
-	# fail
-	    rm $2 > /dev/null 2>&1 && :;
+		rm $2 > /dev/null 2>&1 && :;
 	};
 
 	cd -
 }
 
-# make linux kernel modules
+# make Linux kernel image & dtbs
 # $1 -- cross compiler prefix
-# $2 -- linux defconfig file
-# $3 -- linux dtb files
-# $4 -- linux dirname
+# $2 -- Linux defconfig file
+# $3 -- Linux dtb files
+# $4 -- Linux dirname
 # $5 -- out path
-function make_kernel() {
+function make_kernel()
+{
 	pr_info "make kernel .config"
 	make ARCH=arm64 CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${4}/ ${2}
 
@@ -741,21 +765,23 @@ function make_kernel() {
 }
 
 # clean kernel
-# $1 -- linux dir path
-function clean_kernel() {
-	pr_info "Clean linux kernel"
+# $1 -- Linux dir path
+function clean_kernel()
+{
+	pr_info "Clean the Linux kernel"
 
 	make ARCH=arm64 -C ${1}/ mrproper
 
 	return 0;
 }
 
-# make linux kernel modules
+# make Linux kernel modules
 # $1 -- cross compiler prefix
-# $2 -- linux defconfig file
-# $3 -- linux dirname
+# $2 -- Linux defconfig file
+# $3 -- Linux dirname
 # $4 -- out modules path
-function make_kernel_modules() {
+function make_kernel_modules()
+{
 	pr_info "make kernel defconfig"
 	make ARCH=arm64 CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} ${2}
 
@@ -763,12 +789,13 @@ function make_kernel_modules() {
 	make ARCH=arm64 CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} modules
 }
 
-# install linux kernel modules
+# install the Linux kernel modules
 # $1 -- cross compiler prefix
-# $2 -- linux defconfig file
-# $3 -- linux dirname
+# $2 -- Linux defconfig file
+# $3 -- Linux dirname
 # $4 -- out modules path
-function install_kernel_modules() {
+function install_kernel_modules()
+{
 	pr_info "Installing kernel headers to ${4}"
 	make ARCH=arm64 CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} INSTALL_HDR_PATH=${4}/usr/local headers_install
 
@@ -778,23 +805,24 @@ function install_kernel_modules() {
 	return 0;
 }
 
-# make uboot
-# $1 uboot path
-# $2 outputdir
-function make_uboot() {
-### make emmc uboot ###
-	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_MMC}"
+# make U-Boot
+# $1 U-Boot path
+# $2 Output dir
+function make_uboot()
+{
+	pr_info "Make U-Boot: ${G_UBOOT_DEF_CONFIG_MMC}"
+
 	# clean work directory
 	make ARCH=arm64 -C ${1} \
 		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_CROSS_COMPILER_JOPTION} mrproper
 
-	# make uboot config for mmc
+	# make U-Boot mmc defconfig
 	make ARCH=arm64 -C ${1} \
 		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_CROSS_COMPILER_JOPTION} ${G_UBOOT_DEF_CONFIG_MMC}
 
-	# make uboot
+	# make U-Boot
 	make -C ${1} \
 		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_CROSS_COMPILER_JOPTION}
@@ -859,6 +887,7 @@ function make_uboot() {
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 	fi
+
 	# copy images
 	cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 
@@ -867,17 +896,17 @@ function make_uboot() {
 	return 0;
 }
 
-# clean uboot
-# $1 -- u-boot dir path
-function clean_uboot() {
-	pr_info "Clean uboot"
-
+# clean U-Boot
+# $1 -- U-Boot dir path
+function clean_uboot()
+{
+	pr_info "Clean U-Boot"
 	make ARCH=arm64 -C ${1}/ mrproper
 
 	return 0;
 }
 
-# make sdcard for device
+# verify the SD card
 # $1 -- block device
 function check_sdcard()
 {
@@ -901,10 +930,11 @@ function check_sdcard()
 	local size_bytes=$((${block_size}*$(cat /sys/class/block/${dev}/size)))
 	local size_gib=$(bc <<< "scale=1; ${size_bytes}/(1024*1024*1024)")
 
-	# non removable SD card readers require additional check
+	# Non removable SD card readers require additional check
 	if [ "${removable}" != "1" ]; then
 		local drive=$(udisksctl info -b /dev/${dev}|grep "Drive:"|cut -d"'" -f 2)
-		local mediaremovable=$(gdbus call --system --dest org.freedesktop.UDisks2 --object-path ${drive} --method org.freedesktop.DBus.Properties.Get org.freedesktop.UDisks2.Drive MediaRemovable)
+		local mediaremovable=$(gdbus call --system --dest org.freedesktop.UDisks2 --object-path ${drive} \
+			--method org.freedesktop.DBus.Properties.Get org.freedesktop.UDisks2.Drive MediaRemovable)
 		if [[ "${mediaremovable}" = *"true"* ]]; then
 			removable=1
 		fi
@@ -923,16 +953,17 @@ function check_sdcard()
 	fi
 
 	pr_info "Device: ${LPARAM_BLOCK_DEVICE}, ${size_gib}GiB"
-	pr_info "================================================"
+	echo "============================================="
 	read -p "Press Enter to continue"
 
 	return 0
 }
 
-# make sdcard for device
+# make SD card for device
 # $1 -- block device
 # $2 -- output images dir
-function make_sdcard() {
+function make_sdcard()
+{
 	readonly local LPARAM_BLOCK_DEVICE=${1}
 	readonly local LPARAM_OUTPUT_DIR=${2}
 	readonly local P1_MOUNT_DIR="${G_TMP_DIR}/p1"
@@ -965,7 +996,7 @@ function make_sdcard() {
 
 	function format_sdcard
 	{
-		pr_info "Formating SDCARD partitions"
+		pr_info "Formating SD card partitions"
 		mkfs.ext4 ${LPARAM_BLOCK_DEVICE}${part}1 -L rootfs
 	}
 
@@ -979,7 +1010,7 @@ function make_sdcard() {
 	function flash_sdcard
 	{
 		pr_info "Flashing \"rootfs\" partition"
-		tar -xpf ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME} \
+		tar -xpf ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBALL_NAME} \
 			-C ${P1_MOUNT_DIR}/
 	}
 
@@ -988,12 +1019,13 @@ function make_sdcard() {
 		mkdir -p ${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}
 
 		pr_info "Copying Debian images to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME} \
-			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${DEF_ROOTFS_TARBAR_NAME}
+		cp ${LPARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBALL_NAME} \
+			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${DEF_ROOTFS_TARBALL_NAME}
 
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} \
 			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+
 		return 0;
 	}
 
@@ -1027,9 +1059,8 @@ function make_sdcard() {
 	dd if=/dev/zero of=${LPARAM_BLOCK_DEVICE} bs=1024 count=4096
 	sleep 2; sync;
 
-	pr_info "Creating new partitions"
-
 	# Create a new partition table
+	pr_info "Creating new partitions"
 
 	# Get total card size
 	TOTAL_SIZE=`sfdisk -s ${LPARAM_BLOCK_DEVICE}`
@@ -1074,13 +1105,13 @@ EOF
 	copy_debian_images
 	copy_scripts
 
-	pr_info "Sync sdcard..."
+	pr_info "Syncing to SD card..."
 	sync
 	umount ${P1_MOUNT_DIR}
 
 	rm -rf ${P1_MOUNT_DIR}
 
-	pr_info "Done make sdcard!"
+	pr_info "The SD card is ready"
 
 	return 0;
 }
@@ -1088,7 +1119,8 @@ EOF
 # make firmware for wl bcm module
 # $1 -- bcm git directory
 # $2 -- rootfs output dir
-function make_bcm_fw() {
+function make_bcm_fw()
+{
 	pr_info "Make and install bcm configs and firmware"
 
 	install -d ${2}/lib/firmware/bcm
@@ -1101,9 +1133,10 @@ function make_bcm_fw() {
 	return 0;
 }
 
-#################### commands ################
+################ commands ################
 
-function cmd_make_deploy() {
+function cmd_make_deploy()
+{
 	make_prepare;
 
 	# get linaro toolchain
@@ -1115,9 +1148,9 @@ function cmd_make_deploy() {
 			-C ${G_TOOLS_PATH}/
 	};
 
-	# get uboot repository
+	# get U-Boot repository
 	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
-		pr_info "Get uboot repository";
+		pr_info "Get U-Boot repository";
 		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} \
 			${G_UBOOT_SRC_DIR} ${G_UBOOT_REV}
 	};
@@ -1142,37 +1175,40 @@ function cmd_make_deploy() {
 		get_git_src ${G_IMXBOOT_GIT} \
 		${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
 	};
+
 	return 0;
 }
 
-function cmd_make_rootfs() {
+function cmd_make_rootfs()
+{
 	make_prepare;
 
-	## make debian rootfs
+	# make Debian rootfs
 	cd ${G_ROOTFS_DIR}
 	make_debian_rootfs ${G_ROOTFS_DIR} || {
 		pr_error "Failed #$? in function make_debian_rootfs"
 		cd -;
 		return 1;
-	}
+	};
 	cd -
 
-	## make bcm firmwares
+	# make bcm firmwares
 	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR} || {
-		pr_error "Failed #$? in function make_tarbar"
+		pr_error "Failed #$? in function make_bcm_fw"
 		return 4;
 	};
 
-	## pack rootfs
-	make_tarbar ${G_ROOTFS_DIR} ${G_ROOTFS_TARBAR_PATH} || {
-		pr_error "Failed #$? in function make_tarbar"
+	# pack rootfs
+	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH} || {
+		pr_error "Failed #$? in function make_tarball"
 		return 4;
-	}
+	};
 
 	return 0;
 }
 
-function cmd_make_uboot() {
+function cmd_make_uboot()
+{
 	make_uboot ${G_UBOOT_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
 		pr_error "Failed #$? in function make_uboot"
 		return 1;
@@ -1181,7 +1217,8 @@ function cmd_make_uboot() {
 	return 0;
 }
 
-function cmd_make_kernel() {
+function cmd_make_kernel()
+{
 	make_kernel ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_LINUX_KERNEL_DEF_CONFIG} "${G_LINUX_DTB}" \
 		${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
@@ -1192,7 +1229,8 @@ function cmd_make_kernel() {
 	return 0;
 }
 
-function cmd_make_kmodules() {
+function cmd_make_kmodules()
+{
 	make_prepare;
 
 	rm -rf ${G_ROOTFS_DIR}/lib/modules/* || {
@@ -1217,17 +1255,19 @@ function cmd_make_kmodules() {
 	return 0;
 }
 
-function cmd_make_rfs_tar() {
-	## pack rootfs
-	make_tarbar ${G_ROOTFS_DIR} ${G_ROOTFS_TARBAR_PATH} || {
-		pr_error "Failed #$? in function make_tarbar"
+function cmd_make_rfs_tar()
+{
+	# pack rootfs
+	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH} || {
+		pr_error "Failed #$? in function make_tarball"
 		return 1;
-	}
+	};
 
 	return 0;
 }
 
-function cmd_make_sdcard() {
+function cmd_make_sdcard()
+{
 	make_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR} || {
 		pr_error "Failed #$? in function make_sdcard"
 		return 1;
@@ -1236,7 +1276,8 @@ function cmd_make_sdcard() {
 	return 0;
 }
 
-function cmd_make_bcmfw() {
+function cmd_make_bcmfw()
+{
 	make_prepare
 
 	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR} || {
@@ -1247,21 +1288,21 @@ function cmd_make_bcmfw() {
 	return 0;
 }
 
-function cmd_make_clean() {
-
-	## clean kernel, dtb, modules
+function cmd_make_clean()
+{
+	# clean kernel, dtb, modules
 	clean_kernel ${G_LINUX_KERNEL_SRC_DIR} || {
 		pr_error "Failed #$? in function clean_kernel"
 		return 1;
 	};
 
-	## clean u-boot
+	# clean U-Boot
 	clean_uboot ${G_UBOOT_SRC_DIR} || {
 		pr_error "Failed #$? in function clean_uboot"
 		return 2;
 	};
 
-	## delete tmp dirs and etc
+	# delete tmp dirs and etc
 	pr_info "Delete tmp dir ${G_TMP_DIR}"
 	rm -rf ${G_TMP_DIR} && :;
 
@@ -1271,10 +1312,12 @@ function cmd_make_clean() {
 	return 0;
 }
 
-#################### main function #######################
+################ main function ################
 
-## test for root access support (msrc not allowed)
-[ "$PARAM_CMD" != "deploy" ] && [ "$PARAM_CMD" != "bootloader" ] && [ "$PARAM_CMD" != "kernel" ] && [ "$PARAM_CMD" != "modules" ] && [ ${EUID} -ne 0 ] && {
+# test for root access support
+[ "$PARAM_CMD" != "deploy" ] && [ "$PARAM_CMD" != "bootloader" ] &&
+[ "$PARAM_CMD" != "kernel" ] && [ "$PARAM_CMD" != "modules" ] &&
+[ ${EUID} -ne 0 ] && {
 	pr_error "this command must be run as root (or sudo/su)"
 	exit 1;
 };
@@ -1325,7 +1368,7 @@ case $PARAM_CMD in
 		};
 		;;
 	all )
-		(cmd_make_uboot  &&
+		(cmd_make_uboot &&
 		 cmd_make_kernel &&
 		 cmd_make_kmodules &&
 		 cmd_make_rootfs) || {
@@ -1346,6 +1389,5 @@ esac
 pr_info ""
 pr_info "Command: \"$PARAM_CMD\" end. Exit code: ${V_RET_CODE}"
 pr_info ""
-
 
 exit ${V_RET_CODE};

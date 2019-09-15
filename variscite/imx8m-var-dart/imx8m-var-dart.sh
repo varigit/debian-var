@@ -1,4 +1,12 @@
-## LINUX kernel: git, config, paths and etc
+# U-Boot
+readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
+readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
+readonly G_UBOOT_BRANCH="imx_v2018.03_4.14.78_1.0.0_ga_var01"
+readonly G_UBOOT_REV="0e734b6c1c83aa80ade185471ef0aee5bc11c8b0"
+G_UBOOT_DEF_CONFIG_MMC="imx8m_var_dart_defconfig"
+readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
+
+# Linux kernel
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
@@ -29,15 +37,7 @@ G_LINUX_DTB="freescale/fsl-imx8mq-var-dart-sd-emmc-lvds.dtb
 	freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-hdmi-cb12.dtb
 	freescale/fsl-imx8mq-var-dart-m4-emmc-wifi-dual-display-cb12.dtb"
 
-## uboot
-readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
-readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2018.03_4.14.78_1.0.0_ga_var01"
-readonly G_UBOOT_REV="0e734b6c1c83aa80ade185471ef0aee5bc11c8b0"
-G_UBOOT_DEF_CONFIG_MMC="imx8m_var_dart_defconfig"
-readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
-
-## Broadcom BT/WIFI firmware ##
+# Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="6.0.0.121"
@@ -49,7 +49,8 @@ readonly IMX_FIRMWARE_VERSION="8.0"
 readonly WESTON_PACKAGE_DIR="imx8mq-vivante"
 
 IMXGSTPLG="imx-gst1.0-plugin-mx8mq"
-##Flashing Variables
+
+# Flashing variables
 BOOTLOADER_OFFSET=33
 
 BOOT_DTB="fsl-imx8mq-var-dart.dtb"
