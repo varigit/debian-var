@@ -24,7 +24,7 @@ readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
+readonly DEF_DEBIAN_MIRROR="https://deb.debian.org/debian/"
 readonly DEB_RELEASE="buster"
 readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
 
@@ -249,7 +249,7 @@ function make_debian_rootfs()
 	rm -rf ${ROOTFS_BASE}/*
 
 	pr_info "rootfs: debootstrap"
-	debootstrap --verbose --foreign --arch arm64 ${DEB_RELEASE} \
+	debootstrap --verbose --no-check-gpg --foreign --arch arm64 ${DEB_RELEASE} \
 		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
 
 	# prepare qemu
