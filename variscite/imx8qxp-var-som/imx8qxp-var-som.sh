@@ -2,7 +2,7 @@
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2018.03_4.14.98_2.0.0_ga_var01"
-readonly G_UBOOT_REV="82b111752596b4ed3c8292140516078a26cb0450"
+readonly G_UBOOT_REV="39aa5d3b6da74a8f69335a6d178bfa6a3f0fd59f"
 G_UBOOT_DEF_CONFIG_MMC='imx8qxp_var_som_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
