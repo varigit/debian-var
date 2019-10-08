@@ -1,0 +1,28 @@
+#!/bin/bash
+
+FLAGFILE=$HOME/.config/backlight_disabled
+
+# check flagfile presence
+if [ -f $FLAGFILE ]; then
+    exit 0
+fi
+
+# wait that everything is up & running
+sleep 20
+
+# never lock the section
+gsettings set apps.light-locker lock-after-screensaver 0
+gsettings set apps.light-locker lock-on-suspend false
+
+# don't lock the screen when suspending
+xfconf-query -c xfce4-power-manager -n -t bool -p /xfce4-power-manager/lock-screen-suspend-hibernate -s false
+xfconf-query -c xfce4-power-manager -n -t bool -p /xfce4-power-manager/logind-handle-lid-switch -s false
+
+# disable display blanking
+xfconf-query -c xfce4-power-manager -n -t int -p /xfce4-power-manager/blank-on-ac -s 0
+xfconf-query -c xfce4-power-manager -n -t uint -p /xfce4-power-manager/dpms-on-ac-off -s 0
+xfconf-query -c xfce4-power-manager -n -t uint -p /xfce4-power-manager/dpms-on-ac-sleep -s 0
+xfconf-query -c xfce4-power-manager -n -t bool -p /xfce4-power-manager/dpms-enabled -s false
+
+# create flagfile
+touch $FLAGFILE

@@ -1,0 +1,82 @@
+Format: 1.8
+Date: Thu, 21 Feb 2019 20:48:01 -0500
+Source: udisks2
+Binary: gir1.2-udisks-2.0 libudisks2-0 libudisks2-0-dbgsym libudisks2-dev udisks2 udisks2-bcache udisks2-bcache-dbgsym udisks2-btrfs udisks2-btrfs-dbgsym udisks2-dbgsym udisks2-doc udisks2-lvm2 udisks2-lvm2-dbgsym udisks2-vdo udisks2-vdo-dbgsym udisks2-zram udisks2-zram-dbgsym
+Architecture: armhf all
+Version: 2.8.1-4
+Distribution: unstable
+Urgency: medium
+Maintainer: Utopia Maintenance Team <pkg-utopia-maintainers@lists.alioth.debian.org>
+Changed-By: Jeremy Bicha <jbicha@debian.org>
+Description:
+ gir1.2-udisks-2.0 - GObject based library to access udisks2 - introspection data
+ libudisks2-0 - GObject based library to access udisks2
+ libudisks2-dev - GObject based library to access udisks2 - development files
+ udisks2    - D-Bus service to access and manipulate storage devices
+ udisks2-bcache - bcache support for udisks2
+ udisks2-btrfs - BTRFS support for udisks2
+ udisks2-doc - udisks2 documentation
+ udisks2-lvm2 - LVM2 support for udisks2
+ udisks2-vdo - VDO support for udisks2
+ udisks2-zram - zram support for udisks2
+Changes:
+ udisks2 (2.8.1-4) unstable; urgency=medium
+ .
+   * Cherry-pick commit to fix test race condition detected by Ubuntu ppc64el
+Checksums-Sha1:
+ 42f1855cae9ba67eb89f08ac07a1217e7648a875 27076 gir1.2-udisks-2.0_2.8.1-4_armhf.deb
+ 1e3eb8bf40da841c2f92ef6f9eec2f61edb691a1 341356 libudisks2-0-dbgsym_2.8.1-4_armhf.deb
+ ecffdfd321176f5050ae345e36cf32218c1c9ac0 87500 libudisks2-0_2.8.1-4_armhf.deb
+ ffd725a010f4bcbb89ddc3b72950eebe621bcec4 167620 libudisks2-dev_2.8.1-4_armhf.deb
+ 96e3d6c82c5409359a6330492e4fb9f283f9e3e7 72280 udisks2-bcache-dbgsym_2.8.1-4_armhf.deb
+ 5ee211614175c3b061ebf82fd66cf9dcddcd1865 26064 udisks2-bcache_2.8.1-4_armhf.deb
+ 6d8634dcf16b21e6009a7b36f46dc21c22cd1a64 80284 udisks2-btrfs-dbgsym_2.8.1-4_armhf.deb
+ d61618ed12effd8a75555abb7e8bfbea73231f7b 27744 udisks2-btrfs_2.8.1-4_armhf.deb
+ b9829126cf36a5fdedd15455968618ffc3cea9f2 641992 udisks2-dbgsym_2.8.1-4_armhf.deb
+ 7ba332535a64dfa6fa85ddd2e87c1c68060da780 287944 udisks2-doc_2.8.1-4_all.deb
+ 5200a7341458e566c3a46589761c9e55c422cdb1 206508 udisks2-lvm2-dbgsym_2.8.1-4_armhf.deb
+ 31fd23d26015cbe3ddd02e87ba6ed4ec10ca23e6 49612 udisks2-lvm2_2.8.1-4_armhf.deb
+ cf041aac41621183e145eb819d1957236ba25443 84476 udisks2-vdo-dbgsym_2.8.1-4_armhf.deb
+ aafabcb335e67106aca553bf68ca3e633e2db4eb 28932 udisks2-vdo_2.8.1-4_armhf.deb
+ b564add074902ab7fa52b506624feb88720dff68 84832 udisks2-zram-dbgsym_2.8.1-4_armhf.deb
+ 8789c1c4a7b935bc9733cd01996858034f693460 28492 udisks2-zram_2.8.1-4_armhf.deb
+ aeb5e8a78174fed10a55251757ee265d4b99ab86 18020 udisks2_2.8.1-4_armhf.buildinfo
+ 693f71cca83f4f3fc8ba967f7cc3e6eb274b6c23 345532 udisks2_2.8.1-4_armhf.deb
+Checksums-Sha256:
+ 7beb82717dbf5b819a5f04ca2a5a2bcf044ebde364dece920c12519061fd5970 27076 gir1.2-udisks-2.0_2.8.1-4_armhf.deb
+ 7ba35e91ce382323d6c698d4f9b15af2706624b37ce60aaf850ca2f4fb375625 341356 libudisks2-0-dbgsym_2.8.1-4_armhf.deb
+ 0e08025a61011fa193a3346fb67a9d3f8c07325f0028576c4962b9fa971d7df3 87500 libudisks2-0_2.8.1-4_armhf.deb
+ c5f2b6810540415dd4130aeeb9f90b3196803a3c130a7f778179d6ab9f4dfb72 167620 libudisks2-dev_2.8.1-4_armhf.deb
+ d59b437e23bb9ccd921b0432d2402285b25c23f205823803d531b39e1f50c220 72280 udisks2-bcache-dbgsym_2.8.1-4_armhf.deb
+ 5350b51402bab4f1d851ad58ca9bfe1c4eea585fac491c63657198fc2f8b522a 26064 udisks2-bcache_2.8.1-4_armhf.deb
+ 77a3c2e26233da3f033e7876f1f7b43eb6ae32b21fd28a3139f046ed0d8b3e93 80284 udisks2-btrfs-dbgsym_2.8.1-4_armhf.deb
+ 64e163df0363b5d09d7089182520cccb3afa3df5f94237919235e4ed5afc171c 27744 udisks2-btrfs_2.8.1-4_armhf.deb
+ d3cf28c21adf799be633d33fc0534ddc459f17a4428ddbd00f210c8872c326ad 641992 udisks2-dbgsym_2.8.1-4_armhf.deb
+ 731ce09ff620887bff58abe997f8a8356e372c5ed10afd8d2298cb6b670b1c27 287944 udisks2-doc_2.8.1-4_all.deb
+ b1d6314febba610d3cf3bec5ca648101c990708909e544a1b6759e6b9579664c 206508 udisks2-lvm2-dbgsym_2.8.1-4_armhf.deb
+ c7cfb720193883eb02d47e8d0f7210a07e174c9f34f5cd25933dc7bf59f811b9 49612 udisks2-lvm2_2.8.1-4_armhf.deb
+ e7cdf6765e80f1c229650bf0bdba5209ddf43b04a312c782dc87613566189b29 84476 udisks2-vdo-dbgsym_2.8.1-4_armhf.deb
+ 3dbc4cf34e89db1c5c4130e02a335060167dd62bd7d8e091c9d11018ec7117a0 28932 udisks2-vdo_2.8.1-4_armhf.deb
+ d75f40be2db282626c80bf6c1af9108e15c4bda24cf919b075db5552d5ccfab1 84832 udisks2-zram-dbgsym_2.8.1-4_armhf.deb
+ 9c906f37494a5d9ee9173ab7f652b94a80749747ac81d4bd163bc44b61cf6a9b 28492 udisks2-zram_2.8.1-4_armhf.deb
+ 568a96301b9fbafae0c437068334b17aa0fcc0ef3e585fb8ba2c181bd9899bcf 18020 udisks2_2.8.1-4_armhf.buildinfo
+ 797d844778b77d7cf939ba643dc68eeaaf4021d197d25fa5623f26f9b565e62f 345532 udisks2_2.8.1-4_armhf.deb
+Files:
+ 574cac747baeef6d394dbd99a3554449 27076 introspection optional gir1.2-udisks-2.0_2.8.1-4_armhf.deb
+ 8a3ea0e531dc432d21ed614d09c5561b 341356 debug optional libudisks2-0-dbgsym_2.8.1-4_armhf.deb
+ fa2c6ea2295181cd92af94703ae1913c 87500 libs optional libudisks2-0_2.8.1-4_armhf.deb
+ 0a0648590c9629e5b63c7a4cb944fb72 167620 libdevel optional libudisks2-dev_2.8.1-4_armhf.deb
+ 0ea2bed43b998abed3d2e79e70c49f67 72280 debug optional udisks2-bcache-dbgsym_2.8.1-4_armhf.deb
+ 9b6dacc22162ca1ff83d2f8ace2d4121 26064 admin optional udisks2-bcache_2.8.1-4_armhf.deb
+ 9454a7934759170e5fe0ed87f36c8072 80284 debug optional udisks2-btrfs-dbgsym_2.8.1-4_armhf.deb
+ 6de0e1683c5b4ba3da48fb2a0092112f 27744 admin optional udisks2-btrfs_2.8.1-4_armhf.deb
+ e3e056e6302df23be55b957ed3a332f9 641992 debug optional udisks2-dbgsym_2.8.1-4_armhf.deb
+ af512f7739f761653a5c9278291862e9 287944 doc optional udisks2-doc_2.8.1-4_all.deb
+ 19c17df4f8da6ec8166677062835010d 206508 debug optional udisks2-lvm2-dbgsym_2.8.1-4_armhf.deb
+ 868c5b1bcde45bc34193a70d97352a38 49612 admin optional udisks2-lvm2_2.8.1-4_armhf.deb
+ 44737d28619d11788c92ae702d44fa04 84476 debug optional udisks2-vdo-dbgsym_2.8.1-4_armhf.deb
+ 8f9a37acb9555d9b0b6059e92b797561 28932 admin optional udisks2-vdo_2.8.1-4_armhf.deb
+ 5576337beb18b1107ff74cef9dfa027e 84832 debug optional udisks2-zram-dbgsym_2.8.1-4_armhf.deb
+ 0bf8d6f0602fbcabeafe5e6ae9bff955 28492 admin optional udisks2-zram_2.8.1-4_armhf.deb
+ 32e814f035c097a8684116708fb1b955 18020 admin optional udisks2_2.8.1-4_armhf.buildinfo
+ 0653f0f9685bd72418af0c8a608ecdd2 345532 admin optional udisks2_2.8.1-4_armhf.deb

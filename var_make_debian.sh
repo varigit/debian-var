@@ -42,6 +42,12 @@ readonly G_CROSS_COMPILER_ARCHIVE_64BIT="${G_CROSS_COMPILER_64BIT_NAME}.tar.xz"
 readonly G_EXT_CROSS_64BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/${G_CROSS_COMPILER_ARCHIVE_64BIT}"
 readonly G_CROSS_COMPILER_64BIT_PREFIX="aarch64-linux-gnu-"
 
+#32 bit CROSS_COMPILER config and paths
+readonly G_CROSS_COMPILER_32BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
+readonly G_CROSS_COMPILER_ARCHIVE_32BIT="${G_CROSS_COMPILER_32BIT_NAME}.tar.xz"
+readonly G_EXT_CROSS_32BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/${G_CROSS_COMPILER_ARCHIVE_32BIT}"
+readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-linux-gnueabihf-"
+
 readonly G_CROSS_COMPILER_JOPTION="-j 4"
 
 #### user rootfs packages ####
@@ -62,7 +68,7 @@ function usage()
 	echo "Make Debian ${DEB_RELEASE} image and create a bootabled SD card"
 	echo
 	echo "Usage:"
-	echo " MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som> ./${SCRIPT_NAME} options"
+	echo " MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx6ul-var-dart> ./${SCRIPT_NAME} options"
 	echo
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
@@ -75,6 +81,7 @@ function usage()
 	echo "       modules     -- build or rebuild the Linux kernel modules & headers and install them in the rootfs dir"
 	echo "       rootfs      -- build or rebuild the Debian root filesystem and create rootfs.tar.gz"
 	echo "                       (including: make & install Debian packages, firmware and kernel modules & headers)"
+	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
 	echo "       rtar        -- generate or regenerate rootfs.tar.gz image from the rootfs folder"
 	echo "       clean       -- clean all build artifacts (without deleting sources code or resulted images)"
 	echo "       sdcard      -- create a bootable SD card"
@@ -98,7 +105,7 @@ fi
 
 source ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh
 
-# Setup cross compiler path, name, dtb path, kernel image type
+# Setup cross compiler path, name, kernel dtb path, kernel image type, helper scripts
 if [ "${ARCH_CPU}" = "64BIT" ]; then
 	G_CROSS_COMPILER_NAME=${G_CROSS_COMPILER_64BIT_NAME}
 	G_EXT_CROSS_COMPILER_LINK=${G_EXT_CROSS_64BIT_COMPILER_LINK}
@@ -110,6 +117,14 @@ if [ "${ARCH_CPU}" = "64BIT" ]; then
 	KERNEL_DTB_IMAGE_PATH="arch/arm64/boot/dts/freescale/"
 	# Include weston backend rootfs helper
 	source ${G_VARISCITE_PATH}/weston_rootfs.sh
+elif [ "${ARCH_CPU}" = "32BIT" ]; then
+	G_CROSS_COMPILER_NAME=${G_CROSS_COMPILER_32BIT_NAME}
+	G_EXT_CROSS_COMPILER_LINK=${G_EXT_CROSS_32BIT_COMPILER_LINK}
+	G_CROSS_COMPILER_ARCHIVE=${G_CROSS_COMPILER_ARCHIVE_32BIT}
+	G_CROSS_COMPILER_PREFIX=${G_CROSS_COMPILER_32BIT_PREFIX}
+	ARCH_ARGS="arm"
+	# Include x11 backend rootfs helper
+	source ${G_VARISCITE_PATH}/x11_rootfs.sh
 else
 	echo " Error unknown CPU type"
 	exit 1
@@ -370,6 +385,8 @@ function make_uboot()
 		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 		${G_CROSS_COMPILER_JOPTION}
 
+	cp ${1}/tools/env/fw_printenv ${2}
+
 	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
 			src/imx-mkimage/iMX8QX/
@@ -382,6 +399,7 @@ function make_uboot()
 		make SOC=iMX8QX flash
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8m-var-dart" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mq.bin \
 			src/imx-mkimage/iMX8M/bl31.bin
@@ -404,6 +422,7 @@ function make_uboot()
 		make SOC=iMX8M flash_evk
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8mm-var-dart" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mm.bin \
 			src/imx-mkimage/iMX8M/bl31.bin
@@ -424,12 +443,77 @@ function make_uboot()
 		make SOC=iMX8MM flash_evk
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	elif [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		#copy MMC SPL, u-boot, SPL binaries
+		cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
+		cp ${1}/u-boot.img  ${2}/${G_UBOOT_NAME_FOR_EMMC}
+
+		# make nand make NAND U-Boot
+		pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_NAND}"
+		# clean work directory
+		make ARCH=arm -C ${1} \
+			CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+			${G_CROSS_COMPILER_JOPTION} mrproper
+
+		# make uboot config for nand
+		make ARCH=arm -C ${1} \
+			CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+			 ${G_CROSS_COMPILER_JOPTION} ${G_UBOOT_DEF_CONFIG_NAND}
+
+		# make uboot
+		make ARCH=arm -C ${1} \
+			CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+			 ${G_CROSS_COMPILER_JOPTION}
+
+		# copy NAND SPL, u-boot binaries
+		cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_NAND}
+		cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_NAND}
 	fi
+}
 
-	# copy images
-	cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+# make *.ubi image from rootfs
+# params:
+#  $1 -- path to rootfs dir
+#  $2 -- tmp dir
+#  $3 -- output dir
+#  $4 -- ubi file name
+function make_ubi() {
+	readonly local _rootfs=${1};
+	readonly local _tmp=${2};
+	readonly local _output=${3};
+	readonly local _ubi_file_name=${4};
 
-	cp ${1}/tools/env/fw_printenv ${2}
+	readonly local UBI_CFG="${_tmp}/ubi.cfg"
+	readonly local UBIFS_IMG="${_tmp}/rootfs.ubifs"
+	readonly local UBI_IMG="${_output}/${_ubi_file_name}"
+
+	# gnerate ubifs file
+	pr_info "Generate ubi config file: ${UBI_CFG}"
+cat > ${UBI_CFG} << EOF
+[ubifs]
+mode=ubi
+image=${UBIFS_IMG}
+vol_id=0
+vol_type=dynamic
+vol_name=rootfs
+vol_flags=autoresize
+EOF
+	# delete previus images
+	rm -f ${UBI_IMG} && :;
+	rm -f ${UBIFS_IMG} && :;
+
+	pr_info "Creating $UBIFS_IMG image"
+	mkfs.ubifs -x zlib -m 2048  -e 124KiB -c 3965 -r ${_rootfs} $UBIFS_IMG
+
+	pr_info "Creating $UBI_IMG image"
+	ubinize -o ${UBI_IMG} -m 2048 -p 128KiB -s 2048 -O 2048 ${UBI_CFG}
+
+	# delete unused file
+	rm -f ${UBIFS_IMG} && :;
+	rm -f ${UBI_CFG} && :;
+
+	return 0;
 }
 
 # clean U-Boot
@@ -493,6 +577,19 @@ function check_sdcard()
 	return 0
 }
 
+# make imx sdma firmware
+# $1 -- linux-firmware directory
+# $2 -- rootfs output dir
+function make_imx_sdma_fw() {
+	pr_info "Install imx sdma firmware"
+	install -d ${2}/lib/firmware/imx/sdma
+	if [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		install -m 0644 ${1}/imx/sdma/sdma-imx6q.bin \
+		${2}/lib/firmware/imx/sdma
+	fi
+	install -m 0644 ${1}/LICENSE.sdma_firmware ${2}/lib/firmware/
+}
+
 # make firmware for wl bcm module
 # $1 -- bcm git directory
 # $2 -- rootfs output dir
@@ -551,6 +648,16 @@ function cmd_make_deploy()
 		};
 	fi
 
+	# SDMA firmware
+	if [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		# get linux-frimwrae source repository
+		(( `ls ${G_IMX_SDMA_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get Linux-Firmware";
+			get_git_src ${G_IMX_SDMA_FW_GIT} \
+				${G_IMX_SDMA_FW_GIT_BRANCH} ${G_IMX_SDMA_FW_SRC_DIR} \
+				${G_IMX_SDMA_FW_GIT_REV}
+		};
+	fi
 	return 0
 }
 
@@ -558,18 +665,33 @@ function cmd_make_rootfs()
 {
 	make_prepare;
 
-	# make Debian weston backend rootfs for imx8 family
-	cd ${G_ROOTFS_DIR}
-	make_debian_weston_rootfs ${G_ROOTFS_DIR}
-	cd -
+	if [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		# make debian x11 backend rootfs
+		cd ${G_ROOTFS_DIR}
+		make_debian_x11_rootfs ${G_ROOTFS_DIR}
+		# make imx sdma firmware
+		make_imx_sdma_fw ${G_IMX_SDMA_FW_SRC_DIR} ${G_ROOTFS_DIR}
+		cd -
+	else
+		# make debian weston backend rootfs for imx8 family
+		cd ${G_ROOTFS_DIR}
+		make_debian_weston_rootfs ${G_ROOTFS_DIR}
+		cd -
+	fi
 
-	if [ ! -z "${G_BCM_FW_GIT}" ]; then
 	# make bcm firmwares
+	if [ ! -z "${G_BCM_FW_GIT}" ]; then
 		make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 	fi
 
 	# pack rootfs
 	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH}
+
+	if [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		# pack to ubi
+		make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} \
+				${G_UBI_FILE_NAME}
+	fi
 }
 
 function cmd_make_uboot()
@@ -597,6 +719,10 @@ function cmd_make_kmodules()
 		${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR}
 }
 
+function cmd_make_rfs_ubi() {
+	make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} ${G_UBI_FILE_NAME}
+}
+
 function cmd_make_rfs_tar()
 {
 	# pack rootfs
@@ -605,12 +731,20 @@ function cmd_make_rfs_tar()
 
 function cmd_make_sdcard()
 {
-	make_weston_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR}
+	if [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		make_x11_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR}
+	else
+		make_weston_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR}
+	fi
 }
 
 function cmd_make_bcmfw()
 {
 	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
+}
+
+function cmd_make_firmware() {
+	make_imx_sdma_fw ${G_IMX_SDMA_FW_SRC_DIR} ${G_ROOTFS_DIR}
 }
 
 function cmd_make_clean()
@@ -662,8 +796,15 @@ case $PARAM_CMD in
 	bcmfw )
 		cmd_make_bcmfw
 		;;
+	firmware )
+		cmd_make_firmware
+		;;
+
 	sdcard )
 		cmd_make_sdcard
+		;;
+	rubi )
+		cmd_make_rfs_ubi
 		;;
 	rtar )
 		cmd_make_rfs_tar
