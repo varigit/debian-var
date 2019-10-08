@@ -474,7 +474,8 @@ function make_x11_sdcard() {
 		pr_info "Copying Debian images to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${LPARAM_OUTPUT_DIR}/${BUILD_IMAGE_TYPE} \
 		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
-		if [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
+		   [ "${MACHINE}" = "var-som-mx7" ]; then
 			cp ${LPARAM_OUTPUT_DIR}/rootfs.ubi.img \
 			${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 		fi
@@ -504,7 +505,8 @@ function make_x11_sdcard() {
 		pr_info "Copying scripts to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
 		cp ${G_VARISCITE_PATH}/${MACHINE}/debian-emmc.sh \
 		${P2_MOUNT_DIR}/usr/sbin/
-		if [ "${MACHINE}" = "imx6ul-var-dart" ]; then
+		if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
+		   [ "${MACHINE}" = "var-som-mx7" ]; then
 			cp ${G_VARISCITE_PATH}/${MACHINE}/debian-nand.sh \
 			${P2_MOUNT_DIR}/usr/sbin/
 		else
