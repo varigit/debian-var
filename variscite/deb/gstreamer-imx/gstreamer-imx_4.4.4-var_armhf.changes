@@ -1,0 +1,25 @@
+Format: 1.8
+Date: Tue, 22 Sep 2019 16:09:23 +0200
+Source: gstreamer-imx
+Binary: gstreamer-imx
+Architecture: armhf
+Version: 4.4.4-var
+Distribution: buster
+Urgency: medium
+Maintainer: Harshesh Valera <harshesh.v@variscite.com>
+Changed-By: Harshesh Valera <harshesh.v@variscite.com>
+Description:
+ gstreamer-imx - NXP gstreamer1.0 plugin library
+Changes:
+ gstreamer-imx (4.4.4-var) buster; urgency=medium
+ .
+   * Debianize gstreamer-imx plugin for i.MX6UL and i.MX7
+Checksums-Sha1:
+ 7f32337a3134909def51ae6a42370ccbc856fa10 18013 gstreamer-imx_4.4.4-var_armhf.buildinfo
+ d24bff7b84f56450c31268500d3d063e72dffee2 110588 gstreamer-imx_4.4.4-var_armhf.deb
+Checksums-Sha256:
+ 4163a28ffac831345511a6513c53ae6923cfb483f8d9a447afe2adf821701e5a 18013 gstreamer-imx_4.4.4-var_armhf.buildinfo
+ 290ac06934e32fbc0fe29abb32725e5ded446f8eb8b7b3b1861ea32deb2773d1 110588 gstreamer-imx_4.4.4-var_armhf.deb
+Files:
+ a95db1f313ad82868269c3bc5a45cc86 18013 restricted/libs optional gstreamer-imx_4.4.4-var_armhf.buildinfo
+ f82b020bc9c350fa76ad66ffe7382cd6 110588 multimedia optional gstreamer-imx_4.4.4-var_armhf.deb

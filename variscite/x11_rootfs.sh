@@ -37,6 +37,9 @@ function make_debian_x11_rootfs() {
 	# udisk2
 	cp -r ${G_VARISCITE_PATH}/deb/udisks2/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
+	# gstreamer-imx
+	cp -r ${G_VARISCITE_PATH}/deb/gstreamer-imx/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
 
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -179,6 +182,15 @@ sed -i -e 's/\#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm
 # added alsa & alsa utilites
 protected_install alsa-utils
 protected_install gstreamer1.0-alsa
+
+protected_install gstreamer1.0-plugins-bad
+protected_install gstreamer1.0-plugins-base
+protected_install gstreamer1.0-plugins-ugly
+protected_install gstreamer1.0-plugins-good
+protected_install gstreamer1.0-tools
+
+# added gstreamer-imx
+protected_install gstreamer-imx
 
 # added i2c tools
 protected_install i2c-tools
