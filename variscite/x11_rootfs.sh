@@ -40,6 +40,9 @@ function make_debian_x11_rootfs() {
 	# gstreamer-imx
 	cp -r ${G_VARISCITE_PATH}/deb/gstreamer-imx/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
+	# shared-mime-info
+	cp -r ${G_VARISCITE_PATH}/deb/shared-mime-info/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
 
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -211,9 +214,8 @@ protected_install bluez-tools
 protected_install blueman
 protected_install gconf2
 
-# Fix icon Mime type issue
-apt-get install -y --reinstall libgdk-pixbuf2.0-0
-dpkg-reconfigure libgdk-pixbuf2.0-0
+#shared-mime-info
+protected_install shared-mime-info
 
 # wifi support packages
 protected_install hostapd
@@ -233,6 +235,8 @@ apt-get -y autoremove
 update-alternatives --set iptables /usr/sbin/iptables-legacy
 update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
+apt-get install -y --reinstall libgdk-pixbuf2.0-0
+
 # Remove foreign man pages and locales
 rm -rf /usr/share/man/??
 rm -rf /usr/share/man/??_*
@@ -245,11 +249,6 @@ rm -rf /usr/share/doc
 
 # Remove deb package lists
 rm -rf /var/lib/apt/lists/deb.*
-
-
-# update mime and icon caches
-update-mime-database /usr/share/mime/
-update-icon-caches /usr/share/icons/
 
 # create users and set password
 useradd -m -G audio -s /bin/bash user
@@ -333,6 +332,8 @@ EOF
 	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
 
+	tar -xzf ${G_VARISCITE_PATH}/deb/shared-mime-info/mime_image_prebuilt.tar.gz -C \
+		${ROOTFS_BASE}/
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
 

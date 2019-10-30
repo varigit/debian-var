@@ -13,9 +13,3 @@
 # Disable runtime power management to avoid dealock
 echo "Disabling runtime PM"
 echo 0 > /sys/devices/soc0/soc/soc:busfreq/enable
-# Update mime database on boot
-if [ ! -f /etc/mime_update_done ]; then
-	echo "Updating mime database"
-	update-mime-database /usr/share/mime
-	touch /etc/mime_update_done
-fi

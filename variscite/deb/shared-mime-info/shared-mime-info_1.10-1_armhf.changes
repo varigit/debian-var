@@ -1,0 +1,30 @@
+Format: 1.8
+Date: Tue, 25 Sep 2018 11:55:36 +0200
+Source: shared-mime-info
+Binary: shared-mime-info shared-mime-info-dbgsym
+Architecture: armhf
+Version: 1.10-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Debian freedesktop.org maintainers <pkg-freedesktop-maintainers@lists.alioth.debian.org>
+Changed-By: Emilio Pozuelo Monfort <pochu@debian.org>
+Description:
+ shared-mime-info - FreeDesktop.org shared MIME database and spec
+Changes:
+ shared-mime-info (1.10-1) unstable; urgency=medium
+ .
+   * New upstream release.
+   * Updated Vcs fields for move to git and salsa.
+   * Add gbp.conf.
+Checksums-Sha1:
+ c384eebc637706c327fba8fb1ed4ff2289e94998 65788 shared-mime-info-dbgsym_1.10-1_armhf.deb
+ 560f1c86f37dbf3a6e0af562319157716098927f 9845 shared-mime-info_1.10-1_armhf.buildinfo
+ 33d9ff0b65cbd8358b8d1ac8c7d42f1a3f4f1779 762648 shared-mime-info_1.10-1_armhf.deb
+Checksums-Sha256:
+ 4d3065d05916c08c7339a4171acb40f9286fe076e5f44cec6e4841fa39030c33 65788 shared-mime-info-dbgsym_1.10-1_armhf.deb
+ e915747fc73004e433ecf847c460a0668e91b00954547dd5043507cd92b8f774 9845 shared-mime-info_1.10-1_armhf.buildinfo
+ 781ef0b4ffcaf1bcaf882d0c88bf557a661494d0e540cf3fd1f7c5f2cd35fe95 762648 shared-mime-info_1.10-1_armhf.deb
+Files:
+ 2a842c08071f60dc811c0a5b685c5cac 65788 debug optional shared-mime-info-dbgsym_1.10-1_armhf.deb
+ 82f442f7b048ad4daf3678605cdb0c2d 9845 misc optional shared-mime-info_1.10-1_armhf.buildinfo
+ 6e03ec2065d617152abb0425e6d7632a 762648 misc optional shared-mime-info_1.10-1_armhf.deb
