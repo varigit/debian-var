@@ -389,9 +389,11 @@ rm -f user-stage
 
 	# copy custom files
 	cp ${G_VARISCITE_PATH}/${MACHINE}/kobs-ng ${ROOTFS_BASE}/usr/bin
-	cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
-	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
+	cp ${PARAM_OUTPUT_DIR}/fw_printenv-mmc ${ROOTFS_BASE}/usr/bin
+	cp ${PARAM_OUTPUT_DIR}/fw_printenv-nand ${ROOTFS_BASE}/usr/bin
+	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_printenv-nand
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
+	cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
 
 ## clenup command
 echo "#!/bin/bash

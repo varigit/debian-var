@@ -446,6 +446,7 @@ function make_uboot()
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	     [ "${MACHINE}" = "var-som-mx7" ]; then
+		mv ${2}/fw_printenv ${2}/fw_printenv-mmc
 		#copy MMC SPL, u-boot, SPL binaries
 		cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_EMMC}
 		cp ${1}/u-boot.img  ${2}/${G_UBOOT_NAME_FOR_EMMC}
@@ -467,9 +468,15 @@ function make_uboot()
 			CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
 			 ${G_CROSS_COMPILER_JOPTION}
 
+		# make fw_printenv
+		make envtools -C ${1} \
+			CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+			${G_CROSS_COMPILER_JOPTION}
+
 		# copy NAND SPL, u-boot binaries
 		cp ${1}/SPL ${2}/${G_SPL_NAME_FOR_NAND}
 		cp ${1}/u-boot.img ${2}/${G_UBOOT_NAME_FOR_NAND}
+		cp ${1}/tools/env/fw_printenv ${2}/fw_printenv-nand
 	fi
 }
 
