@@ -237,19 +237,6 @@ update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
 apt-get install -y --reinstall libgdk-pixbuf2.0-0
 
-# Remove foreign man pages and locales
-rm -rf /usr/share/man/??
-rm -rf /usr/share/man/??_*
-rm -rf /var/cache/man/??
-rm -rf /var/cache/man/??_*
-(cd /usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
-
-# Remove document files
-rm -rf /usr/share/doc
-
-# Remove deb package lists
-rm -rf /var/lib/apt/lists/deb.*
-
 # create users and set password
 useradd -m -G audio -s /bin/bash user
 useradd -m -G audio -s /bin/bash x_user
@@ -417,6 +404,27 @@ rm -f cleanup
 	rm ${ROOTFS_BASE}/usr/bin/qemu-arm-static
 }
 
+# Must be called after make_debian_x11_rootfs in main script
+# function generate ubi rootfs in input dir
+# $1 - rootfs ubifs base dir
+function prepare_x11_ubifs_rootfs() {
+	local UBIFS_ROOTFS_BASE=$1
+	pr_info "Make debian(${DEB_RELEASE}) rootfs for UBIFS start..."
+
+	# Below removals are to free space to fit in a NAND flash
+	# Remove foreign man pages and locales
+	rm -rf ${UBIFS_ROOTFS_BASE}/usr/share/man/??
+	rm -rf ${UBIFS_ROOTFS_BASE}/usr/share/man/??_*
+	rm -rf ${UBIFS_ROOTFS_BASE}/var/cache/man/??
+	rm -rf ${UBIFS_ROOTFS_BASE}/var/cache/man/??_*
+	(cd ${UBIFS_ROOTFS_BASE}/usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
+
+	# Remove document files
+	rm -rf ${UBIFS_ROOTFS_BASE}/usr/share/doc
+
+	# Remove deb package lists
+	rm -rf ${UBIFS_ROOTFS_BASE}/var/lib/apt/lists/deb.*
+}
 # make sdcard for device
 # $1 -- block device
 # $2 -- output images dir

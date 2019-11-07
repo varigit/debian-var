@@ -495,7 +495,11 @@ function make_ubi() {
 	readonly local UBI_CFG="${_tmp}/ubi.cfg"
 	readonly local UBIFS_IMG="${_tmp}/rootfs.ubifs"
 	readonly local UBI_IMG="${_output}/${_ubi_file_name}"
+	readonly local UBIFS_ROOTFS_DIR="${DEF_BUILDENV}/rootfs_ubi_tmp"
 
+	rm -rf ${UBIFS_ROOTFS_DIR}
+	cp -a ${_rootfs} ${UBIFS_ROOTFS_DIR}
+	prepare_x11_ubifs_rootfs ${UBIFS_ROOTFS_DIR}
 	# gnerate ubifs file
 	pr_info "Generate ubi config file: ${UBI_CFG}"
 cat > ${UBI_CFG} << EOF
@@ -508,18 +512,19 @@ vol_name=rootfs
 vol_flags=autoresize
 EOF
 	# delete previus images
-	rm -f ${UBI_IMG} && :;
-	rm -f ${UBIFS_IMG} && :;
+	rm -f ${UBI_IMG}
+	rm -f ${UBIFS_IMG}
 
 	pr_info "Creating $UBIFS_IMG image"
-	mkfs.ubifs -x zlib -m 2048  -e 124KiB -c 3965 -r ${_rootfs} $UBIFS_IMG
+	mkfs.ubifs -x zlib -m 2048  -e 124KiB -c 3965 -r ${UBIFS_ROOTFS_DIR} $UBIFS_IMG
 
 	pr_info "Creating $UBI_IMG image"
 	ubinize -o ${UBI_IMG} -m 2048 -p 128KiB -s 2048 -O 2048 ${UBI_CFG}
 
 	# delete unused file
-	rm -f ${UBIFS_IMG} && :;
-	rm -f ${UBI_CFG} && :;
+	rm -f ${UBIFS_IMG}
+	rm -f ${UBI_CFG}
+	rm -rf ${UBIFS_ROOTFS_DIR}
 
 	return 0;
 }
@@ -734,7 +739,8 @@ function cmd_make_kmodules()
 }
 
 function cmd_make_rfs_ubi() {
-	make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} ${G_UBI_FILE_NAME}
+	make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} \
+				${G_UBI_FILE_NAME}
 }
 
 function cmd_make_rfs_tar()
