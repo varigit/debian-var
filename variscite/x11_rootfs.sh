@@ -518,15 +518,10 @@ function make_x11_sdcard() {
 	function copy_scripts
 	{
 		pr_info "Copying scripts to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${G_VARISCITE_PATH}/${MACHINE}/debian-emmc.sh \
-		${P2_MOUNT_DIR}/usr/sbin/
 		if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 		   [ "${MACHINE}" = "var-som-mx7" ]; then
-			cp ${G_VARISCITE_PATH}/${MACHINE}/debian-nand.sh \
-			${P2_MOUNT_DIR}/usr/sbin/
-		else
-			cp ${G_VARISCITE_PATH}/${MACHINE}/debian-install.sh \
-			${P2_MOUNT_DIR}/usr/sbin/
+			cp ${G_VARISCITE_PATH}/mx6ul_mx7_install_debian.sh \
+				${P2_MOUNT_DIR}/usr/sbin/install_debian.sh
 		fi
 	}
 
