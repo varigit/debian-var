@@ -68,7 +68,7 @@ function usage()
 	echo "Make Debian ${DEB_RELEASE} image and create a bootabled SD card"
 	echo
 	echo "Usage:"
-	echo " MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
+	echo " MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
 	echo
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
@@ -444,6 +444,20 @@ function make_uboot()
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	elif [ "${MACHINE}" = "imx8qm-var-som" ]; then
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
+			src/imx-mkimage/iMX8QM/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8qm.bin \
+			src/imx-mkimage/iMX8QM/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qm-ahab-container.img \
+			src/imx-mkimage/iMX8QM/
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QM/
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make SOC=iMX8QM flash
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QM/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${1}/tools/env/fw_printenv ${2}
 	elif [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	     [ "${MACHINE}" = "var-som-mx7" ]; then
 		mv ${2}/fw_printenv ${2}/fw_printenv-mmc

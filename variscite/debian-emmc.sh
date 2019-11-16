@@ -46,6 +46,17 @@ check_board()
 			red_bold_echo "ERROR: invalid display, should be lvds, hdmi or dual-display"
 			exit 1
 		fi
+	elif grep -q "i.MX8QM" /sys/devices/soc0/soc_id; then
+		BOARD=imx8qm-var-som
+		DTB_PREFIX=fsl-imx8qm-var-som
+		BOOTLOADER_OFFSET=32
+		BLOCK=mmcblk0
+
+		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
+		      $DISPLAY != "dp" ]]; then
+			red_bold_echo "ERROR: invalid display, should be lvds, hdmi or dp"
+			exit 1
+		fi
 	else
 		red_bold_echo "ERROR: Unsupported board"
 		exit 1
