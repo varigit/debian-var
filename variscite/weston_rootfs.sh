@@ -19,7 +19,7 @@ function make_debian_weston_rootfs()
 
 	# prepare qemu
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
-	cp /usr/bin/qemu-aarch64-static ${ROOTFS_BASE}/usr/bin/
+	cp ${G_VARISCITE_PATH}/qemu_64bit/qemu-aarch64-static ${ROOTFS_BASE}/usr/bin/qemu-aarch64-static
 	mount -o bind /proc ${ROOTFS_BASE}/proc
 	mount -o bind /dev ${ROOTFS_BASE}/dev
 	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
