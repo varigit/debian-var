@@ -220,6 +220,12 @@ protected_install imx-firmware-vpu
 # epdc package
 protected_install imx-firmware-epdc
 
+# hdmi firmware package
+if [ ! -z "${HDMI_FIRMWARE_PACKAGE}" ]
+then
+	protected_install ${HDMI_FIRMWARE_PACKAGE}
+fi
+
 # graphical packages
 protected_install libdrm-vivante1
 protected_install imx-gpu-viv-core
