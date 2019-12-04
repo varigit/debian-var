@@ -151,21 +151,28 @@ install_rootfs_to_emmc()
 	if [[ ${BOARD} = "imx8m-var-dart" ]]; then
 		# Create DTB symlink
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
-
-		# Install blacklist.conf
-		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
+		# Update blacklist.conf
+		if [ -f ${MOUNTDIR}/etc/modprobe.d/blacklist.conf ]; then
+			echo "blacklist fec" >> ${MOUNTDIR}/etc/modprobe.d/blacklist.conf
+		fi
 	fi
 
 	if [[ ${BOARD} = "imx8qxp-var-som" ]]; then
 		# Create DTB symlink
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi.dtb ${DTB_PREFIX}.dtb)
+	fi
 
-		# Install blacklist.conf
-		cp ${MOUNTDIR}/etc/wifi/blacklist.conf ${MOUNTDIR}/etc/modprobe.d
+	if [[ ${BOARD} = "imx8qm-var-som" ]]; then
+		# Create DTB symlinks
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs fsl-imx8qm-var-spear-${DISPLAY}.dtb fsl-imx8qm-var-spear.dtb)
 	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
-	sed -i "s/\/dev\/mmcblk./\/dev\/${BLOCK}/" ${MOUNTDIR}/etc/fw_env.config
+	if [ -f ${MOUNTDIR}/etc/fw_env.config ]; then
+		sed -i "s/\/dev\/mmcblk./\/dev\/${BLOCK}/" ${MOUNTDIR}/etc/fw_env.config
+	fi
 
 	echo
 	sync
@@ -192,7 +199,7 @@ start_udev()
 usage()
 {
 	echo
-	echo "This script installs Yocto on the SOM's internal storage device"
+	echo "This script installs Debian on the SOM's internal storage device"
 	echo
 	echo " Usage: $(basename $0) <option>"
 	echo
@@ -205,7 +212,7 @@ usage()
 finish()
 {
 	echo
-	blue_bold_echo "Yocto installed successfully"
+	blue_bold_echo "Debian installed successfully"
 	exit 0
 }
 
@@ -218,7 +225,7 @@ if [[ $EUID != 0 ]] ; then
 	exit 1
 fi
 
-blue_underlined_bold_echo "*** Variscite MX8M Yocto eMMC Recovery ***"
+blue_underlined_bold_echo "*** Variscite MX8M Debian eMMC Recovery ***"
 echo
 
 while getopts d:h OPTION;

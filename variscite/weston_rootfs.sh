@@ -558,8 +558,8 @@ function make_weston_sdcard()
 	function copy_scripts
 	{
 		pr_info "Copying scripts to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${G_VARISCITE_PATH}/debian-emmc.sh \
-			${P1_MOUNT_DIR}/usr/sbin/
+		cp ${G_VARISCITE_PATH}/mx8_install_debian.sh \
+			${P1_MOUNT_DIR}/usr/sbin/install_debian.sh
 	}
 
 	function ceildiv
