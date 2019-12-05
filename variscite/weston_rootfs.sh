@@ -289,6 +289,9 @@ apt-get -y autoremove
 update-alternatives --set iptables /usr/sbin/iptables-legacy
 update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
+#install usleep busybox applet
+ln -sf /bin/busybox /bin/usleep
+
 # create users and set password
 useradd -m -G audio -s /bin/bash user
 usermod -a -G video user
