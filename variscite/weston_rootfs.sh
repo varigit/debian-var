@@ -423,7 +423,7 @@ rm -f user-stage
 	fi
 
 	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
-	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
+	install -m 0644 ${G_VARISCITE_PATH}/wallpaper_hd.png \
 		${ROOTFS_BASE}/usr/share/images/desktop-base/default
 
 	# Add alsa default configs
