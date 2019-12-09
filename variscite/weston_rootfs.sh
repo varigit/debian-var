@@ -345,10 +345,13 @@ EOF
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
 		${ROOTFS_BASE}/etc/pulse/
 
+	# install blacklist.conf
+	install -d ${ROOTFS_BASE}/etc/modprobe.d/
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/blacklist.conf \
+		${ROOTFS_BASE}/etc/modprobe.d/
+
 	# install variscite-wifi service
 	install -d ${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/blacklist.conf \
-		${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi.conf \
 		${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi-common.sh \
