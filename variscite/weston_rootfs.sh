@@ -423,6 +423,9 @@ rm -f user-stage
 			ln -sf ${DEFAULT_BOOT_DTB2} \
 				${ROOTFS_BASE}/boot/${BOOT_DTB2}
 		fi
+		if [ "${MACHINE}" = "imx8qm-var-som" ]; then
+			ln -sf ${DEFAULT_BOOT_SPEAR8_DTB} ${ROOTFS_BASE}/boot/${BOOT_SPEAR8_DTB}
+		fi
 	fi
 
 	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/

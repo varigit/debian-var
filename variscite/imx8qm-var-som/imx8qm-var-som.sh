@@ -45,4 +45,6 @@ readonly G_IMXBOOT_REV="dd0234001713623c79be92b60fa88bc07b07f24f"
 BOOTLOADER_OFFSET=32
 
 BOOT_DTB="fsl-imx8qm-var-som.dtb"
+BOOT_SPEAR8_DTB="fsl-imx8qm-var-spear.dtb"
 DEFAULT_BOOT_DTB="fsl-imx8qm-var-som-lvds.dtb"
+DEFAULT_BOOT_SPEAR8_DTB="fsl-imx8qm-var-spear-lvds.dtb"
