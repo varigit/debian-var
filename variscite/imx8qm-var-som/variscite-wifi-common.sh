@@ -75,20 +75,8 @@ wifi_down()
 # Return true if SOM has WIFI module assembled
 wifi_is_available()
 {
-	# For now assume WIFI is available on SPEAR-MX8
-	if grep -q SPEAR-MX8 /sys/devices/soc0/machine; then
-		return 0
-	fi
-
-	# Read SOM options EEPROM field
-	opt=$(i2cget -f -y 0x0 0x52 0x20)
-
-	# Check WIFI bit in SOM options
-	if [ $((opt & 0x1)) -eq 1 ]; then
-		return 0
-	else
-		return 1
-	fi
+	# For now assume WIFI is always available
+	return 0
 }
 
 # Return true if WIFI should not be started
