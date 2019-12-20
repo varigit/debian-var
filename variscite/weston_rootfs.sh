@@ -62,6 +62,11 @@ function make_debian_weston_rootfs()
 		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_PACKAGE_DIR}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 	fi
+	# Vivante GPU SDK Binaries
+	if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# imxcodec
 	cp -r ${G_VARISCITE_PATH}/deb/imxcodec/* \
@@ -229,6 +234,21 @@ fi
 # graphical packages
 protected_install libdrm-vivante1
 protected_install imx-gpu-viv-core
+
+# GPU SDK
+if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
+then
+	protected_install libwayland-egl-backend-dev
+	protected_install glslang-tools
+	protected_install libdevil-dev
+	protected_install libassimp-dev
+	protected_install imx-gpu-sdk-console
+	protected_install imx-gpu-sdk-gles2
+	protected_install imx-gpu-sdk-gles3
+	protected_install imx-gpu-sdk-opencl
+	protected_install imx-gpu-sdk-window
+fi
+
 if [ ! -z "${G2DPACKAGE}" ]
 then
 	protected_install ${G2DPACKAGE}
