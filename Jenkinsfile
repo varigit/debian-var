@@ -8,10 +8,10 @@ pipeline {
   }
 
   environment {
-    PRODUCT_AVENTURA = 'twonav-aventura-2018'
-    PRODUCT_TRAIL = 'twonav-trail-2018'
-    AVENTURA_OUTPUT_DIR = 'output-aventura'
-    TRAIL_OUTPUT_DIR = 'output-trail'
+    PRODUCT_TWONAV_AVENTURA = 'twonav-aventura-2018'
+    PRODUCT_TWONAV_TRAIL = 'twonav-trail-2018'
+    TWONAV_AVENTURA_OUTPUT_DIR = 'output-aventura'
+    TWONAV_TRAIL_OUTPUT_DIR = 'output-trail'
   }
 
   stages {
@@ -41,13 +41,13 @@ pipeline {
         stage('Building Aventura') {
           steps {
             sh 'sudo ./make_var_mx6ul_dart_debian.sh -c clean'
-            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_AVENTURA} -o ${WORKSPACE}/${AVENTURA_OUTPUT_DIR}"
+            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_TWONAV_AVENTURA} -o ${WORKSPACE}/${TWONAV_AVENTURA_OUTPUT_DIR}"
           }
         }
         stage('Building Trail') {
           steps {
             sh 'sudo ./make_var_mx6ul_dart_debian.sh -c clean'
-            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_TRAIL} -o ${WORKSPACE}/${TRAIL_OUTPUT_DIR}"
+            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_TWONAV_TRAIL} -o ${WORKSPACE}/${TWONAV_TRAIL_OUTPUT_DIR}"
           }
         }
       }
@@ -67,8 +67,8 @@ pipeline {
         sh "echo ${USER}"
         sh "sudo chown -R ${USER}:${USER} rootfs"
         sh "sudo chown -R ${USER}:${USER} tmp"
-        sh "sudo chown -R ${USER}:${USER} ${AVENTURA_OUTPUT_DIR}"
-        sh "sudo chown -R ${USER}:${USER} ${TRAIL_OUTPUT_DIR}"
+        sh "sudo chown -R ${USER}:${USER} ${TWONAV_AVENTURA_OUTPUT_DIR}"
+        sh "sudo chown -R ${USER}:${USER} ${TWONAV_TRAIL_OUTPUT_DIR}"
       }
     }
   }
@@ -80,7 +80,7 @@ pipeline {
 
     success {
       echo 'Saving Artifacts'
-      archiveArtifacts artifacts: "${AVENTURA_OUTPUT_DIR}/*deb,${TRAIL_OUTPUT_DIR}/*deb", onlyIfSuccessful: true
+      archiveArtifacts artifacts: "${TWONAV_AVENTURA_OUTPUT_DIR}/*deb,${TWONAV_TRAIL_OUTPUT_DIR}/*deb", onlyIfSuccessful: true
     }
   }
 }
