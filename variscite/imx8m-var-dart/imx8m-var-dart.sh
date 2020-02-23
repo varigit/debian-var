@@ -12,7 +12,7 @@ readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
-readonly G_LINUX_KERNEL_REV="09a8b5955516af5a54219b521eda73f286dd0e15"
+readonly G_LINUX_KERNEL_REV="b6e5bcc957e5e6610fb0a057143489c161219733"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 G_LINUX_DTB="freescale/fsl-imx8mq-var-dart-sd-emmc-lvds.dtb
 	freescale/fsl-imx8mq-var-dart-sd-emmc-hdmi.dtb
