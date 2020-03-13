@@ -395,8 +395,9 @@ function make_uboot()
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qx-ahab-container.img \
 			src/imx-mkimage/iMX8QX/
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
 		cd ${DEF_SRC_DIR}/imx-mkimage
-		make SOC=iMX8QX flash
+		make SOC=iMX8QX flash_spl
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
