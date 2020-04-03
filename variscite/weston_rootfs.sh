@@ -69,8 +69,10 @@ function make_debian_weston_rootfs()
 	fi
 
 	# imxcodec
-	cp -r ${G_VARISCITE_PATH}/deb/imxcodec/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${G_IMX_CODEC_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_CODEC_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# imxparser
 	cp -r ${G_VARISCITE_PATH}/deb/imxparser/* \
