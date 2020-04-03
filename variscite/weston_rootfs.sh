@@ -75,8 +75,10 @@ function make_debian_weston_rootfs()
 	fi
 
 	# imxparser
-	cp -r ${G_VARISCITE_PATH}/deb/imxparser/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${G_IMX_PARSER_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_PARSER_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# imxvpuhantro
 	cp -r ${G_VARISCITE_PATH}/deb/imxvpuhantro/* \
