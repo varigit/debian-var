@@ -103,8 +103,10 @@ function make_debian_weston_rootfs()
 		${ROOTFS_BASE}/srv/local-apt-repository
 
 	# imx-vpuwrap
-	cp -r ${G_VARISCITE_PATH}/deb/imxvpuwrap/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${G_IMX_VPU_WRAPPER_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_WRAPPER_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# imxgstplugin
 	cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
