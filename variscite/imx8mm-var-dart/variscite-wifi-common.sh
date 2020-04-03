@@ -1,3 +1,9 @@
+# Return true if board is DART-MX8M-MINI
+board_is_dart_mx8m_mini()
+{
+	grep -q DART-MX8MM /sys/devices/soc0/machine
+}
+
 # Setup WIFI control GPIOs
 wifi_pre_up()
 {
@@ -16,9 +22,11 @@ wifi_pre_up()
 		echo out > /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction
 	fi
 
-	if [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
-		echo ${BT_BUF_GPIO} > /sys/class/gpio/export
-		echo out > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
+	if board_is_dart_mx8m_mini; then
+		if [ ! -d /sys/class/gpio/gpio${BT_BUF_GPIO} ]; then
+			echo ${BT_BUF_GPIO} > /sys/class/gpio/export
+			echo out > /sys/class/gpio/gpio${BT_BUF_GPIO}/direction
+		fi
 	fi
 
 	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
@@ -40,7 +48,11 @@ wifi_up()
 	usleep 10000
 
 	# WIFI_1V8 up
-	echo 0 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	if board_is_dart_mx8m_mini; then
+		echo 0 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	else
+		echo 1 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	fi
 	usleep 10000
 
 	# WLAN_EN up
@@ -49,14 +61,16 @@ wifi_up()
 	# BT_EN up
 	echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 
-	# BT_BUF up
-	echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+	if board_is_dart_mx8m_mini; then
+		# BT_BUF up
+		echo 0 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
 
-	# Wait at least 150ms
-	usleep 200000
+		# Wait at least 150ms
+		usleep 200000
 
-	# BT_BUF down
-	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+		# BT_BUF down
+		echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+	fi
 
 	# BT_EN down
 	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
@@ -83,14 +97,20 @@ wifi_down()
 	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
 
 	# BT_BUF down
-	echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+	if board_is_dart_mx8m_mini; then
+		echo 1 > /sys/class/gpio/gpio${BT_BUF_GPIO}/value
+	fi
 
 	# BT_EN down
 	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
 	usleep 10000
 
 	# WIFI_1V8 down
-	echo 1 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	if board_is_dart_mx8m_mini; then
+		echo 1 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	else
+		echo 0 > /sys/class/gpio/gpio${WIFI_1V8_GPIO}/value
+	fi
 
 	# WIFI_3V3 down
 	echo 0 > /sys/class/gpio/gpio${WIFI_3V3_GPIO}/value
