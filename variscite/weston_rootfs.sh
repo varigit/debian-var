@@ -81,8 +81,10 @@ function make_debian_weston_rootfs()
 	fi
 
 	# imxvpuhantro
-	cp -r ${G_VARISCITE_PATH}/deb/imxvpuhantro/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${G_IMX_VPU_HANTRO_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_HANTRO_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# gstpluginsbad
 	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
