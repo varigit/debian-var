@@ -116,6 +116,12 @@ function make_debian_weston_rootfs()
 	cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 
+	# opencv
+	if [ ! -z "${G_OPENCV_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_OPENCV_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
+
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
