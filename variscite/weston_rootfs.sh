@@ -127,19 +127,21 @@ echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
+deb ${DEF_DEBIAN_MIRROR} testing main contrib non-free
+deb-src ${DEF_DEBIAN_MIRROR} testing main contrib non-free
 " > etc/apt/sources.list
-
-# raise backports priority
-echo "Package: *
-Pin: release n=${DEB_RELEASE}-backports
-Pin-Priority: 500
-" > etc/apt/preferences.d/backports
 
 # maximize local repo priority
 echo "Package: *
 Pin: origin ""
 Pin-Priority: 1000
 " > etc/apt/preferences.d/local
+
+# raise backports priority
+echo "Package: *
+Pin: release n=${DEB_RELEASE}-backports
+Pin-Priority: 600
+" > etc/apt/preferences.d/backports
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -215,6 +217,35 @@ protected_install local-apt-repository
 # update packages and install base
 apt-get update || apt-get upgrade
 
+# libc6 >=2.29 by Vivnate GPU drivers
+protected_install libc6/testing
+
+# maximize local repo priority
+echo "Package: *
+Pin: origin ""
+Pin-Priority: 1000
+" > etc/apt/preferences.d/local
+
+echo "Package: *
+Pin: release n=${DEB_RELEASE}
+Pin-Priority: 990
+" > etc/apt/preferences.d/buster
+# raise backports priority
+echo "Package: *
+Pin: release n=${DEB_RELEASE}-backports
+Pin-Priority: 500
+" > etc/apt/preferences.d/backports
+
+# raise backports priority
+echo "Package: *
+Pin: release n=testing
+Pin-Priority: 90
+" > etc/apt/preferences.d/testing
+
+# update packages and install base
+apt-get update
+
+protected_install libc6-dev/testing
 protected_install locales
 protected_install ntp
 protected_install openssh-server
