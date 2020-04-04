@@ -456,7 +456,9 @@ EOF
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
-	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/01-bt.sh \
+		${ROOTFS_BASE}/etc/pm/sleep.d/
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
 
 	## end packages stage ##
