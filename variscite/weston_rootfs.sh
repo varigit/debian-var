@@ -383,6 +383,8 @@ EOF
 		${ROOTFS_BASE}/etc/bluetooth
 	install -m 0755 ${G_VARISCITE_PATH}/variscite-bt \
 		${ROOTFS_BASE}/etc/bluetooth
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-bt-common.sh \
+		${ROOTFS_BASE}/etc/bluetooth
 	install -m 0644 ${G_VARISCITE_PATH}/variscite-bt.service \
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/variscite-bt.service \
