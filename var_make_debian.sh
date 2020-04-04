@@ -661,6 +661,12 @@ function cmd_make_deploy()
 		pr_info "Get kernel repository";
 		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} \
 			${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
+		# patch kernel for SDMA module build
+		if [ "${MACHINE}" = "imx8mm-var-dart" ]; then
+			cd ${G_LINUX_KERNEL_SRC_DIR}
+			git am < ${G_VARISCITE_PATH}/${MACHINE}/patches/kernel/0001-arm64-imx8_var_defconfig-Compile-SDMA-as-kernel-modu.patch
+			cd -
+		fi
 	};
 	if [ ! -z "${G_BCM_FW_GIT}" ]; then
 		# get bcm firmware repository
