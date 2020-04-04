@@ -427,21 +427,37 @@ function make_uboot()
 	elif [ "${MACHINE}" = "imx8mm-var-dart" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mm.bin \
 			src/imx-mkimage/iMX8M/bl31.bin
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_imem.bin \
-			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_imem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_dmem_1d.bin \
+			src/imx-mkimage/iMX8M/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_dmem_2d.bin \
+			src/imx-mkimage/iMX8M/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_imem_1d.bin \
+			src/imx-mkimage/iMX8M/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_imem_2d.bin \
+			src/imx-mkimage/iMX8M/
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_dmem.bin \
-			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_dmem.bin
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_imem.bin \
-			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_imem.bin
+			src/imx-mkimage/iMX8M/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_imem.bin \
+			src/imx-mkimage/iMX8M/
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_dmem.bin \
-			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_dmem.bin
+			src/imx-mkimage/iMX8M/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_imem.bin \
+			src/imx-mkimage/iMX8M/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/soc.mak \
+			src/imx-mkimage/iMX8M/
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
-		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/fsl-imx8mm-evk.dtb
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		if [ ! -z "${UBOOT_DTB_EXTRA}" ]; then
+			cp ${1}/arch/arm/dts/${UBOOT_DTB_EXTRA} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		fi
+		if [ ! -z "${UBOOT_DTB_EXTRA2}" ]; then
+			cp ${1}/arch/arm/dts/${UBOOT_DTB_EXTRA2} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		fi
 		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
 		cd ${DEF_SRC_DIR}/imx-mkimage
-		make SOC=iMX8MM flash_evk
+		make SOC=iMX8MM flash_lpddr4_ddr4_evk
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
