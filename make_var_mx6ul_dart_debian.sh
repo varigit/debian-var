@@ -357,9 +357,9 @@ function make_debian_rootfs() {
 echo "deb $PARAM_DEB_LOCAL_MIRROR ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/PreProduction/TwoNav/" >> etc/apt/sources.list.d/twonav.list
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/PreProduction/Kernel/" >> etc/apt/sources.list.d/twonav.list
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/PreProduction/Extras/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/Production/TwoNav/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/Production/Kernel/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/Production/Extras/" >> etc/apt/sources.list.d/twonav.list
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -847,8 +847,6 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} ${G_UBOOT_DEF_CONFIG_MMC}
 
 	# make uboot
-	#make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} KCFLAGS="-DTWONAV_DEVICE=\"$DEVICE\""
-	#make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} KCFLAGS="-DTWONAV_DEVICE=\"$DEVICE\""
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} KCFLAGS="-DTWONAV_DEVICE=\\\"$DEVICE\\\""
 
 	# copy images
