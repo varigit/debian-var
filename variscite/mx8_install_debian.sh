@@ -17,6 +17,7 @@ red_bold_echo()
 
 IMGS_PATH=/opt/images/Debian
 UBOOT_IMAGE=imx-boot-sd.bin
+UBOOT_IMAGE_MX8MQ_DP=imx-boot-sd-dp.bin
 ROOTFS_IMAGE=rootfs.tar.gz
 BOOTLOADER_RESERVED_SIZE=8
 BOOTLOADER_OFFSET=33
@@ -31,10 +32,15 @@ check_board()
 		BOARD=imx8mm-var-dart
 		DTB_PREFIX=fsl-imx8mm-var-dart
 		BLOCK=mmcblk2
-	elif grep -q "i.MX8M" /sys/devices/soc0/soc_id; then
-		BOARD=imx8m-var-dart
+	elif grep -q "i.MX8MQ" /sys/devices/soc0/soc_id; then
+		BOARD=imx8mq-var-dart
 		DTB_PREFIX=fsl-imx8mq-var-dart
 		BLOCK=mmcblk0
+		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
+		    $DISPLAY != "dp" && $DISPLAY != "lvds-dp" && $DISPLAY != "lvds-hdmi" ]]; then
+			red_bold_echo "ERROR: invalid display, should be lvds, hdmi, dp, lvds-dp or lvds-hdmi"
+			exit 1
+		fi
 	elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
 		BOARD=imx8qxp-var-som
 		DTB_PREFIX=fsl-imx8qxp-var-som
@@ -132,6 +138,9 @@ install_bootloader_to_emmc()
 	echo
 	blue_underlined_bold_echo "Installing booloader"
 
+	if [[ ${BOARD} = "imx8mq-var-dart" && ( ${DISPLAY} = "dp" || ${DISPLAY} = "lvds-dp" ) ]]; then
+		UBOOT_IMAGE=${UBOOT_IMAGE_MX8MQ_DP}
+	fi
 	dd if=${IMGS_PATH}/${UBOOT_IMAGE} of=/dev/${BLOCK} bs=1K seek=${BOOTLOADER_OFFSET}
 	sync
 }
@@ -148,10 +157,11 @@ install_rootfs_to_emmc()
 	printf "Extracting files"
 	tar --warning=no-timestamp -xpf ${IMGS_PATH}/${ROOTFS_IMAGE} -C ${MOUNTDIR} --checkpoint=.1200
 
-	if [[ ${BOARD} = "imx8m-var-dart" ]]; then
+	if [[ ${BOARD} = "imx8mq-var-dart" ]]; then
 		# Create DTB symlink
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-emmc-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
+
 		# Update blacklist.conf
 		if [ -f ${MOUNTDIR}/etc/modprobe.d/blacklist.conf ]; then
 			echo "blacklist fec" >> ${MOUNTDIR}/etc/modprobe.d/blacklist.conf
@@ -205,7 +215,11 @@ usage()
 	echo
 	echo " options:"
 	echo " -h                           show help message"
-	echo " -d <lvds|hdmi|dual-display>  set display type, default is lvds"
+	if grep -q "i.MX8QM" /sys/devices/soc0/soc_id; then
+		echo " -d <lvds|hdmi|dp>            set display type, default is lvds"
+	elif grep -q "i.MX8MQ" /sys/devices/soc0/soc_id; then
+		echo " -d <lvds|hdmi|dp|lvds-dp|lvds-hdmi>  set display type, default is lvds"
+	fi
 	echo
 }
 
