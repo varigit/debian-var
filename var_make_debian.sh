@@ -68,7 +68,7 @@ function usage()
 	echo "Make Debian ${DEB_RELEASE} image and create a bootabled SD card"
 	echo
 	echo "Usage:"
-	echo " MACHINE=<imx8m-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
+	echo " MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
 	echo
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
@@ -401,7 +401,7 @@ function make_uboot()
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
-	elif [ "${MACHINE}" = "imx8m-var-dart" ]; then
+	elif [ "${MACHINE}" = "imx8mq-var-dart" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mq.bin \
 			src/imx-mkimage/iMX8M/bl31.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/signed_hdmi_imx8m.bin \
@@ -414,10 +414,12 @@ function make_uboot()
 			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_imem.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_dmem.bin \
 			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_dmem.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/soc.mak \
+			src/imx-mkimage/iMX8M/
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
-		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/fsl-imx8mq-evk.dtb
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
 		cd ${DEF_SRC_DIR}/imx-mkimage
 		make SOC=iMX8M flash_evk
