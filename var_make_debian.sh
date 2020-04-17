@@ -406,6 +406,8 @@ function make_uboot()
 			src/imx-mkimage/iMX8M/bl31.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/signed_hdmi_imx8m.bin \
 			src/imx-mkimage/iMX8M/signed_hdmi_imx8m.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/signed_dp_imx8m.bin \
+			src/imx-mkimage/iMX8M/signed_dp_imx8m.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_imem.bin \
 			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_imem.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_dmem.bin \
@@ -426,6 +428,11 @@ function make_uboot()
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+		make SOC=iMX8M clean
+		make SOC=iMX8M flash_dp_evk
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC_DP}
+		cp ${G_UBOOT_NAME_FOR_EMMC_DP} ${2}/${G_UBOOT_NAME_FOR_EMMC_DP}
 	elif [ "${MACHINE}" = "imx8mm-var-dart" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mm.bin \
 			src/imx-mkimage/iMX8M/bl31.bin
