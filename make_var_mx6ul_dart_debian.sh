@@ -60,8 +60,10 @@ readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 G_LINUX_KERNEL_GIT="https://github.com/twonav/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_GIT_UP="https://repo_username:repo_password@github.com/twonav/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_twonav"
-readonly G_LINUX_DTB='imx6ul-var-dart-emmc_wifi.dtb imx6ul-var-dart-nand_wifi.dtb imx6ul-var-dart-sd_emmc.dtb imx6ul-var-dart-sd_nand.dtb imx6ull-var-dart-emmc_wifi.dtb imx6ull-var-dart-sd_emmc.dtb imx6ull-var-dart-nand_wifi.dtb imx6ull-var-dart-sd_nand.dtb imx6ul-var-dart-5g-emmc_wifi.dtb imx6ull-var-dart-5g-emmc_wifi.dtb imx6ul-var-dart-5g-nand_wifi.dtb imx6ull-var-dart-5g-nand_wifi.dtb'
 
+readonly BRANDS="os twonav"                                                     
+readonly MODELS="aventura crosstop trail"                                       
+readonly G_TWONAV_DTB="imx6ull-var-dart-emmc_wifi.dtb $(for i in $BRANDS ; do for j in $MODELS ; do echo imx6ull-var-dart-$i-$j-2018.dtb ; done ; done)"
 
 ## uboot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
@@ -138,7 +140,7 @@ function usage() {
 	echo "       -d|--dev    		-- select sdcard device (exmple: -d /dev/sde)"
 	echo "       --debug     		-- enable debug mode for this script"
 	echo "       -k|--instpkg		-- install package in rootfs"
-	echo "       -t|--type   		-- twonav-aventura-2018/twonav-trail-2018"
+	echo "       -t|--type   		-- twonav-aventura-2018/twonav-trail-2018/crosstop-2018"
 	echo "Examples of use:"
 	echo "  make only linux kernel for board: sudo ./${SCRIPT_NAME} --cmd kernel"
 	echo "  make only rootfs for board:       sudo ./${SCRIPT_NAME} --cmd rootfs"
@@ -194,7 +196,7 @@ while true; do
 			PARAM_DEBUG=1;
 			shift
 			;;
-		-t|--type ) # twonav-aventura/trail-2018
+		-t|--type ) # twonav-aventura/trail-2018/crosstop-2018
 			PARAM_DEVICE_TYPE="$2"
 			shift
 			;;
@@ -223,7 +225,7 @@ done
 ## declarate dinamic variables ##
 readonly G_ROOTFS_TARBAR_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}"
 
-## device type: twonav-aventura/trail-2018
+## device type: twonav-aventura/trail-2018/crosstop-2018
 readonly DEVICE="$PARAM_DEVICE_TYPE"
 
 #Provisional until we define different kernels on the go.
@@ -237,6 +239,9 @@ readonly G_LINUX_KERNEL_DEF_CONFIG="imx6ul-var-dart-${DEVICE}_defconfig"
 
 readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-$DEVICE linux-image-4.1.15-$DEVICE"
 readonly G_TWONAV_PACKAGES=$DEVICE
+
+##uboot formatted name
+readonly TWONAV_UBOOT_NAME_FOR_EMMC="u-boot_$DEVICE.imx"
 
 ###### local functions ######
 
@@ -778,7 +783,12 @@ function build_kernel_package() {
 
 	#cp -r ${3}/lib/modules/$KERNEL_NAME/updates ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
 	#cp ${3}/lib/modules/$KERNEL_NAME/modules.*  ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
-	cp ${2}/arch/arm/boot/dts/*-var-dart-*emmc_wifi.dtb ${2}/debian/linux-image-$KERNEL_NAME/boot
+	
+	for dtb in $G_TWONAV_DTB
+	do
+		cp "${2}/arch/arm/boot/dts/$dtb" ${2}/debian/linux-image-$KERNEL_NAME/boot	
+	done
+		
 	cp ${2}/arch/arm/boot/zImage ${2}/debian/linux-image-$KERNEL_NAME/boot
 	dpkg --build ${2}/debian/linux-image-$KERNEL_NAME ..
 
@@ -827,6 +837,9 @@ function copy_kernel() {
 function make_uboot() {
 ### make emmc uboot ###
 	pr_info "Make SPL & u-boot: ${G_UBOOT_DEF_CONFIG_MMC}"
+	pr_info "Uboot for ${DEVICE}"
+	pr_info "File Name = ${TWONAV_UBOOT_NAME_FOR_EMMC}"
+
 	# clean work directory 
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} mrproper
 
@@ -834,10 +847,10 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} ${G_UBOOT_DEF_CONFIG_MMC}
 
 	# make uboot
-	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION}
+	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} KCFLAGS="-DTWONAV_DEVICE=\\\"$DEVICE\\\""
 
 	# copy images
-	cp ${1}/${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	cp ${1}/${G_UBOOT_NAME_FOR_EMMC} ${2}/${TWONAV_UBOOT_NAME_FOR_EMMC}
 
 	return 0;
 }
@@ -995,7 +1008,7 @@ function make_sdcard() {
 	function flash_u-boot
 	{
 		pr_info "Flashing U-Boot"
-		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
+		dd if=${LPARAM_OUTPUT_DIR}/${TWONAV_UBOOT_NAME_FOR_EMMC} of=${LPARAM_BLOCK_DEVICE} bs=1K seek=1; sync
 	}
 
 	function flash_sdcard
@@ -1021,7 +1034,7 @@ function make_sdcard() {
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb						${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+		cp ${LPARAM_OUTPUT_DIR}/${TWONAV_UBOOT_NAME_FOR_EMMC}	${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 
 		return 0;
 	}
@@ -1237,7 +1250,7 @@ function cmd_make_uboot() {
 function cmd_make_kernel() {
 	make_prepare;
 
-	make_kernel ${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_LINUX_KERNEL_DEF_CONFIG} "${G_LINUX_DTB}" ${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
+	make_kernel ${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_LINUX_KERNEL_DEF_CONFIG} "${G_TWONAV_DTB}" ${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR} || {
 		pr_error "Failed #$? in function make_kernel"
 		return 1;
 	};
