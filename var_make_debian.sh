@@ -402,8 +402,12 @@ function make_uboot()
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8mq-var-dart" ]; then
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mq.bin \
-			src/imx-mkimage/iMX8M/bl31.bin
+		cd ${DEF_SRC_DIR}/imx-atf
+		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+				PLAT=imx8mq bl31
+		cd -
+		cp ${DEF_SRC_DIR}/imx-atf/build/imx8mq/release/bl31.bin \
+			${DEF_SRC_DIR}/imx-mkimage/iMX8M/bl31.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/signed_hdmi_imx8m.bin \
 			src/imx-mkimage/iMX8M/signed_hdmi_imx8m.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/signed_dp_imx8m.bin \
@@ -708,6 +712,22 @@ function cmd_make_deploy()
 			pr_info "Get imx-boot";
 			get_git_src ${G_IMXBOOT_GIT} \
 			${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
+		};
+	fi
+
+	# get imx-atf repository
+	if [ ! -z "${G_IMX_ATF_GIT}" ]; then
+		(( `ls ${G_IMX_ATF_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get IMX ATF repository";
+			get_git_src ${G_IMX_ATF_GIT} ${G_IMX_ATF_BRANCH} \
+			${G_IMX_ATF_SRC_DIR} ${G_IMX_ATF_REV}
+		# patch imx-atf
+		if [ "${MACHINE}" = "imx8mq-var-dart" ]; then
+			cd ${G_IMX_ATF_SRC_DIR}
+			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-atf/imx8m-atf-ddr-timing.patch
+			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-atf/imx8m-atf-fix-derate-enable.patch
+			cd -
+		fi
 		};
 	fi
 

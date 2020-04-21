@@ -83,6 +83,13 @@ readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
 readonly G_IMXBOOT_BRACH="imx_4.19.35_1.1.0"
 readonly G_IMXBOOT_REV="1c2277b95ce59f5d0265f26fec522e2ac2581e59"
+
+#imx-atf
+readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
+readonly G_IMX_ATF_GIT="https://source.codeaurora.org/external/imx/imx-atf"
+readonly G_IMX_ATF_BRANCH="imx_4.19.35_1.1.0"
+readonly G_IMX_ATF_REV="70fa7bcc1a2035ab8402550911b3ae29eff55371"
+
 HDMI=yes
 SPL_LOAD_ADDR=0x7E1000
 TEE_LOAD_ADDR=0xfe000000
