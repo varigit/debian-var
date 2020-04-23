@@ -240,7 +240,7 @@ readonly TWONAV_KERNEL_VERSION_PATH="${G_LINUX_KERNEL_SRC_DIR}/twonav_kernel_ver
 readonly G_LINUX_KERNEL_DEF_CONFIG="imx6ul-var-dart-${UNIFIED_DEVICE}_defconfig"
 
 readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-$UNIFIED_DEVICE linux-image-4.1.15-$UNIFIED_DEVICE"
-readonly G_TWONAV_PACKAGES=$UNIFIED_DEVICE
+readonly G_TWONAV_PACKAGES=$DEVICE
 
 ##uboot formatted name
 readonly TWONAV_UBOOT_NAME_FOR_EMMC="u-boot_$DEVICE.imx"
