@@ -228,16 +228,18 @@ readonly G_ROOTFS_TARBAR_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}"
 ## device type: twonav-aventura/trail-2018/crosstop-2018
 readonly DEVICE="$PARAM_DEVICE_TYPE"
 
+readonly UNIFIED_DEVICE="twonav-2018"
+
 #Provisional until we define different kernels on the go.
-readonly KERNEL_NAME="4.1.15-"$DEVICE
+readonly KERNEL_NAME="4.1.15-"$UNIFIED_DEVICE
 
 # Parse kernel version from file
 readonly TWONAV_KERNEL_VERSION_PATH="${G_LINUX_KERNEL_SRC_DIR}/twonav_kernel_version"
 
 ## defconfig
-readonly G_LINUX_KERNEL_DEF_CONFIG="imx6ul-var-dart-${DEVICE}_defconfig"
+readonly G_LINUX_KERNEL_DEF_CONFIG="imx6ul-var-dart-${UNIFIED_DEVICE}_defconfig"
 
-readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-$DEVICE linux-image-4.1.15-$DEVICE"
+readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-$UNIFIED_DEVICE linux-image-4.1.15-$UNIFIED_DEVICE"
 readonly G_TWONAV_PACKAGES=$DEVICE
 
 ##uboot formatted name
