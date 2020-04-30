@@ -768,15 +768,43 @@ function make_kernel_modules() {
 	return 0;
 }
 
+###################### Twonav kernel package fix for older kernel  packages ##########
+function pkg_info_gen() {
+	local OLD_KERN_BRANDS="twonav os"
+	local OLD_KERN_MODELS="trail aventura"
+	local BREAK_VERSION="1.0.19"
+	echo -n "$1"
+	local i j cnt=0
+	for i in $OLD_KERN_BRANDS ; do for j in $OLD_KERN_MODELS ; do
+		if ((cnt++ > 0)) ; then echo "," ; fi
+		echo -en "\t$2-4.1.15-$i-$j-2018 (<= $BREAK_VERSION)"
+	done ; done
+	echo
+}
+
+function fix_unified_kernel_control_files() {
+	local i
+	local LINUX_DEBIAN_PATH=${1}/debian/${2}-$KERNEL_NAME/DEBIAN		
+
+	for i in "Breaks:" "Replaces:" ; do
+		pkg_info_gen "$i" ${2}>> $LINUX_DEBIAN_PATH/control		
+	done
+}
+# ###############################################################################################
+
+
+
 # build linux kernel package
 # $1 -- cross compiller prefix
 # $2 -- linux dirname
 # $3 -- rootfs dirname
 # $4 -- out patch
 function build_kernel_package() {
-
 	readonly KERNEL_VERSION=`cat ${TWONAV_KERNEL_VERSION_PATH}`
 	cd ${2}
+
+	pr_info "Kernel package: make-kpkg"
+
 	if [ "$UBUNTU_VERSION" -ge 16 ]; then
 		DEB_HOST_ARCH=armhf make-kpkg --revision=$KERNEL_VERSION ${G_CROSS_COMPILEER_JOPTION} --rootcmd fakeroot --arch arm --cross-compile ${1} --initrd linux_headers linux_image
 	else
@@ -786,18 +814,27 @@ function build_kernel_package() {
 	#cp -r ${3}/lib/modules/$KERNEL_NAME/updates ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
 	#cp ${3}/lib/modules/$KERNEL_NAME/modules.*  ${2}/debian/linux-image-$KERNEL_NAME/lib/modules/$KERNEL_NAME/
 	
+	pr_info "Kernel package: Copying all dtb to kernel package"
 	for dtb in $G_TWONAV_DTB
 	do
 		cp "${2}/arch/arm/boot/dts/$dtb" ${2}/debian/linux-image-$KERNEL_NAME/boot	
 	done
-		
-	cp ${2}/arch/arm/boot/zImage ${2}/debian/linux-image-$KERNEL_NAME/boot
-	dpkg --build ${2}/debian/linux-image-$KERNEL_NAME ..
+
+	## Repacks linux-image with TwoNav modifications
+	pr_info "Kernel package: Repacking linux-image with TwoNav modifications..."
+	local KERN_IMAGE_BASE_NAME="linux-image"	
+	fix_unified_kernel_control_files $2 $KERN_IMAGE_BASE_NAME	
+	cp ${2}/arch/arm/boot/zImage ${2}/debian/linux-image-$KERNEL_NAME/boot		
+	dpkg --build ${2}/debian/$KERN_IMAGE_BASE_NAME-$KERNEL_NAME ..
+
+	## Repacks linux-headers with TwoNav modifications
+	pr_info "Kernel package: Repacking linux-headers with TwoNav modifications..."
+	local KERN_HEADERS_BASE_NAME="linux-headers"
+	fix_unified_kernel_control_files $2 $KERN_HEADERS_BASE_NAME	
+	dpkg --build ${2}/debian/$KERN_HEADERS_BASE_NAME-$KERNEL_NAME ..
 
 	mv ../*.deb ${4}/;
-	cp ${4}/*.deb $G_TWONAV_PATH/recovery
-	cp ${4}/*.deb ${3}/opt/twonav/recovery
-
+	
 	cd -
 	
 	return 0;
