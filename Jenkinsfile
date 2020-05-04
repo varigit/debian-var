@@ -8,14 +8,8 @@ pipeline {
   }
 
   environment {
-    PRODUCT_TWONAV_AVENTURA = 'twonav-aventura-2018'
-    PRODUCT_TWONAV_TRAIL = 'twonav-trail-2018'
-    PRODUCT_OS_AVENTURA = 'os-aventura-2018'
-    PRODUCT_OS_TRAIL = 'os-trail-2018'
-    TWONAV_AVENTURA_OUTPUT_DIR = 'output-twonav-aventura'
-    TWONAV_TRAIL_OUTPUT_DIR = 'output-twonav-trail'
-    OS_AVENTURA_OUTPUT_DIR = 'output-os-aventura'
-    OS_TRAIL_OUTPUT_DIR = 'output-os-trail'
+    PRODUCT_TWONAV = 'twonav-2018'
+    KERNEL_OUTPUT_DIR = 'output-twonav'
   }
 
   stages {
@@ -42,28 +36,10 @@ pipeline {
 
     stage('Build Kernel and package') {
       stages {
-        stage('Building TwoNav Aventura') {
+        stage('Building Kernel') {
           steps {
             sh 'sudo ./make_var_mx6ul_dart_debian.sh -c clean'
-            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_TWONAV_AVENTURA} -o ${WORKSPACE}/${TWONAV_AVENTURA_OUTPUT_DIR}"
-          }
-        }
-        stage('Building TwoNav Trail') {
-          steps {
-            sh 'sudo ./make_var_mx6ul_dart_debian.sh -c clean'
-            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_TWONAV_TRAIL} -o ${WORKSPACE}/${TWONAV_TRAIL_OUTPUT_DIR}"
-          }
-        }
-        stage('Building OS Aventura') {
-          steps {
-            sh 'sudo ./make_var_mx6ul_dart_debian.sh -c clean'
-            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_OS_AVENTURA} -o ${WORKSPACE}/${OS_AVENTURA_OUTPUT_DIR}"
-          }
-        }
-        stage('Building OS Trail') {
-          steps {
-            sh 'sudo ./make_var_mx6ul_dart_debian.sh -c clean'
-            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_OS_TRAIL} -o ${WORKSPACE}/${OS_TRAIL_OUTPUT_DIR}"
+            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -o ${WORKSPACE}/${KERNEL_OUTPUT_DIR}"
           }
         }
       }
@@ -83,10 +59,7 @@ pipeline {
         sh "echo ${USER}"
         sh "sudo chown -R ${USER}:${USER} rootfs"
         sh "sudo chown -R ${USER}:${USER} tmp"
-        sh "sudo chown -R ${USER}:${USER} ${TWONAV_AVENTURA_OUTPUT_DIR}"
-        sh "sudo chown -R ${USER}:${USER} ${TWONAV_TRAIL_OUTPUT_DIR}"
-        sh "sudo chown -R ${USER}:${USER} ${OS_AVENTURA_OUTPUT_DIR}"
-        sh "sudo chown -R ${USER}:${USER} ${OS_TRAIL_OUTPUT_DIR}"
+        sh "sudo chown -R ${USER}:${USER} ${KERNEL_OUTPUT_DIR}"
       }
     }
   }
@@ -98,7 +71,7 @@ pipeline {
 
     success {
       echo 'Saving Artifacts'
-      archiveArtifacts artifacts: "${TWONAV_AVENTURA_OUTPUT_DIR}/*deb,${TWONAV_TRAIL_OUTPUT_DIR}/*deb,${OS_AVENTURA_OUTPUT_DIR}/*deb,${OS_TRAIL_OUTPUT_DIR}/*deb", onlyIfSuccessful: true
+      archiveArtifacts artifacts: "${KERNEL_OUTPUT_DIR}/*deb", onlyIfSuccessful: true
     }
   }
 }
