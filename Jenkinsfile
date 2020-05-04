@@ -39,7 +39,7 @@ pipeline {
         stage('Building Kernel') {
           steps {
             sh 'sudo ./make_var_mx6ul_dart_debian.sh -c clean'
-            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -t ${PRODUCT_TWONAV} -o ${WORKSPACE}/${KERNEL_OUTPUT_DIR}"
+            sh "sudo ./make_var_mx6ul_dart_debian.sh -c package -o ${WORKSPACE}/${KERNEL_OUTPUT_DIR}"
           }
         }
       }
