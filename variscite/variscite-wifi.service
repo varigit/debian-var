@@ -5,9 +5,9 @@ After=sysinit.target
 
 [Service]
 Type=oneshot
-RemainAfterExit=yes
+#RemainAfterExit=yes
 ExecStart=/etc/wifi/variscite-wifi start
-ExecStop=/etc/wifi/variscite-wifi stop
+#ExecStop=/etc/wifi/variscite-wifi stop
 
 [Install]
 WantedBy=network.target
