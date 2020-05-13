@@ -772,7 +772,7 @@ function make_kernel_modules() {
 function pkg_info_gen() {
 	local OLD_KERN_BRANDS="twonav os"
 	local OLD_KERN_MODELS="trail aventura"
-	local BREAK_VERSION="1.0.19"
+	local BREAK_VERSION="1.0.20"
 	echo -n "$1"
 	local i j cnt=0
 	for i in $OLD_KERN_BRANDS ; do for j in $OLD_KERN_MODELS ; do
