@@ -56,6 +56,9 @@ wifi_down()
 	# Unload WIFI driver
 	modprobe -r brcmfmac
 
+	# sleep to prevent panic kernel
+	sleep 0.1
+
 	# Unbind WIFI device from MMC controller
 	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
 	   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
