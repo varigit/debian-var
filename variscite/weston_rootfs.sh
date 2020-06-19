@@ -94,8 +94,13 @@ function make_debian_weston_rootfs()
 		${ROOTFS_BASE}/srv/local-apt-repository
 
 	# gstpluginsgood
-	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${G_GST_PLUGINS_GOOD_VERSION}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${G_GST_PLUGINS_GOOD_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	else
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# gstreamer
 	cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
