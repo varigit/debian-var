@@ -81,8 +81,13 @@ function make_debian_weston_rootfs()
 		${ROOTFS_BASE}/srv/local-apt-repository
 
 	# gstpluginsbad
-	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${G_GST_PLUGINS_BAD_VERSION}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${G_GST_PLUGINS_BAD_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	else
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# gstpluginsbase
 	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
