@@ -276,6 +276,18 @@ protected_install gstreamer1.0-plugins-good
 protected_install gstreamer1.0-tools
 protected_install ${IMXGSTPLG}
 
+# install SW encoders/decoders for socs that lacks HW based
+# encoders/decoders
+if [ ! -z "${G_GST_EXTRA_PLUGINS}" ]
+then
+	protected_install ${G_GST_EXTRA_PLUGINS}
+fi
+
+if [ ! -z "${G_SW_ENCODER_DECODERS}" ]
+then
+	protected_install ${G_SW_ENCODER_DECODERS}
+fi
+
 # i2c tools
 protected_install i2c-tools
 
@@ -341,10 +353,19 @@ EOF
 	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus \
 		${ROOTFS_BASE}/usr/bin
 	install -d ${ROOTFS_BASE}/etc/bluetooth
+	if [ -f ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt-common.sh ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt-common.sh \
+			${ROOTFS_BASE}/etc/bluetooth
+	fi
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt.conf \
 		${ROOTFS_BASE}/etc/bluetooth
-	install -m 0755 ${G_VARISCITE_PATH}/variscite-bt \
-		${ROOTFS_BASE}/etc/bluetooth
+	if [ -f ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt \
+			${ROOTFS_BASE}/etc/bluetooth
+	else
+		install -m 0755 ${G_VARISCITE_PATH}/variscite-bt \
+			${ROOTFS_BASE}/etc/bluetooth
+	fi
 	install -m 0644 ${G_VARISCITE_PATH}/variscite-bt.service \
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/variscite-bt.service \
@@ -416,8 +437,19 @@ EOF
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
-	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
-		${ROOTFS_BASE}/etc/pm/sleep.d/
+
+	# install pm-suspend scripts
+	if [ -f ${G_VARISCITE_PATH}/${MACHINE}/01-bt.sh ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/01-bt.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+	fi
+	if [  -f ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+	else
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+	fi
 
 	## end packages stage ##
 	if [ "${G_USER_PACKAGES}" != "" ] ; then
