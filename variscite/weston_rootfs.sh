@@ -141,7 +141,11 @@ echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
 " > etc/fstab
 
-echo "${MACHINE}" > etc/hostname
+if [ "${IS_QXP_B0}" = true ]; then
+	echo "imx8qxpb0-var-som" > etc/hostname
+else
+	echo "${MACHINE}" > etc/hostname
+fi
 
 echo "auto lo
 iface lo inet loopback
@@ -564,6 +568,11 @@ function make_weston_sdcard()
 
 	readonly local BOOTLOAD_RESERVE_SIZE=8
 	readonly local SPARE_SIZE=4
+	local bootloader_bin=${G_UBOOT_NAME_FOR_EMMC}
+
+	if [ "${IS_QXP_B0}" = true ]; then
+		bootloader_bin=${G_UBOOT_NAME_FOR_B0_EMMC}
+	fi
 
 	[ "${LPARAM_BLOCK_DEVICE}" = "na" ] && {
 		pr_error "No valid block device: ${LPARAM_BLOCK_DEVICE}"
@@ -596,7 +605,7 @@ function make_weston_sdcard()
 	function flash_u-boot
 	{
 		pr_info "Flashing U-Boot"
-		dd if=${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} \
+		dd if=${LPARAM_OUTPUT_DIR}/${bootloader_bin} \
 		of=${LPARAM_BLOCK_DEVICE} bs=1K seek=${BOOTLOADER_OFFSET}; sync
 	}
 
@@ -616,8 +625,8 @@ function make_weston_sdcard()
 			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${DEF_ROOTFS_TARBALL_NAME}
 
 		pr_info "Copying MMC U-Boot to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${G_UBOOT_NAME_FOR_EMMC} \
-			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
+		cp ${LPARAM_OUTPUT_DIR}/${bootloader_bin} \
+			${P1_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/${G_UBOOT_NAME_FOR_EMMC}
 	}
 
 	function copy_scripts
