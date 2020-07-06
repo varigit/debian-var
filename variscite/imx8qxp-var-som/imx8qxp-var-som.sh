@@ -25,6 +25,7 @@ readonly G_BCM_FW_GIT_BRANCH="7.0.0.142"
 readonly G_BCM_FW_GIT_REV="7080491e10b82661ca4a67237fdb361190775d2f"
 
 readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.2.4.p4.0"
+readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.2.4.p4.0"
 readonly GST_MM_VERSION="MM_04.04.05_1902_L4.14.98_GA"
 readonly G2D_PACKAGE_DIR="imx-dpu-g2d-1.7.0"
 readonly IMX_FIRMWARE_VERSION="8.1"
