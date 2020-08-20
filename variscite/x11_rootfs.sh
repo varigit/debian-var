@@ -378,7 +378,7 @@ rm -f user-stage
 	cp ${G_VARISCITE_PATH}/${MACHINE}/kobs-ng ${ROOTFS_BASE}/usr/bin
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv-mmc ${ROOTFS_BASE}/usr/bin
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv-nand ${ROOTFS_BASE}/usr/bin
-	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_printenv-nand
+	ln -sf fw_printenv-nand ${ROOTFS_BASE}/usr/bin/fw_printenv
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
 
