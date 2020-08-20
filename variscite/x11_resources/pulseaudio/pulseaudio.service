@@ -2,8 +2,8 @@
 Description=PulseAudio system server
 
 [Service]
-Type=fork
-PIDFile=/var/run/pulse/pid
+Type=forking
+PIDFile=/run/pulse/pid
 ExecStart=/usr/bin/pulseaudio --system --disallow-exit --disable-shm --exit-idle-time=-1 --daemonize
 
 [Install]
