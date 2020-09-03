@@ -581,7 +581,8 @@ function make_weston_sdcard()
 	};
 
 	local part=""
-	if [ `echo ${LPARAM_BLOCK_DEVICE} | grep -c mmcblk` -ne 0 ]; then
+	if [ `echo ${LPARAM_BLOCK_DEVICE} | grep -c mmcblk` -ne 0 ] \
+		|| [[ ${LPARAM_BLOCK_DEVICE} == *"loop"* ]] ; then
 		part="p"
 	fi
 
