@@ -248,7 +248,11 @@ apt-get update
 protected_install libc6-dev/testing
 protected_install locales
 protected_install ntp
-protected_install openssh-server
+protected_install openssh-sftp-server/testing
+protected_install runit-helper/testing
+protected_install ncurses-term/testing
+protected_install xauth/testing
+protected_install openssh-server/testing
 protected_install nfs-common
 
 # packages required when flashing emmc
