@@ -4,7 +4,7 @@ readonly ARCH_CPU="64BIT"
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2019.04_4.19.35_1.1.0-var01"
-readonly G_UBOOT_REV="0a5addb02bcd31378a4ac1f76d39002cbea0a51f"
+readonly G_UBOOT_REV="3e1643239fb11297209254dbaa803425cf0c1702"
 G_UBOOT_DEF_CONFIG_MMC="imx8mm_var_dart_defconfig"
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
