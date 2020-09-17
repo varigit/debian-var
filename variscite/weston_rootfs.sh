@@ -286,20 +286,6 @@ protected_install imx-gpu-viv-core
 protected_install dpkg-dev
 protected_install imx-gpu-viv-wl
 
-# GPU SDK
-if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
-then
-       protected_install libwayland-egl-backend-dev/buster
-       protected_install glslang-tools/buster
-       protected_install libtiff-dev/buster
-       protected_install libdevil-dev/buster
-       protected_install libassimp-dev/buster
-       protected_install imx-gpu-sdk-console
-       protected_install imx-gpu-sdk-gles2
-       protected_install imx-gpu-sdk-gles3
-       protected_install imx-gpu-sdk-opencl
-       protected_install imx-gpu-sdk-window
-fi
 
 if [ ! -z "${G2DPACKAGE}" ]
 then
@@ -356,6 +342,25 @@ protected_install pmount
 protected_install pm-utils
 
 apt-get -y autoremove
+
+# GPU SDK
+if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
+then
+       protected_install libc6-dev/testing
+       protected_install zlib1g-dev/testing
+       protected_install libtiff5/testing
+       protected_install libtiff-dev/testing
+       protected_install libassimp-dev/testing
+       protected_install libjpeg-dev/testing
+       protected_install libdevil-dev/testing
+       protected_install libwayland-egl-backend-dev/buster
+       protected_install glslang-tools/testing
+       protected_install imx-gpu-sdk-console
+       protected_install imx-gpu-sdk-gles2
+       protected_install imx-gpu-sdk-gles3
+       protected_install imx-gpu-sdk-opencl
+       protected_install imx-gpu-sdk-window
+fi
 
 #update iptables alternatives to legacy
 update-alternatives --set iptables /usr/sbin/iptables-legacy
