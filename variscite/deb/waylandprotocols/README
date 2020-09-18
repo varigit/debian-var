@@ -1,3 +1,0 @@
-This is taken from debian snapshots and provide a wayland-protocols version aligned to latest Yocto Sumo from NXP.
-The package include NXP patches from:
-https://source.codeaurora.org/external/imx/wayland-protocols-imx/log/?h=wayland-protocols-imx-1.16
