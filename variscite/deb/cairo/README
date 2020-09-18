@@ -1,3 +1,0 @@
-This is the currently available cairo package from Debian Stretch.
-To support glesv2 in wayland, the package has been recompiled adding the following cflags:
-	--enable-egl=yes --enable-glesv2
