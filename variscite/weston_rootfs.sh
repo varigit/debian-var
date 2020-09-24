@@ -14,6 +14,8 @@ function make_debian_weston_rootfs()
 	rm -rf ${ROOTFS_BASE}/*
 
 	pr_info "rootfs: debootstrap"
+	sudo mkdir -p ${ROOTFS_BASE}
+	sudo chown -R root:root ${ROOTFS_BASE}
 	debootstrap --verbose --no-check-gpg --foreign --arch arm64 ${DEB_RELEASE} \
 		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
 
@@ -24,7 +26,7 @@ function make_debian_weston_rootfs()
 	mount -o bind /dev ${ROOTFS_BASE}/dev
 	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
 	mount -o bind /sys ${ROOTFS_BASE}/sys
-	chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage
+	chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage --verbose
 
 	# delete unused folder
 	chroot $ROOTFS_BASE rm -rf ${ROOTFS_BASE}/debootstrap
@@ -54,6 +56,12 @@ function make_debian_weston_rootfs()
 	# G2D_Packages
 	if [ ! -z "${G2D_PACKAGE_DIR}" ]; then
 		cp -r ${G_VARISCITE_PATH}/deb/${G2D_PACKAGE_DIR}/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+	fi
+
+	# Vivante GPU libgbm1 libraries
+	if [ ! -z "${G_GPU_IMX_VIV_GBM_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_GBM_DIR}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 	fi
 
@@ -217,42 +225,14 @@ protected_install local-apt-repository
 # update packages and install base
 apt-get update || apt-get upgrade
 
-# libc6 >=2.29 by Vivnate GPU drivers
-protected_install libc6/testing
-
-# maximize local repo priority
-echo "Package: *
-Pin: origin ""
-Pin-Priority: 1000
-" > etc/apt/preferences.d/local
-
-echo "Package: *
-Pin: release n=${DEB_RELEASE}
-Pin-Priority: 990
-" > etc/apt/preferences.d/buster
-# raise backports priority
-echo "Package: *
-Pin: release n=${DEB_RELEASE}-backports
-Pin-Priority: 500
-" > etc/apt/preferences.d/backports
-
-# raise backports priority
-echo "Package: *
-Pin: release n=testing
-Pin-Priority: 90
-" > etc/apt/preferences.d/testing
-
 # update packages and install base
 apt-get update
 
-protected_install libc6-dev/testing
+protected_install libc6-dev
 protected_install locales
 protected_install ntp
-protected_install openssh-sftp-server/testing
-protected_install runit-helper/testing
-protected_install ncurses-term/testing
-protected_install xauth/testing
-protected_install openssh-server/testing
+protected_install openssh-sftp-server
+protected_install openssh-server
 protected_install nfs-common
 
 # packages required when flashing emmc
@@ -282,6 +262,7 @@ fi
 
 # graphical packages
 protected_install libdrm-vivante1
+protected_install libgbm1
 protected_install imx-gpu-viv-core
 protected_install dpkg-dev
 protected_install imx-gpu-viv-wl
@@ -299,7 +280,6 @@ protected_install gstreamer1.0-alsa
 protected_install gstreamer1.0-plugins-bad
 protected_install gstreamer1.0-plugins-base
 protected_install gstreamer1.0-plugins-base-apps
-protected_install gstreamer1.0-plugins-ugly
 protected_install gstreamer1.0-plugins-good
 protected_install gstreamer1.0-tools
 protected_install ${IMXGSTPLG}
@@ -346,15 +326,10 @@ apt-get -y autoremove
 # GPU SDK
 if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
 then
-       protected_install libc6-dev/testing
-       protected_install zlib1g-dev/testing
-       protected_install libtiff5/testing
-       protected_install libtiff-dev/testing
-       protected_install libassimp-dev/testing
-       protected_install libjpeg-dev/testing
-       protected_install libdevil-dev/testing
-       protected_install libwayland-egl-backend-dev/buster
-       protected_install glslang-tools/testing
+       protected_install libdevil-dev
+       protected_install libwayland-egl-backend-dev
+       protected_install glslang-tools
+       protected_install libassimp-dev
        protected_install imx-gpu-sdk-console
        protected_install imx-gpu-sdk-gles2
        protected_install imx-gpu-sdk-gles3
