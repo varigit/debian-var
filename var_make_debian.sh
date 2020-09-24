@@ -25,7 +25,7 @@ readonly LOOP_MAJOR=7
 
 # default mirror
 readonly DEF_DEBIAN_MIRROR="https://deb.debian.org/debian/"
-readonly DEB_RELEASE="buster"
+readonly DEB_RELEASE="bullseye"
 readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
 
 # base paths
