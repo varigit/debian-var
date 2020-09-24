@@ -14,6 +14,7 @@
 #
 
 # Media automounting
-SUBSYSTEM=="block", ACTION=="add"    RUN+="/etc/udev/scripts/mount.sh"
-SUBSYSTEM=="block", ACTION=="remove" RUN+="/etc/udev/scripts/mount.sh"
-SUBSYSTEM=="block", ACTION=="change", ENV{DISK_MEDIA_CHANGE}=="1" RUN+="/etc/udev/scripts/mount.sh"
+ACTION=="add", SUBSYSTEMS=="usb", SUBSYSTEM=="block", ENV{ID_FS_USAGE}=="filesystem", \
+	RUN{program}+="/usr/bin/systemd-mount --no-block --automount=yes --collect $devnode"
+ACTION=="add", SUBSYSTEMS=="mmc", SUBSYSTEM=="block", ENV{ID_FS_USAGE}=="filesystem", \
+	RUN{program}+="/usr/bin/systemd-mount --no-block --automount=yes --collect $devnode"
