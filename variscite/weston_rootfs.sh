@@ -321,6 +321,12 @@ protected_install pmount
 # pm-utils
 protected_install pm-utils
 
+# install dpkg-dev for dpkg-buildpackage
+protected_install debhelper
+protected_install execstack
+protected_install dh-python
+protected_install apt-src
+
 apt-get -y autoremove
 
 # GPU SDK
@@ -444,6 +450,23 @@ EOF
 		${ROOTFS_BASE}/etc/pm/sleep.d/
 	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
+
+	#Build kernel headers on the target
+	pr_info "rootfs: Building kernel-headers"
+	cp -ar ${ROOTFS_BASE}/../output/kernel-headers ${ROOTFS_BASE}/tmp/
+
+	echo "#!/bin/bash
+	# update packages
+	cd /tmp/kernel-headers
+	dpkg-buildpackage -b -j4 -us -uc
+	cp -ar /tmp/*.deb /srv/local-apt-repository/
+	dpkg-reconfigure local-apt-repository
+	rm -rf /var/cache/apt/*
+	rm -f header-stage
+	" > header-stage
+
+	chmod +x header-stage
+	chroot ${ROOTFS_BASE} /header-stage
 
 	## end packages stage ##
 	if [ "${G_USER_PACKAGES}" != "" ] ; then
