@@ -1,0 +1,5 @@
+kernel (5.4.3) buster; urgency=medium
+
+  * Debianized Linux kernel headers
+
+ -- Harshesh Valera <harshesh.v@variscite.com>  Tue, 16 Oct 2020 12:35:48 -0800

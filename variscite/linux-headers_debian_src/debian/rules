@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+
+###
+### Configuration, decide what to build
+###
+
+# Some variables:
+#DEB_HOST_GNU_TYPE = $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+
+####
+
+%:
+	dh $@ --with python3
+
+
+override_dh_auto_configure:
+	dh_testdir
+
+override_dh_builddeb:
+	dh_builddeb -- -Zxz
+
+
+override_dh_strip:
+	dh_strip -a --no-automatic-dbgsym

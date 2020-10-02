@@ -79,6 +79,7 @@ function usage()
 	echo "       all         -- build or rebuild kernel/bootloader/rootfs"
 	echo "       bootloader  -- build or rebuild U-Boot"
 	echo "       kernel      -- build or rebuild the Linux kernel"
+	echo "       kernelheaders -- build or rebuild Linux kernel headers"
 	echo "       modules     -- build or rebuild the Linux kernel modules & headers and install them in the rootfs dir"
 	echo "       rootfs      -- build or rebuild the Debian root filesystem and create rootfs.tar.gz"
 	echo "                       (including: make & install Debian packages, firmware and kernel modules & headers)"
@@ -123,6 +124,7 @@ if [ "${ARCH_CPU}" = "64BIT" ]; then
 	KERNEL_DTB_IMAGE_PATH="arch/arm64/boot/dts/freescale/"
 	# Include weston backend rootfs helper
 	source ${G_VARISCITE_PATH}/weston_rootfs.sh
+	source ${G_VARISCITE_PATH}/linux-headers_debian_src/create_kernel_tree.sh
 elif [ "${ARCH_CPU}" = "32BIT" ]; then
 	G_CROSS_COMPILER_NAME=${G_CROSS_COMPILER_32BIT_NAME}
 	G_EXT_CROSS_COMPILER_LINK=${G_EXT_CROSS_32BIT_COMPILER_LINK}
@@ -352,6 +354,21 @@ function make_kernel_modules()
 	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} modules
 }
 
+# make Linux kernel headers package
+# $1 -- cross compiler prefix
+# $2 -- Linux defconfig file
+# $3 -- Linux dirname
+# $4 -- out modules path
+function make_kernel_headers_package()
+{
+	pr_info "make kernel defconfig"
+	create_debian_kernel_headers_package ${3} \
+		${PARAM_OUTPUT_DIR}/kernel-headers ${G_VARISCITE_PATH}
+	pr_info "Installing kernel modules to ${4}"
+	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} \
+		${G_CROSS_COMPILER_JOPTION} -C ${3} \
+		INSTALL_MOD_PATH=${4} modules_install
+}
 # install the Linux kernel modules
 # $1 -- cross compiler prefix
 # $2 -- Linux defconfig file
@@ -797,6 +814,15 @@ function cmd_make_kernel()
 		${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR}
 }
 
+function cmd_make_kernel_header_deb()
+{
+	make_kernel_headers_package \
+		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
+		${PARAM_OUTPUT_DIR}/kernel-headers/kernel
+
+}
+
 function cmd_make_kmodules()
 {
 	rm -rf ${G_ROOTFS_DIR}/lib/modules/*
@@ -886,6 +912,9 @@ case $PARAM_CMD in
 	modules )
 		cmd_make_kmodules
 		;;
+	kernelheaders )
+		cmd_make_kernel_header_deb
+		;;
 	bcmfw )
 		cmd_make_bcmfw
 		;;
@@ -906,6 +935,7 @@ case $PARAM_CMD in
 		cmd_make_uboot  &&
 		cmd_make_kernel &&
 		cmd_make_kmodules &&
+		cmd_make_kernel_header_deb &&
 		cmd_make_rootfs
 		;;
 	clean )
