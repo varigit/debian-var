@@ -470,6 +470,30 @@ EOF
 	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
 
+	#Build kernel headers on the target
+	pr_info "rootfs: Building kernel-headers"
+	cp -ar ${ROOTFS_BASE}/../output/kernel-headers ${ROOTFS_BASE}/tmp/
+
+	echo "#!/bin/bash
+	# update packages
+	apt-get install -y build-essential/testing
+	apt-get install -y gcc/testing
+	apt-get install -y python3-distutils/testing
+	apt-get install -y debhelper/testing
+	apt-get install -y execstack/testing
+	apt-get install -y dh-python/testing
+	apt-get install -y apt-src/testing
+	cd /tmp/kernel-headers
+	dpkg-buildpackage -b -j4 -us -uc
+	cp -ar /tmp/*.deb /srv/local-apt-repository/
+	dpkg-reconfigure local-apt-repository
+	rm -rf /var/cache/apt/*
+	rm -f header-stage
+	" > header-stage
+
+	chmod +x header-stage
+	chroot ${ROOTFS_BASE} /header-stage
+
 	## end packages stage ##
 	if [ "${G_USER_PACKAGES}" != "" ] ; then
 		pr_info "rootfs: install user defined packages (user-stage)"
@@ -479,7 +503,6 @@ echo "#!/bin/bash
 # update packages
 apt-get update
 apt-get upgrade
-
 # install all user packages
 apt-get -y install ${G_USER_PACKAGES}
 
