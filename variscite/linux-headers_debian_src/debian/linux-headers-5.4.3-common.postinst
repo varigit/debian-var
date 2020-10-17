@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /usr/src/linux-headers-5.4.3-common/
+ln -s ../../lib/linux-kbuild-5.4.3/scripts/

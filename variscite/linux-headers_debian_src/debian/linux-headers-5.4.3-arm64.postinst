@@ -1,0 +1,26 @@
+#!/bin/sh
+rm -rf  /lib/modules/5.4.3/build
+cd /lib/modules/5.4.3/
+ln -sf /usr/src/linux-headers-5.4.3-arm64/ build
+
+cd /usr/src/linux-headers-5.4.3-common/
+ln -sf ../linux-headers-5.4.3-arm64/Makefile
+
+cd /usr/src/linux-headers-5.4.3-arm64/arch/arm64/
+ln -sf /usr/src/linux-headers-5.4.3-common/arch/arm64/kernel/
+ln -sf /usr/src/linux-headers-5.4.3-common/arch/arm64/Kbuild 
+ln -sf /usr/src/linux-headers-5.4.3-common/arch/arm64/Makefile 
+
+cd /usr/src/linux-headers-5.4.3-arm64/include
+ln -sf /usr/local/src/linux-imx/include/config/auto.conf config/auto.conf
+ln -sf /usr/src/linux-headers-5.4.3-common/include/clocksource 
+ln -sf /usr/src/linux-headers-5.4.3-common/include/asm-generic
+ln -sf /usr/local/src/linux-imx/include/uapi/
+ln -sf /usr/local/src/linux-imx/include/linux/ 
+
+cd /usr/src/linux-headers-5.4.3-arm64/
+ln -sf ../../lib/linux-kbuild-5.4.3/scripts/
+cd /usr/src/linux-headers-5.4.3-common
+ln -sf ../../lib/linux-kbuild-5.4.3/scripts/
+ln -sf ../linux-headers-5.4.3-arm64/Makefile
+

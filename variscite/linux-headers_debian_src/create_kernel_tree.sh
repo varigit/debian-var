@@ -129,6 +129,23 @@ function create_debian_kernel_headers_package()
 		${OUTPUT_DIR}/debian/rules
 	cp ${ORIG_DIR}/linux-headers_debian_src/debian/changelog \
 		${OUTPUT_DIR}/debian/changelog
+
+	LINUX_HEADERS_ARM64_POSTINSTALL=linux-headers-${LOCAL_KERNEL_VERSION}-arm64.postinst
+	cp ${ORIG_DIR}/linux-headers_debian_src/debian/linux-headers-5.4.3-arm64.postinst \
+		${OUTPUT_DIR}/debian/${LINUX_HEADERS_ARM64_POSTINSTALL}
+	sed -i -e "s/5.4.3/${LOCAL_KERNEL_VERSION}/g" \
+		${OUTPUT_DIR}/debian/${LINUX_HEADERS_ARM64_POSTINSTALL}
+	LINUX_HEADERS_COMMON_POSTINSTALL=linux-headers-${LOCAL_KERNEL_VERSION}-common.postinst
+	cp ${ORIG_DIR}/linux-headers_debian_src/debian/linux-headers-5.4.3-common.postinst \
+		${OUTPUT_DIR}/debian/${LINUX_HEADERS_COMMON_POSTINSTALL}
+	sed -i -e "s/5.4.3/${LOCAL_KERNEL_VERSION}/g" \
+		${OUTPUT_DIR}/debian/${LINUX_HEADERS_COMMON_POSTINSTALL}
+	LINUX_KBUILD_POSTINSTALL=linux-kbuild-${LOCAL_KERNEL_VERSION}.postinst
+	cp ${ORIG_DIR}/linux-headers_debian_src/debian/linux-kbuild-5.4.3.postinst \
+		${OUTPUT_DIR}/debian/${LINUX_KBUILD_POSTINSTALL}
+	sed -i -e "s/5.4.3/${LOCAL_KERNEL_VERSION}/g" \
+		${OUTPUT_DIR}/debian/${LINUX_KBUILD_POSTINSTALL}
+
 	sed -i -e "s/5.4.3/${LOCAL_KERNEL_VERSION}/g" \
 		${OUTPUT_DIR}/debian/control
 	sed -i -e "s/5.4.3/${LOCAL_KERNEL_VERSION}/g" \
