@@ -68,7 +68,7 @@ function usage()
 	echo "Make Debian ${DEB_RELEASE} image and create a bootabled SD card"
 	echo
 	echo "Usage:"
-	echo " MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
+	echo " MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx8mn-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
 	echo
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
@@ -491,6 +491,33 @@ function make_uboot()
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	elif [ "${MACHINE}" = "imx8mn-var-som" ]; then
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mn.bin \
+			src/imx-mkimage/iMX8M/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_imem_1d_201810.bin \
+			src/imx-mkimage/iMX8M/ddr4_imem_1d_201810.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_dmem_1d_201810.bin \
+			src/imx-mkimage/iMX8M/ddr4_dmem_1d_201810.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_imem_2d_201810.bin \
+			src/imx-mkimage/iMX8M/ddr4_imem_2d_201810.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_dmem_2d_201810.bin \
+			src/imx-mkimage/iMX8M/ddr4_dmem_2d_201810.bin
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		if [ ! -z "${UBOOT_DTB_EXTRA}" ]; then
+			cp ${1}/arch/arm/dts/${UBOOT_DTB_EXTRA} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		fi
+		if [ ! -z "${UBOOT_DTB_EXTRA2}" ]; then
+			cp ${1}/arch/arm/dts/${UBOOT_DTB_EXTRA2} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		fi
+		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make SOC=iMX8MN flash_ddr4_evk
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8qm-var-som" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
 			src/imx-mkimage/iMX8QM/
@@ -722,6 +749,12 @@ function cmd_make_deploy()
 			pr_info "Get imx-boot";
 			get_git_src ${G_IMXBOOT_GIT} \
 			${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
+		# patch IMX boot
+		if [ "${MACHINE}" = "imx8mn-var-som" ]; then
+			cd ${G_IMXBOOT_SRC_DIR}
+			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-var-som-imx8m-nano-support.patch
+			cd -
+		fi
 		};
 	fi
 

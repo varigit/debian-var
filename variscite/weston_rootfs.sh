@@ -290,6 +290,18 @@ protected_install gstreamer1.0-plugins-good
 protected_install gstreamer1.0-tools
 protected_install ${IMXGSTPLG}
 
+# install SW encoders/decoders for socs that lacks HW based
+# encoders/decoders
+if [ ! -z "${G_GST_EXTRA_PLUGINS}" ]
+then
+	protected_install ${G_GST_EXTRA_PLUGINS}
+fi
+
+if [ ! -z "${G_SW_ENCODER_DECODERS}" ]
+then
+	protected_install ${G_SW_ENCODER_DECODERS}
+fi
+
 # i2c tools
 protected_install i2c-tools
 

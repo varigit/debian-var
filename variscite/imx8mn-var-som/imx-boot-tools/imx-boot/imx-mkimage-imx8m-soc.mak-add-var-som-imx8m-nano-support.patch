@@ -1,0 +1,33 @@
+From b87afecd5094b2ef507c5f181616d7ae0b2f2d99 Mon Sep 17 00:00:00 2001
+From: Nate Drude <nate.d@variscite.com>
+Date: Thu, 27 Aug 2020 09:10:09 -0500
+Subject: [PATCH] imx-mkimage: imx8m: soc.mak: Add support for Variscite
+ VAR-SOM-MX8M-NANO
+
+Signed-off-by: Nate Drude <nate.d@variscite.com>
+---
+ iMX8M/soc.mak | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
+index b7b3986..5a42555 100644
+--- a/iMX8M/soc.mak
++++ b/iMX8M/soc.mak
+@@ -105,7 +105,7 @@ ddr4_dmem_2d = ddr4_dmem_2d$(DDR_FW_VERSION).bin
+ 
+ u-boot-spl-ddr4.bin: u-boot-spl.bin $(ddr4_imem_1d) $(ddr4_dmem_1d) $(ddr4_imem_2d) $(ddr4_dmem_2d)
+ 	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(ddr4_imem_1d) ddr4_imem_1d_pad.bin
+-	@objcopy -I binary -O binary --pad-to 0x4000 --gap-fill=0x0 $(ddr4_dmem_1d) ddr4_dmem_1d_pad.bin
++	@objcopy -I binary -O binary --pad-to 0x1000 --gap-fill=0x0 $(ddr4_dmem_1d) ddr4_dmem_1d_pad.bin
+ 	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(ddr4_imem_2d) ddr4_imem_2d_pad.bin
+ 	@cat ddr4_imem_1d_pad.bin ddr4_dmem_1d_pad.bin > ddr4_1d_fw.bin
+ 	@cat ddr4_imem_2d_pad.bin $(ddr4_dmem_2d) > ddr4_2d_fw.bin
+@@ -169,7 +169,7 @@ u-boot-ddr4.itb: $(dtbs_ddr4)
+ 	./mkimage_uboot -E -p 0x3000 -f u-boot-ddr4.its u-boot-ddr4.itb
+ 	@rm -f u-boot.its $(dtbs_ddr4)
+ 
+-dtbs_ddr4_evk = evkddr4.dtb
++dtbs_ddr4_evk = $(PLAT)-var-som.dtb $(PLAT)-var-som-rev10.dtb
+ $(dtbs_ddr4_evk):
+ 	./$(DTB_PREPROC) $(PLAT)-ddr4-evk.dtb $(dtbs_ddr4_evk)
+ 
