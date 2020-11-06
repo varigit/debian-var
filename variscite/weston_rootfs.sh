@@ -116,6 +116,12 @@ function make_debian_weston_rootfs()
 			${ROOTFS_BASE}/srv/local-apt-repository
 	fi
 
+	# gstreamer-libav for SW codecs
+	if [ ! -z "${G_SW_GST_CODEC_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${G_SW_GST_CODEC_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
+
 	# imxgstplugin
 	cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
