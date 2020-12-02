@@ -167,9 +167,9 @@ protected_install gvfs-daemons
 protected_install net-tools
 
 # enable graphical desktop
-protected_install xorg
-protected_install xfce4
-protected_install xfce4-goodies
+#protected_install xorg
+#protected_install xfce4
+#protected_install xfce4-goodies
 
 
 #network manager
@@ -186,14 +186,15 @@ sed -i -e 's/\#autologin-user-timeout=0/autologin-user-timeout=0/g' /etc/lightdm
 protected_install alsa-utils
 protected_install gstreamer1.0-alsa
 
-protected_install gstreamer1.0-plugins-bad
-protected_install gstreamer1.0-plugins-base
-protected_install gstreamer1.0-plugins-ugly
-protected_install gstreamer1.0-plugins-good
-protected_install gstreamer1.0-tools
+#Stage-1 rfs
+#protected_install gstreamer1.0-plugins-bad
+#protected_install gstreamer1.0-plugins-base
+#protected_install gstreamer1.0-plugins-ugly
+#protected_install gstreamer1.0-plugins-good
+#protected_install gstreamer1.0-tools
 
 # added gstreamer-imx
-protected_install gstreamer-imx
+#protected_install gstreamer-imx
 
 # added i2c tools
 protected_install i2c-tools
@@ -349,14 +350,14 @@ rm -f user-stage
 	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/hostapd.conf ${ROOTFS_BASE}/etc/
 	install -d ${ROOTFS_BASE}/boot/
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
-	install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
-		${ROOTFS_BASE}/usr/share/images/desktop-base/default
+	#install -m 0644 ${G_VARISCITE_PATH}/wallpaper.png \
+		#${ROOTFS_BASE}/usr/share/images/desktop-base/default
 
 	# disable light-locker
-	install -m 0755 ${G_VARISCITE_PATH}/x11_resources/disable-lightlocker \
-		${ROOTFS_BASE}/usr/local/bin/
-	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/disable-lightlocker.desktop \
-		${ROOTFS_BASE}/etc/xdg/autostart/
+	#install -m 0755 ${G_VARISCITE_PATH}/x11_resources/disable-lightlocker \
+		#${ROOTFS_BASE}/usr/local/bin/
+	#install -m 0644 ${G_VARISCITE_PATH}/x11_resources/disable-lightlocker.desktop \
+		#${ROOTFS_BASE}/etc/xdg/autostart/
 
 	# Revert regular booting
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
@@ -417,10 +418,10 @@ function prepare_x11_ubifs_rootfs() {
 	rm -rf ${UBIFS_ROOTFS_BASE}/usr/share/man/??_*
 	rm -rf ${UBIFS_ROOTFS_BASE}/var/cache/man/??
 	rm -rf ${UBIFS_ROOTFS_BASE}/var/cache/man/??_*
-	(cd ${UBIFS_ROOTFS_BASE}/usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
+	#(cd ${UBIFS_ROOTFS_BASE}/usr/share/locale; ls | grep -v en_[GU] | xargs rm -rf)
 
 	# Remove document files
-	rm -rf ${UBIFS_ROOTFS_BASE}/usr/share/doc
+	#rm -rf ${UBIFS_ROOTFS_BASE}/usr/share/doc
 
 	# Remove deb package lists
 	rm -rf ${UBIFS_ROOTFS_BASE}/var/lib/apt/lists/deb.*

@@ -790,7 +790,12 @@ function cmd_make_rootfs()
 	if [ ! -z "${G_BCM_FW_GIT}" ]; then
 		make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 	fi
-
+        
+        rm -rf ${G_ROOTFS_DIR}/usr/share/doc
+        rm -rf ${G_ROOTFS_DIR}/usr/share/icons
+        rm -rf ${G_ROOTFS_DIR}/usr/share/locale
+        rm -rf ${G_ROOTFS_DIR}/usr/share/man
+        rm -rf ${G_ROOTFS_DIR}/usr/share/man-db
 	# pack rootfs
 	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH}
 
