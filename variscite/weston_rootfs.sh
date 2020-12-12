@@ -346,6 +346,8 @@ apt-get -y autoremove
 # GPU SDK
 if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
 then
+       protected_install libtirpc-dev/testing
+       protected_install libnsl-dev/testing
        protected_install libc6-dev/testing
        protected_install zlib1g-dev/testing
        protected_install libtiff5/testing
