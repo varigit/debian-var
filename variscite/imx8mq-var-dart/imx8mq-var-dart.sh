@@ -51,8 +51,8 @@ G_LINUX_DTB="freescale/fsl-imx8mq-var-dart-sd-dp.dtb
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="7.0.0.142"
-readonly G_BCM_FW_GIT_REV="7080491e10b82661ca4a67237fdb361190775d2f"
+readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
+readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
 readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p1.0"
 readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.2.4.p4.0"
