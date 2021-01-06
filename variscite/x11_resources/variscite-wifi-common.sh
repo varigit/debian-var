@@ -19,7 +19,7 @@ som_is_dart_6ul_5g()
 som_is_mx7_5g()
 {
 	# Check is SoC is i.MX7
-	grep -q MX7 /sys/devices/soc0/soc_id || return -1
+	grep -q MX7 /sys/devices/soc0/soc_id || return 1
 
 	# If WIFI type was already detected, use it
 	[ -f $MX7_5G_FILE ] && return 0
@@ -40,7 +40,7 @@ som_is_mx7_5g()
 
 cache_mx7_5g()
 {
-	grep -q MX7 /sys/devices/soc0/soc_id || return
+	grep -q MX7 /sys/devices/soc0/soc_id || return 0
 
 	for i in `seq 1 5`; do
 		if [ -f ${WIFI_SDIO_ID_FILE} ]; then
@@ -128,5 +128,30 @@ wifi_down()
 
 		# BT_EN down
 		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	fi
+}
+
+# Check if WIFI should be powered down during suspend
+wifi_should_be_down_in_suspend()
+{
+	# SOM is VAR-SOM-MX7
+	if grep -q MX7 /sys/devices/soc0/soc_id; then
+		# Do not power down WIFI on VAR-SOM-MX7-5G
+		if som_is_mx7_5g; then
+			return 1
+		else
+			return 0
+		fi
+	# SOM is DART-6UL
+	elif grep -q MX6UL /sys/devices/soc0/soc_id; then
+		# Do not power down WIFI when it is disabled in DTS
+		if ! grep -qi WiFi /sys/devices/soc0/machine; then
+			return 1
+		# Power down WIFI on DART-6UL-5G
+		elif som_is_dart_6ul_5g; then
+			return 0
+		else
+			return 1
+		fi
 	fi
 }

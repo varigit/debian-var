@@ -272,6 +272,10 @@ EOF
 		${ROOTFS_BASE}/etc/bluetooth/
 	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/bluez5/files/main.conf \
 		${ROOTFS_BASE}/etc/bluetooth/
+	if [ -f ${G_VARISCITE_PATH}/x11_resources/variscite-bt-common.sh ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/x11_resources/variscite-bt-common.sh \
+			${ROOTFS_BASE}/etc/bluetooth
+	fi
 
 	# install obexd configuration
 	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/bluez5/files/obexd.conf \
