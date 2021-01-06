@@ -320,8 +320,17 @@ EOF
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
-	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
-		${ROOTFS_BASE}/etc/pm/sleep.d/
+	if   [ "${MACHINE}" = "var-som-mx7" ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/01-bt.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/03-eth.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+	else
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+	fi
 
 	tar -xzf ${G_VARISCITE_PATH}/deb/shared-mime-info/mime_image_prebuilt.tar.gz -C \
 		${ROOTFS_BASE}/
