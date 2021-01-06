@@ -133,6 +133,7 @@ elif [ "${ARCH_CPU}" = "32BIT" ]; then
 	ARCH_ARGS="arm"
 	# Include x11 backend rootfs helper
 	source ${G_VARISCITE_PATH}/x11_rootfs.sh
+	source ${G_VARISCITE_PATH}/linux-headers_debian_src/create_kernel_tree_arm.sh
 else
 	echo " Error unknown CPU type"
 	exit 1

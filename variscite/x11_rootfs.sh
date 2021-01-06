@@ -230,6 +230,12 @@ protected_install can-utils
 # pm-utils
 protected_install pm-utils
 
+# install dpkg-dev for dpkg-buildpackage
+protected_install debhelper
+protected_install execstack
+protected_install dh-python
+protected_install apt-src
+
 apt-get -y autoremove
 #update iptables alternatives to legacy
 update-alternatives --set iptables /usr/sbin/iptables-legacy
@@ -335,6 +341,23 @@ EOF
 
 	tar -xzf ${G_VARISCITE_PATH}/deb/shared-mime-info/mime_image_prebuilt.tar.gz -C \
 		${ROOTFS_BASE}/
+
+	#Build kernel headers on the target
+	pr_info "rootfs: Building kernel-headers"
+	cp -ar ${ROOTFS_BASE}/../output/kernel-headers ${ROOTFS_BASE}/tmp/
+
+	echo "#!/bin/bash
+	# update packages
+	cd /tmp/kernel-headers
+	dpkg-buildpackage -b -j4 -us -uc
+	cp -ar /tmp/*.deb /srv/local-apt-repository/
+	dpkg-reconfigure local-apt-repository
+	rm -rf /var/cache/apt/*
+	rm -f header-stage
+	" > header-stage
+
+	chmod +x header-stage
+	chroot ${ROOTFS_BASE} /header-stage
 ## end packages stage ##
 [ "${G_USER_PACKAGES}" != "" ] && {
 
@@ -416,6 +439,7 @@ rm -f cleanup
 	fi
 
 	rm ${ROOTFS_BASE}/usr/bin/qemu-arm-static
+	rm -rf ${ROOTFS_BASE}/tmp/kernel-headers
 }
 
 # Must be called after make_debian_x11_rootfs in main script

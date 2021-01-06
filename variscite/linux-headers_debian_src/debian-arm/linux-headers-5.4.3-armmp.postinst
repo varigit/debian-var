@@ -1,0 +1,50 @@
+#!/bin/sh
+rm -rf  /lib/modules/5.4.3/build
+cd /lib/modules/5.4.3/
+ln -sf /usr/src/linux-headers-5.4.3-armmp/ build
+
+cd /usr/src/linux-headers-5.4.3-common/
+ln -sf ../linux-headers-5.4.3-armmp/Makefile
+
+cd /usr/src/linux-headers-5.4.3-armmp/arch/arm/
+ln -sf /usr/src/linux-headers-5.4.3-common/arch/arm/kernel/
+ln -sf /usr/src/linux-headers-5.4.3-common/arch/arm/Kbuild 
+ln -sf /usr/src/linux-headers-5.4.3-common/arch/arm/Makefile 
+
+cd /usr/src/linux-headers-5.4.3-armmp/include
+ln -sf /usr/local/src/linux-imx/include/config/auto.conf config/auto.conf
+ln -sf /usr/src/linux-headers-5.4.3-common/include/clocksource 
+ln -sf /usr/src/linux-headers-5.4.3-common/include/asm-generic
+ln -sf /usr/src/linux-headers-5.4.3-common/include/acpi
+ln -sf /usr/src/linux-headers-5.4.3-common/include/asm-generic
+ln -sf /usr/src/linux-headers-5.4.3-common/include/clocksource
+ln -sf /usr/src/linux-headers-5.4.3-common/include/crypto
+ln -sf /usr/src/linux-headers-5.4.3-common/include/drm
+ln -sf /usr/src/linux-headers-5.4.3-common/include/dt-bindings
+ln -sf /usr/src/linux-headers-5.4.3-common/include/keys
+ln -sf /usr/src/linux-headers-5.4.3-common/include/kvm
+ln -sf /usr/src/linux-headers-5.4.3-common/include/math-emu
+ln -sf /usr/src/linux-headers-5.4.3-common/include/media
+ln -sf /usr/src/linux-headers-5.4.3-common/include/memory
+ln -sf /usr/src/linux-headers-5.4.3-common/include/misc
+ln -sf /usr/src/linux-headers-5.4.3-common/include/net
+ln -sf /usr/src/linux-headers-5.4.3-common/include/pcmcia
+ln -sf /usr/src/linux-headers-5.4.3-common/include/ras
+ln -sf /usr/src/linux-headers-5.4.3-common/include/rdma
+ln -sf /usr/src/linux-headers-5.4.3-common/include/scsi
+ln -sf /usr/src/linux-headers-5.4.3-common/include/soc
+ln -sf /usr/src/linux-headers-5.4.3-common/include/sound
+ln -sf /usr/src/linux-headers-5.4.3-common/include/target
+ln -sf /usr/src/linux-headers-5.4.3-common/include/trace
+ln -sf /usr/src/linux-headers-5.4.3-common/include/video
+ln -sf /usr/src/linux-headers-5.4.3-common/include/xen
+
+ln -sf /usr/local/src/linux-imx/include/uapi/
+ln -sf /usr/local/src/linux-imx/include/linux/ 
+
+cd /usr/src/linux-headers-5.4.3-armmp/
+ln -sf ../../lib/linux-kbuild-5.4.3/scripts/
+cd /usr/src/linux-headers-5.4.3-common
+ln -sf ../../lib/linux-kbuild-5.4.3/scripts/
+ln -sf ../linux-headers-5.4.3-armmp/Makefile
+
