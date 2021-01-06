@@ -462,6 +462,12 @@ function prepare_x11_ubifs_rootfs() {
 
 	# Remove deb package lists
 	rm -rf ${UBIFS_ROOTFS_BASE}/var/lib/apt/lists/deb.*
+
+	# Remove man
+	rm -rf ${UBIFS_ROOTFS_BASE}/usr/share/man
+
+	# Remove all tmp folder content
+	rm -rf ${UBIFS_ROOTFS_BASE}/tmp/*
 }
 # make sdcard for device
 # $1 -- block device
