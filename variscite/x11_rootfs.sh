@@ -126,6 +126,7 @@ rm -f cleanup
 	fi
 
 	rm ${ROOTFS_BASE}/usr/bin/qemu-arm-static
+	rm -rf ${ROOTFS_BASE}/tmp/kernel-headers
 }
 
 # make sdcard for device

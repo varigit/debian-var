@@ -263,6 +263,10 @@ protected_install pmount
 # pm-utils
 protected_install pm-utils
 
+# install dpkg-dev for dpkg-buildpackage
+protected_install debhelper
+protected_install dh-python
+protected_install apt-src
 apt-get -y autoremove
 
 #update iptables alternatives to legacy
@@ -383,25 +387,22 @@ EOF
 			${ROOTFS_BASE}/etc/pm/sleep.d/
 	fi
 
-	if [ "${MACHINE}" != "imx6ul-var-dart" ] &&
-	   [ "${MACHINE}" |= "var-som-mx7" ]; then
-		#Build kernel headers on the target
-		pr_info "rootfs: Building kernel-headers"
-		cp -ar ${PARAM_OUTPUT_DIR}/kernel-headers ${ROOTFS_BASE}/tmp/
+	#Build kernel headers on the target
+	pr_info "rootfs: Building kernel-headers"
+	cp -ar ${ROOTFS_BASE}/../output/kernel-headers ${ROOTFS_BASE}/tmp/
+	echo "#!/bin/bash
+	# update packages
+	cd /tmp/kernel-headers
+	dpkg-buildpackage -b -j4 -us -uc
+	cp -ar /tmp/*.deb /srv/local-apt-repository/
+	dpkg-reconfigure local-apt-repository
+	rm -rf /var/cache/apt/*
+	rm -f header-stage
+	" > header-stage
 
-		echo "#!/bin/bash
-		# update packages
-		cd /tmp/kernel-headers
-		dpkg-buildpackage -b -j4 -us -uc
-		cp -ar /tmp/*.deb /srv/local-apt-repository/
-		dpkg-reconfigure local-apt-repository
-		rm -rf /var/cache/apt/*
-		rm -f header-stage
-		" > header-stage
+	chmod +x header-stage
+	chroot ${ROOTFS_BASE} /header-stage
 
-		chmod +x header-stage
-		chroot ${ROOTFS_BASE} /header-stage
-	fi
 
 	#Install user pacakges if any
 	if [ "${G_USER_PACKAGES}" != "" ] ; then

@@ -1,0 +1,48 @@
+Source: kernel
+Section: kernel
+Homepage: https://www.variscite.com
+Standards-Version: 4.2.0
+Maintainer: Harshesh Valera <harshesh.v@variscite.com>
+
+Package: linux-kbuild-5.4.3
+Architecture: linux-any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Kbuild infrastructure for Linux 5.4.3
+ This package provides the kbuild infrastructure for the headers packages
+ for Linux kernel version 5.4.3.
+Multi-Arch: foreign
+Replaces: linux-kbuild-4.19
+Provides: linux-kbuild-4.19
+
+Package: linux-headers-5.4.3-common
+Architecture: all
+Depends: ${misc:Depends}
+Description: Common header files for Linux 5.4.3
+ This package provides the common kernel header files for Linux kernel
+ version 5.4.3, generally used for building out-of-tree kernel modules.
+ To obtain a complete set of headers you also need to install the
+ linux-headers-5.4.3-(flavour) package, matching the flavour of the
+ kernel you intend the build for.
+Multi-Arch: foreign
+Replaces: linux-headers-4.19.0-2-common
+Provides: linux-headers-4.19.0-2-common
+
+Package: linux-headers-5.4.3-armmp
+Architecture: armhf
+Depends: linux-headers-5.4.3-common (= ${source:Version}), linux-kbuild-5.4.3 (>= ${source:Version}), ${misc:Depends}, gcc-10
+Description: Common header files for Linux 5.4.3
+ This package provides the common kernel header files for Linux kernel
+ version 5.4.3, generally used for building out-of-tree kernel modules.
+ To obtain a complete set of headers you also need to install the
+ linux-headers-5.4.3-(flavour) package, matching the flavour of the
+ kernel you intend the build for.
+Replaces: linux-headers-4.19.0-2-armmp
+Provides: linux-headers-4.19.0-2-armmp
+
+Package: linux-headers
+Architecture: armhf
+Depends: linux-headers-5.4.3-common (= ${source:Version}), linux-kbuild-5.4.3 (>= ${source:Version}), linux-headers-5.4.3-armmp (>= ${source:Version}), ${misc:Depends}, gcc-10
+Description: Header files for Linux ARM64 (meta-package)
+ This package depends on the architecture-specific header files for the
+ latest Linux kernel ARM64 configuration.
+Provides: linux-headers-armmp, linux-headers
