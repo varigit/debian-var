@@ -16,7 +16,7 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx_4.14.78_1.0.0_ga_var01"
-readonly G_LINUX_KERNEL_REV="8e54a4b719e6ec0a9e051b0f266036565a555e7d"
+readonly G_LINUX_KERNEL_REV="bdda7278e420b0127ee705b8814666895c1f67b2"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
 G_LINUX_DTB="imx7d-var-som-emmc.dtb
 	imx7d-var-som-nand.dtb
