@@ -242,6 +242,7 @@ useradd -m -G audio -s /bin/bash user
 useradd -m -G audio -s /bin/bash x_user
 usermod -a -G video user
 usermod -a -G video x_user
+usermod -a -G netdev x_user
 echo "user:user" | chpasswd
 echo "root:root" | chpasswd
 passwd -d x_user
