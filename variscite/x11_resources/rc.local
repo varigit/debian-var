@@ -13,3 +13,4 @@
 # Disable runtime power management to avoid dealock
 echo "Disabling runtime PM"
 echo 0 > /sys/devices/soc0/soc/soc:busfreq/enable
+iw wlan0 set power_save off
