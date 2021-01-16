@@ -468,6 +468,9 @@ function prepare_x11_ubifs_rootfs() {
 
 	# Remove all tmp folder content
 	rm -rf ${UBIFS_ROOTFS_BASE}/tmp/*
+	# Copy journald with volatile
+	install -m 0755 ${G_VARISCITE_PATH}/x11_resources/journald.conf \
+		${UBIFS_ROOTFS_BASE}/etc/systemd/
 }
 # make sdcard for device
 # $1 -- block device
