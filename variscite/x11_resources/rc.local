@@ -17,4 +17,3 @@ if [ -e /sys/class/net/wlan0 ]
 then
 	iw wlan0 set power_save off
 fi
-sed -i 's/volatile/persistent/g' /etc/systemd/journald.conf
