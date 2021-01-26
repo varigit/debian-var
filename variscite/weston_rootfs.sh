@@ -139,10 +139,6 @@ function make_debian_weston_rootfs()
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
-deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
-deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
-deb ${DEF_DEBIAN_MIRROR} testing main contrib non-free
-deb-src ${DEF_DEBIAN_MIRROR} testing main contrib non-free
 " > etc/apt/sources.list
 
 # maximize local repo priority
