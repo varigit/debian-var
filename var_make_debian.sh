@@ -24,7 +24,7 @@ readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://deb.debian.org/debian/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201130T213631Z/"
 readonly DEB_RELEASE="buster"
 readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
 
