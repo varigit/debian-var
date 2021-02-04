@@ -127,8 +127,8 @@ echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
-deb ${DEF_DEBIAN_MIRROR} testing main contrib non-free
-deb-src ${DEF_DEBIAN_MIRROR} testing main contrib non-free
+deb ${DEF_DEBIAN_MIRROR} bullseye main contrib non-free
+deb-src ${DEF_DEBIAN_MIRROR} bullseye main contrib non-free
 " > etc/apt/sources.list
 
 # maximize local repo priority
@@ -217,9 +217,6 @@ protected_install local-apt-repository
 # update packages and install base
 apt-get update || apt-get upgrade
 
-# libc6 >=2.29 by Vivnate GPU drivers
-protected_install libc6/testing
-
 # maximize local repo priority
 echo "Package: *
 Pin: origin ""
@@ -238,21 +235,26 @@ Pin-Priority: 500
 
 # raise backports priority
 echo "Package: *
-Pin: release n=testing
+Pin: release n=bullseye
 Pin-Priority: 90
-" > etc/apt/preferences.d/testing
+" > etc/apt/preferences.d/bullseye
+
+# Don't check valid until for snapshot releases
+echo "Acquire::Check-Valid-Until no;" > etc/apt/apt.conf.d/99no-check-valid-until
 
 # update packages and install base
 apt-get update
 
-protected_install libc6-dev/testing
 protected_install locales
+apt-get install libc-bin/bullseye -y --allow-remove-essential
+
+apt-get install libc6/bullseye -y --allow-remove-essential
 protected_install ntp
-protected_install openssh-sftp-server/testing
-protected_install runit-helper/testing
-protected_install ncurses-term/testing
-protected_install xauth/testing
-protected_install openssh-server/testing
+protected_install openssh-sftp-server/bullseye
+protected_install runit-helper/bullseye
+protected_install ncurses-term/bullseye
+protected_install xauth/bullseye
+protected_install openssh-server/bullseye
 protected_install nfs-common
 
 # packages required when flashing emmc
@@ -346,23 +348,26 @@ apt-get -y autoremove
 # GPU SDK
 if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
 then
-       protected_install libtirpc-dev/testing
-       protected_install libnsl-dev/testing
-       protected_install libc6-dev/testing
-       protected_install zlib1g-dev/testing
-       protected_install libtiff5/testing
-       protected_install libtiff-dev/testing
-       protected_install libassimp-dev/testing
-       protected_install libjpeg-dev/testing
-       protected_install libdevil-dev/testing
+       protected_install libtirpc-dev/bullseye
+       protected_install libnsl-dev/bullseye
+       protected_install libc6-dev/bullseye
+       protected_install zlib1g-dev/bullseye
+       protected_install libtiff5/bullseye
+       protected_install libtiff-dev/bullseye
+       protected_install libassimp-dev/bullseye
+       protected_install libjpeg-dev/bullseye
+       protected_install libdevil-dev/bullseye
        protected_install libwayland-egl-backend-dev/buster
-       protected_install glslang-tools/testing
+       protected_install glslang-tools/bullseye
        protected_install imx-gpu-sdk-console
        protected_install imx-gpu-sdk-gles2
        protected_install imx-gpu-sdk-gles3
        protected_install imx-gpu-sdk-opencl
        protected_install imx-gpu-sdk-window
+       dpkg-reconfigure imx-gpu-viv-wl
 fi
+protected_install build-essential/bullseye
+protected_install gcc/bullseye
 
 #update iptables alternatives to legacy
 update-alternatives --set iptables /usr/sbin/iptables-legacy
@@ -478,13 +483,12 @@ EOF
 
 	echo "#!/bin/bash
 	# update packages
-	apt-get install -y build-essential/testing
-	apt-get install -y gcc/testing
-	apt-get install -y python3-distutils/testing
-	apt-get install -y debhelper/testing
-	apt-get install -y execstack/testing
-	apt-get install -y dh-python/testing
-	apt-get install -y apt-src/testing
+	apt-get install -y python3-distutils/bullseye
+	apt-get install -y libdebhelper-perl/bullseye
+	apt-get install -y debhelper/bullseye
+	apt-get install -y execstack/bullseye
+	apt-get install -y dh-python/bullseye
+	apt-get install -y apt-src/bullseye
 	cd /tmp/kernel-headers
 	dpkg-buildpackage -b -j4 -us -uc
 	cp -ar /tmp/*.deb /srv/local-apt-repository/
