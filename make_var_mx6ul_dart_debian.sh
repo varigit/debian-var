@@ -337,7 +337,7 @@ function protected_install() {
 
         echo ""
         echo "###########################"
-        echo "## Fix missing packeges ###"
+        echo "## Fix missing packages ###"
         echo "###########################"
         echo ""
 
@@ -451,7 +451,7 @@ EOF
 
 	pr_info "rootfs: install selected debian packages (third-stage)"
 	chmod +x third-stage
-	LANG=C chroot ${ROOTFS_BASE} /third-stage
+	LANG=C chroot ${ROOTFS_BASE}/third-stage
 
 ## fourth-stage ##
 ### install variscite-bluetooth service
