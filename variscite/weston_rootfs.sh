@@ -560,6 +560,7 @@ rm -f user-stage
 ## clenup command
 echo "#!/bin/bash
 apt-get clean
+rm -rf /tmp/*
 rm -f cleanup
 " > cleanup
 
