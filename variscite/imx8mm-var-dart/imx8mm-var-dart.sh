@@ -61,3 +61,13 @@ UBOOT_DTB_EXTRA="fsl-imx8mm-var-som.dtb"
 UBOOT_DTB_EXTRA2="fsl-imx8mm-var-som-rev10.dtb"
 IMXBOOT_TARGETS="flash_lpddr4_ddr4_evk"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mm.bin"
+
+#rootfs package group control
+#Default compilation of rootfs (Console Base + Multimedia + Graphics)
+#set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it
+
+#Multimedia - GStreamer Packages - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
+
+#Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"

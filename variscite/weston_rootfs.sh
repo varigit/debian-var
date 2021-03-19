@@ -41,99 +41,101 @@ function make_debian_weston_rootfs()
 	cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 
-	# cairo
-	cp -r ${G_VARISCITE_PATH}/deb/cairo/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# libdrm
-	cp -r ${G_VARISCITE_PATH}/deb/libdrm/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# waylandprotocols
-	cp -r ${G_VARISCITE_PATH}/deb/waylandprotocols/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# G2D_Packages
-	if [ ! -z "${G2D_PACKAGE_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G2D_PACKAGE_DIR}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-	fi
-
-	# Vivante GPU libgbm1 libraries
-	if [ ! -z "${G_GPU_IMX_VIV_GBM_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_GBM_DIR}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-	fi
-
-	# Vivante GPU libraries
-	if [ ! -z "${G_GPU_IMX_VIV_PACKAGE_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_PACKAGE_DIR}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-	fi
-	# Vivante GPU SDK Binaries
-	if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-	fi
-
-	# imxcodec
-	if [ ! -z "${G_IMX_CODEC_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_CODEC_DIR}/* \
+	# copy display and gpu pacakges onlly if distro feature enabled
+	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
+		# cairo
+		cp -r ${G_VARISCITE_PATH}/deb/cairo/* \
 			${ROOTFS_BASE}/srv/local-apt-repository
+
+		# libdrm
+		cp -r ${G_VARISCITE_PATH}/deb/libdrm/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+
+		# waylandprotocols
+		cp -r ${G_VARISCITE_PATH}/deb/waylandprotocols/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+
+		# weston
+		cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+
+		# G2D_Packages
+		if [ ! -z "${G2D_PACKAGE_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G2D_PACKAGE_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
+		# Vivante GPU libgbm1 libraries
+		if [ ! -z "${G_GPU_IMX_VIV_GBM_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_GBM_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
+		# Vivante GPU libraries
+		if [ ! -z "${G_GPU_IMX_VIV_PACKAGE_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_PACKAGE_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+		# Vivante GPU SDK Binaries
+		if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
 	fi
 
-	# imxparser
-	if [ ! -z "${G_IMX_PARSER_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_PARSER_DIR}/* \
+	# copy gstreamer and multimedia pacakges only if distro feature enabled
+	if [ "${G_DEBIAN_DISTRO_FEATURE_MM}" = "y" ]; then
+		# imxcodec
+		if [ ! -z "${G_IMX_CODEC_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_CODEC_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
+		# imxparser
+		if [ ! -z "${G_IMX_PARSER_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_PARSER_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
+		# imxvpuhantro
+		if [ ! -z "${G_IMX_VPU_HANTRO_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_HANTRO_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
+		# imx-vpuwrap
+		if [ ! -z "${G_IMX_VPU_WRAPPER_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_WRAPPER_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
+		# gstreamer-libav for SW codecs
+		if [ ! -z "${G_SW_GST_CODEC_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_SW_GST_CODEC_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
+		# gstpluginsbad
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
 			${ROOTFS_BASE}/srv/local-apt-repository
-	fi
 
-	# imxvpuhantro
-	if [ ! -z "${G_IMX_VPU_HANTRO_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_HANTRO_DIR}/* \
+		# gstpluginsbase
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
 			${ROOTFS_BASE}/srv/local-apt-repository
-	fi
 
-	# gstpluginsbad
-	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# gstpluginsbase
-	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# gstpluginsgood
-	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# gstreamer
-	cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# imx-vpuwrap
-	if [ ! -z "${G_IMX_VPU_WRAPPER_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_WRAPPER_DIR}/* \
+		# gstpluginsgood
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
 			${ROOTFS_BASE}/srv/local-apt-repository
-	fi
 
-	# gstreamer-libav for SW codecs
-	if [ ! -z "${G_SW_GST_CODEC_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_SW_GST_CODEC_DIR}/* \
+		# gstreamer
+		cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
 			${ROOTFS_BASE}/srv/local-apt-repository
-	fi
 
-	# imxgstplugin
-	cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# weston
-	cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-
-	# opencv
-	if [ ! -z "${G_OPENCV_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_OPENCV_DIR}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
+		# opencv
+		if [ ! -z "${G_OPENCV_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_OPENCV_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
 	fi
 
 # add mirror to source list
@@ -183,8 +185,8 @@ EOF
 
 chmod +x ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
-# third packages stage
-cat > third-stage << EOF
+# rootfs packages console only stage
+cat > rootfs-stage-base << EOF
 #!/bin/bash
 # apply debconfig options
 debconf-set-selections /debconf.set
@@ -265,41 +267,9 @@ then
 	protected_install ${HDMI_FIRMWARE_PACKAGE}
 fi
 
-# graphical packages
-protected_install libdrm-vivante1
-protected_install libgbm1
-protected_install imx-gpu-viv-core
-protected_install dpkg-dev
-protected_install imx-gpu-viv-wl
 
-
-if [ ! -z "${G2DPACKAGE}" ]
-then
-	protected_install ${G2DPACKAGE}
-fi
-protected_install weston
-
-# alsa & gstreamer
+# alsa
 protected_install alsa-utils
-protected_install gstreamer1.0-alsa
-protected_install gstreamer1.0-plugins-bad
-protected_install gstreamer1.0-plugins-base
-protected_install gstreamer1.0-plugins-base-apps
-protected_install gstreamer1.0-plugins-good
-protected_install gstreamer1.0-tools
-protected_install ${IMXGSTPLG}
-
-# install SW encoders/decoders for socs that lacks HW based
-# encoders/decoders
-if [ ! -z "${G_GST_EXTRA_PLUGINS}" ]
-then
-	protected_install ${G_GST_EXTRA_PLUGINS}
-fi
-
-if [ ! -z "${G_SW_ENCODER_DECODERS}" ]
-then
-	protected_install ${G_SW_ENCODER_DECODERS}
-fi
 
 # i2c tools
 protected_install i2c-tools
@@ -346,20 +316,6 @@ protected_install apt-src
 
 apt-get -y autoremove
 
-# GPU SDK
-if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
-then
-       protected_install libdevil-dev
-       protected_install libwayland-egl-backend-dev
-       protected_install glslang-tools
-       protected_install libassimp-dev
-       protected_install imx-gpu-sdk-console
-       protected_install imx-gpu-sdk-gles2
-       protected_install imx-gpu-sdk-gles3
-       protected_install imx-gpu-sdk-opencl
-       protected_install imx-gpu-sdk-window
-fi
-
 #update iptables alternatives to legacy
 update-alternatives --set iptables /usr/sbin/iptables-legacy
 update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
@@ -373,15 +329,167 @@ usermod -a -G video user
 echo "user:user" | chpasswd
 echo "root:root" | chpasswd
 
-# sado kill
-rm -f third-stage
+# sudo kill rootfs-stage-base
+rm -f rootfs-stage-base
 EOF
 
-	pr_info "rootfs: install selected Debian packages (third-stage)"
-	chmod +x third-stage
-	chroot ${ROOTFS_BASE} /third-stage
+# rootfs packages graphics stage
+cat > rootfs-stage-graphics << EOF
+#!/bin/bash
+# apply debconfig options
+debconf-set-selections /debconf.set
+rm -f /debconf.set
 
-	# fourth-stage
+function protected_install()
+{
+	local _name=\${1}
+	local repeated_cnt=5;
+	local RET_CODE=1;
+
+	echo Installing \${_name}
+	for (( c=0; c<\${repeated_cnt}; c++ ))
+	do
+		apt install -y \${_name} && {
+			RET_CODE=0;
+			break;
+		};
+
+		echo
+		echo "##########################"
+		echo "## Fix missing packages ##"
+		echo "##########################"
+		echo
+
+		sleep 2;
+
+		apt --fix-broken install -y && {
+			RET_CODE=0;
+			break;
+		};
+	done
+
+	return \${RET_CODE}
+}
+
+# update packages and install base
+apt-get update || apt-get upgrade
+# graphical packages
+protected_install libdrm-vivante1
+protected_install libgbm1
+protected_install imx-gpu-viv-core
+protected_install dpkg-dev
+protected_install imx-gpu-viv-wl
+
+
+if [ ! -z "${G2DPACKAGE}" ]
+then
+	protected_install ${G2DPACKAGE}
+fi
+protected_install weston
+
+
+# GPU SDK
+if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
+then
+       protected_install libdevil-dev
+       protected_install libwayland-egl-backend-dev
+       protected_install glslang-tools
+       protected_install libassimp-dev
+       protected_install imx-gpu-sdk-console
+       protected_install imx-gpu-sdk-gles2
+       protected_install imx-gpu-sdk-gles3
+       protected_install imx-gpu-sdk-opencl
+       protected_install imx-gpu-sdk-window
+fi
+#sudo kill rootfs-stage-graphics
+rm -f rootfs-stage-graphics
+EOF
+
+# rootfs packages multimedia stage
+cat > rootfs-stage-gstreamer << EOF
+#!/bin/bash
+# apply debconfig options
+debconf-set-selections /debconf.set
+rm -f /debconf.set
+
+function protected_install()
+{
+	local _name=\${1}
+	local repeated_cnt=5;
+	local RET_CODE=1;
+
+	echo Installing \${_name}
+	for (( c=0; c<\${repeated_cnt}; c++ ))
+	do
+		apt install -y \${_name} && {
+			RET_CODE=0;
+			break;
+		};
+
+		echo
+		echo "##########################"
+		echo "## Fix missing packages ##"
+		echo "##########################"
+		echo
+
+		sleep 2;
+
+		apt --fix-broken install -y && {
+			RET_CODE=0;
+			break;
+		};
+	done
+
+	return \${RET_CODE}
+}
+
+# update packages and install base
+apt-get update || apt-get upgrade
+
+# gstreamer
+protected_install gstreamer1.0-plugins-bad
+protected_install gstreamer1.0-plugins-base
+protected_install gstreamer1.0-plugins-base-apps
+protected_install gstreamer1.0-plugins-good
+protected_install gstreamer1.0-tools
+protected_install ${IMXGSTPLG}
+
+# install SW encoders/decoders for socs that lacks HW based
+# encoders/decoders
+if [ ! -z "${G_GST_EXTRA_PLUGINS}" ]
+then
+	protected_install ${G_GST_EXTRA_PLUGINS}
+fi
+
+if [ ! -z "${G_SW_ENCODER_DECODERS}" ]
+then
+	protected_install ${G_SW_ENCODER_DECODERS}
+fi
+
+# sudo kill rootfs-stage-gstreamer
+rm -f rootfs-stage-gstreamer
+EOF
+
+	pr_info "rootfs: install selected Debian packages (console-only-stage)"
+	chmod +x rootfs-stage-base
+	chroot ${ROOTFS_BASE} /rootfs-stage-base
+
+	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
+		pr_info "rootfs: install selected Debian packages (Graphics - GPU/Weston)"
+		chmod +x rootfs-stage-graphics
+		chroot ${ROOTFS_BASE} /rootfs-stage-graphics
+	else
+		rm -f ${ROOTFS_BASE}/rootfs-stage-graphics
+	fi
+
+	if [ "${G_DEBIAN_DISTRO_FEATURE_MM}" = "y" ]; then
+		pr_info "rootfs: install selected Debian packages (MM Gstreamer)"
+		chmod +x rootfs-stage-gstreamer
+		chroot ${ROOTFS_BASE} /rootfs-stage-gstreamer
+	else
+		rm -f ${ROOTFS_BASE}/rootfs-stage-gstreamer
+	fi
+
 	# install variscite-bt service
 	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus \
 		${ROOTFS_BASE}/usr/bin
@@ -444,20 +552,22 @@ EOF
 	install -m 0644 ${G_VARISCITE_PATH}/securetty \
 		${ROOTFS_BASE}/etc/securetty
 
-	# install weston service
-	install -d ${ROOTFS_BASE}/etc/xdg/weston
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/weston.ini \
-		${ROOTFS_BASE}/etc/xdg/weston
-	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/weston.config \
-		${ROOTFS_BASE}/etc/default/weston
-	install -m 0755 ${G_VARISCITE_PATH}/weston-start \
-		${ROOTFS_BASE}/usr/bin/weston-start
-	install -m 0755 ${G_VARISCITE_PATH}/weston.profile \
-		${ROOTFS_BASE}/etc/profile.d/weston.sh
-	install -m 0644 ${G_VARISCITE_PATH}/weston.service \
-		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/weston.service \
-		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/weston.service
+	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
+		# install weston service
+		install -d ${ROOTFS_BASE}/etc/xdg/weston
+		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/weston.ini \
+			${ROOTFS_BASE}/etc/xdg/weston
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/weston.config \
+			${ROOTFS_BASE}/etc/default/weston
+		install -m 0755 ${G_VARISCITE_PATH}/weston-start \
+			${ROOTFS_BASE}/usr/bin/weston-start
+		install -m 0755 ${G_VARISCITE_PATH}/weston.profile \
+			${ROOTFS_BASE}/etc/profile.d/weston.sh
+		install -m 0644 ${G_VARISCITE_PATH}/weston.service \
+			${ROOTFS_BASE}/lib/systemd/system
+		ln -s /lib/systemd/system/weston.service \
+			${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/weston.service
+	fi
 
 	# remove pm-utils default scripts and install wifi / bt pm-utils script
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
@@ -485,21 +595,21 @@ EOF
 	chmod +x header-stage
 	chroot ${ROOTFS_BASE} /header-stage
 
-	## end packages stage ##
+	#Install user pacakges if any
 	if [ "${G_USER_PACKAGES}" != "" ] ; then
 		pr_info "rootfs: install user defined packages (user-stage)"
 		pr_info "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\" "
 
-echo "#!/bin/bash
-# update packages
-apt-get update
-apt-get upgrade
+		echo "#!/bin/bash
+		# update packages
+		apt-get update
+		apt-get upgrade
 
-# install all user packages
-apt-get -y install ${G_USER_PACKAGES}
+		# install all user packages
+		apt-get -y install ${G_USER_PACKAGES}
 
-rm -f user-stage
-" > user-stage
+		rm -f user-stage
+		" > user-stage
 
 		chmod +x user-stage
 		chroot ${ROOTFS_BASE} /user-stage
@@ -560,11 +670,11 @@ rm -f user-stage
 		cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
 	fi
 
-## clenup command
-echo "#!/bin/bash
-apt-get clean
-rm -f cleanup
-" > cleanup
+	#clenup command
+	echo "#!/bin/bash
+	apt-get clean
+	rm -f cleanup
+	" > cleanup
 
 	# clean all packages
 	pr_info "rootfs: clean"

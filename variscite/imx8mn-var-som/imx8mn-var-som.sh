@@ -54,3 +54,13 @@ HDMI=no
 UBOOT_DTB="imx8mn-var-som.dtb"
 UBOOT_DTB_EXTRA="imx8mn-var-som-rev10.dtb"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mn.bin"
+
+#rootfs package group control
+#Default compilation of rootfs (Console Base + Multimedia + Graphics)
+#set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it
+
+#Multimedia - GStreamer Packages - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
+
+#Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
