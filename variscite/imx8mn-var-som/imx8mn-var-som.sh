@@ -3,8 +3,8 @@ readonly ARCH_CPU="64BIT"
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2020.04_5.4.24_2.1.0_var01"
-readonly G_UBOOT_REV="34b2228b6816425cab528b408a4c6f1cd144e15c"
+readonly G_UBOOT_BRANCH="imx_v2020.04_5.4.24_2.1.0_var02"
+readonly G_UBOOT_REV="48cabcbc64484ca6c201746e526a11b4b43eb359"
 G_UBOOT_DEF_CONFIG_MMC="imx8mn_var_som_defconfig"
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
@@ -50,10 +50,17 @@ readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
 readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
 readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
+
+#imx-atf
+readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
+readonly G_IMX_ATF_GIT="git://github.com/varigit/imx-atf.git"
+readonly G_IMX_ATF_BRANCH="imx_5.4.24_2.1.0_var01"
+readonly G_IMX_ATF_REV="7575633e03ff952a18c0a2c0aa543dee793fda5f"
+
 HDMI=no
-UBOOT_DTB="imx8mn-var-som.dtb"
-UBOOT_DTB_EXTRA="imx8mn-var-som-rev10.dtb"
+UBOOT_DTB="imx8mn-var-som-symphony.dtb"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mn.bin"
+IMXBOOT_TARGETS="flash_ddr4_evk"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)

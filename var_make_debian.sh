@@ -492,7 +492,11 @@ function make_uboot()
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8mn-var-som" ]; then
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mn.bin \
+		cd ${DEF_SRC_DIR}/imx-atf
+		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+				PLAT=imx8mn bl31
+		cd -
+		cp ${DEF_SRC_DIR}/imx-atf/build/imx8mn/release/bl31.bin \
 			src/imx-mkimage/iMX8M/bl31.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_imem_1d_201810.bin \
 			src/imx-mkimage/iMX8M/ddr4_imem_1d_201810.bin
@@ -514,7 +518,7 @@ function make_uboot()
 		fi
 		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
 		cd ${DEF_SRC_DIR}/imx-mkimage
-		make SOC=iMX8MN flash_ddr4_evk
+		make SOC=iMX8MN dtbs="${UBOOT_DTB}" ${IMXBOOT_TARGETS}
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}

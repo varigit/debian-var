@@ -1,16 +1,17 @@
-From b87afecd5094b2ef507c5f181616d7ae0b2f2d99 Mon Sep 17 00:00:00 2001
+From b65c153a24d2483325dd4df8c7aec2bce963e00a Mon Sep 17 00:00:00 2001
 From: Nate Drude <nate.d@variscite.com>
 Date: Thu, 27 Aug 2020 09:10:09 -0500
 Subject: [PATCH] imx-mkimage: imx8m: soc.mak: Add support for Variscite
  VAR-SOM-MX8M-NANO
 
 Signed-off-by: Nate Drude <nate.d@variscite.com>
+
 ---
- iMX8M/soc.mak | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ iMX8M/soc.mak | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
-index b7b3986..5a42555 100644
+index b7b3986..eae769c 100644
 --- a/iMX8M/soc.mak
 +++ b/iMX8M/soc.mak
 @@ -105,7 +105,7 @@ ddr4_dmem_2d = ddr4_dmem_2d$(DDR_FW_VERSION).bin
@@ -27,7 +28,7 @@ index b7b3986..5a42555 100644
  	@rm -f u-boot.its $(dtbs_ddr4)
  
 -dtbs_ddr4_evk = evkddr4.dtb
-+dtbs_ddr4_evk = $(PLAT)-var-som.dtb $(PLAT)-var-som-rev10.dtb
++dtbs_ddr4_evk = $(PLAT)-var-som-symphony.dtb
  $(dtbs_ddr4_evk):
  	./$(DTB_PREPROC) $(PLAT)-ddr4-evk.dtb $(dtbs_ddr4_evk)
  
