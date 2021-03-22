@@ -11,13 +11,16 @@ readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 # Linux kernel
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx_5.4.24_2.1.0_var01"
-readonly G_LINUX_KERNEL_REV="89dc37c105210b93995d395c37579f283bfa0399"
+readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"
+readonly G_LINUX_KERNEL_REV="9f39ab0f3ee3a8ef518a07b6c2db847fb5ff4037"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
-G_LINUX_DTB="freescale/imx8mn-var-som.dtb
-	freescale/imx8mn-var-som-m7.dtb
-	freescale/imx8mn-var-som-rev10.dtb
-	freescale/imx8mn-var-som-rev10-m7.dtb"
+G_LINUX_DTB="freescale/imx8mn-var-som-symphony.dtb
+	freescale/imx8mn-var-som-symphony-root.dtb
+	freescale/imx8mn-var-som-symphony-m7.dtb
+	freescale/imx8mn-var-som-symphony-legacy.dtb
+	freescale/imx8mn-var-som-symphony-legacy-root.dtb
+	freescale/imx8mn-var-som-symphony-legacy-m7.dtb
+	freescale/imx8mn-var-som-inmate.dtb"
 
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
