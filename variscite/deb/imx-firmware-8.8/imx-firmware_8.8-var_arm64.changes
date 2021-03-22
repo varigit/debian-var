@@ -1,0 +1,33 @@
+Format: 1.8
+Date: Mon, 22 Mar 2021 16:09:23 -0700
+Source: imx-firmware
+Binary: imx-firmware-epdc imx-firmware-sdma imx-firmware-vpu
+Architecture: arm64
+Version: 8.8-var
+Distribution: bullseye
+Urgency: medium
+Maintainer: Harshesh Valera <harshesh.v@variscite.com>
+Changed-By: Harshesh Valera <harshesh.v@variscite.com>
+Description:
+ imx-firmware-epdc - NXP firmware for EPDC
+ imx-firmware-sdma - NXP firmware for SDMA
+ imx-firmware-vpu - NXP firmware for VPU
+Changes:
+ imx-firmware (8.8-var) bullseye; urgency=medium
+ .
+   * Debianize imx-firmware binaries
+Checksums-Sha1:
+ da6890f31852c3307366069e7facfa0f782f6a29 79224 imx-firmware-epdc_8.8-var_arm64.deb
+ 4a236885861f76aba5c9757a2007553115c10485 19188 imx-firmware-sdma_8.8-var_arm64.deb
+ d025f6563566486a6bfec14b35afc8b40839e315 458628 imx-firmware-vpu_8.8-var_arm64.deb
+ c800044cae1b847d4f8bc19b7f742a77c1b26022 5675 imx-firmware_8.8-var_arm64.buildinfo
+Checksums-Sha256:
+ bcc1014335f58ebe5ba7af1a8add6691c16ca37b49cd3ce6b9cc077a7d0fe0f7 79224 imx-firmware-epdc_8.8-var_arm64.deb
+ bb85b2f62bde83bc3d35ae3f60714d7960bffc3184c7dc27e6cafd53f38fa552 19188 imx-firmware-sdma_8.8-var_arm64.deb
+ 5f670ea2e266ef211453007c1c9cc9c70ebd52e7074fd3cee698fb16837db61c 458628 imx-firmware-vpu_8.8-var_arm64.deb
+ a61d14dde2bbd5741dc9f2ae6bb1b88c6664d60de504c749e36246bc2ca5dfc7 5675 imx-firmware_8.8-var_arm64.buildinfo
+Files:
+ 53cb22e182806323b0651745a9a216a0 79224 restricted/base optional imx-firmware-epdc_8.8-var_arm64.deb
+ 272699cc3ccb17df9fa9ae8dc8865d55 19188 restricted/base optional imx-firmware-sdma_8.8-var_arm64.deb
+ 9a70ee456a81a5f82bc16836072481cd 458628 restricted/base optional imx-firmware-vpu_8.8-var_arm64.deb
+ 0d2f0f89eae5dc7c037c4cc8c9e99a9b 5675 restricted/libs optional imx-firmware_8.8-var_arm64.buildinfo
