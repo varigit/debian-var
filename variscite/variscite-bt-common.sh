@@ -31,9 +31,21 @@ som_is_var_som_mx8mm()
 	grep -q VAR-SOM-MX8MM /sys/devices/soc0/machine
 }
 
+# Return true if SOM is VAR-SOM-MX8M-PLUS
+som_is_var_som_mx8mp()
+{
+	grep -q VAR-SOM-MX8M-PLUS /sys/devices/soc0/machine
+}
+
 # Enable BT via GPIO(s)
 enable_bt()
 {
+	if som_is_var_som_mx8mp; then
+		BT_EN_GPIO=${BT_EN_GPIO_SOM}
+		BT_BUF_GPIO=${BT_BUF_GPIO_SOM}
+		BT_TTY_DEV=${BT_TTY_DEV_SOM}
+	fi
+
 	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
 		echo ${BT_EN_GPIO} >/sys/class/gpio/export
 		echo "out" > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
@@ -138,6 +150,12 @@ bt_start()
 # Stop BT hardware
 bt_stop()
 {
+	if som_is_var_som_mx8mp; then
+		BT_EN_GPIO=${BT_EN_GPIO_SOM}
+		BT_BUF_GPIO=${BT_BUF_GPIO_SOM}
+		BT_TTY_DEV=${BT_TTY_DEV_SOM}
+	fi
+
 	hciconfig hci0 down
 
 	if [ "${BT_CHIP}" = "wl18xx" ]; then
