@@ -131,6 +131,10 @@ function make_debian_weston_rootfs()
 		cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
 			${ROOTFS_BASE}/srv/local-apt-repository
 
+		# imxgstplugin
+		cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+
 		# opencv
 		if [ ! -z "${G_OPENCV_DIR}" ]; then
 			cp -r ${G_VARISCITE_PATH}/deb/${G_OPENCV_DIR}/* \
