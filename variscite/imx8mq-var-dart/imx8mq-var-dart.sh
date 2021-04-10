@@ -3,8 +3,8 @@ readonly ARCH_CPU="64BIT"
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2019.04_4.19.35_1.1.0-var01"
-readonly G_UBOOT_REV="54b5b2e0604ed6d3de2dfd4de7414a1c31e9f2f4"
+readonly G_UBOOT_BRANCH="imx_v2020.04_5.4.24_2.1.0_var02"
+readonly G_UBOOT_REV="48cabcbc64484ca6c201746e526a11b4b43eb359"
 G_UBOOT_DEF_CONFIG_MMC="imx8mq_var_dart_defconfig"
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 readonly G_UBOOT_NAME_FOR_EMMC_DP='imx-boot-sd-dp.bin'
@@ -81,18 +81,18 @@ DEFAULT_BOOT_DTB2="fsl-imx8mq-var-dart-sd-lvds-cb12.dtb"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
-readonly G_IMXBOOT_BRACH="imx_4.19.35_1.1.0"
-readonly G_IMXBOOT_REV="1c2277b95ce59f5d0265f26fec522e2ac2581e59"
+readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
+readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
 
 #imx-atf
 readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
-readonly G_IMX_ATF_GIT="https://source.codeaurora.org/external/imx/imx-atf"
-readonly G_IMX_ATF_BRANCH="imx_4.19.35_1.1.0"
-readonly G_IMX_ATF_REV="70fa7bcc1a2035ab8402550911b3ae29eff55371"
+readonly G_IMX_ATF_GIT="git://github.com/varigit/imx-atf.git"
+readonly G_IMX_ATF_BRANCH="imx_5.4.24_2.1.0_var01"
+readonly G_IMX_ATF_REV="7575633e03ff952a18c0a2c0aa543dee793fda5f"
 
 HDMI=yes
 SPL_LOAD_ADDR=0x7E1000
 TEE_LOAD_ADDR=0xfe000000
 ATF_LOAD_ADDR=0x00910000
-UBOOT_DTB="fsl-imx8mq-var-dart.dtb"
+UBOOT_DTB="imx8mq-var-dart-customboard.dtb"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mq.bin"

@@ -437,20 +437,19 @@ function make_uboot()
 			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_imem.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_dmem.bin \
 			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_dmem.bin
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/soc.mak \
-			src/imx-mkimage/iMX8M/
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
 		cd ${DEF_SRC_DIR}/imx-mkimage
-		make SOC=iMX8M flash_evk
+		make SOC=iMX8MQ dtbs=${UBOOT_DTB} flash_evk
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 		make SOC=iMX8M clean
-		make SOC=iMX8M flash_dp_evk
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		make SOC=iMX8M dtbs=${UBOOT_DTB} flash_dp_evk
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC_DP}
 		cp ${G_UBOOT_NAME_FOR_EMMC_DP} ${2}/${G_UBOOT_NAME_FOR_EMMC_DP}
@@ -761,6 +760,12 @@ function cmd_make_deploy()
 			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-var-som-imx8m-nano-support.patch
 			cd -
 		fi
+		# patch IMX boot for imx8mq-var-dart
+		if [ "${MACHINE}" = "imx8mq-var-dart" ]; then
+			cd ${G_IMXBOOT_SRC_DIR}
+			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-dart-mx8m-support.patch
+			cd -
+		fi
 		};
 	fi
 
@@ -770,13 +775,6 @@ function cmd_make_deploy()
 			pr_info "Get IMX ATF repository";
 			get_git_src ${G_IMX_ATF_GIT} ${G_IMX_ATF_BRANCH} \
 			${G_IMX_ATF_SRC_DIR} ${G_IMX_ATF_REV}
-		# patch imx-atf
-		if [ "${MACHINE}" = "imx8mq-var-dart" ]; then
-			cd ${G_IMX_ATF_SRC_DIR}
-			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-atf/imx8m-atf-ddr-timing.patch
-			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-atf/imx8m-atf-fix-derate-enable.patch
-			cd -
-		fi
 		};
 	fi
 
