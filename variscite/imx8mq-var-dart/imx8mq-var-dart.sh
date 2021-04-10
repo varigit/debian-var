@@ -12,41 +12,41 @@ readonly G_UBOOT_NAME_FOR_EMMC_DP='imx-boot-sd-dp.bin'
 # Linux kernel
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx_4.19.35_1.1.0_var01"
-readonly G_LINUX_KERNEL_REV="464a2402011bdce91e5a04cb36269e6b09dcdb1b"
-readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
-G_LINUX_DTB="freescale/fsl-imx8mq-var-dart-sd-dp.dtb	
-	freescale/fsl-imx8mq-var-dart-sd-hdmi.dtb	
-	freescale/fsl-imx8mq-var-dart-sd-lvds.dtb	
-	freescale/fsl-imx8mq-var-dart-sd-lvds-dp.dtb 
-	freescale/fsl-imx8mq-var-dart-sd-lvds-hdmi.dtb
-	freescale/fsl-imx8mq-var-dart-sd-hdmi-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-sd-lvds-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-sd-lvds-hdmi-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-dp.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-hdmi.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-lvds.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-lvds-dp.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-lvds-hdmi.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-hdmi-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-lvds-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-wifi-lvds-hdmi-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-dp.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-hdmi.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-lvds.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-lvds-dp.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-lvds-hdmi.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-hdmi-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-lvds-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-m4-sd-lvds-hdmi-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-dp.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-hdmi.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-lvds.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-lvds-dp.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-lvds-hdmi.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-hdmi-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-lvds-cb12.dtb
-	freescale/fsl-imx8mq-var-dart-m4-wifi-lvds-hdmi-cb12.dtb"
+readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"
+readonly G_LINUX_KERNEL_REV="786d1c620c9279028a5c13770721c0be1db7ee95"
+readonly G_LINUX_KERNEL_DEF_CONFIG='imx8mq_var_dart_defconfig'
+G_LINUX_DTB="freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-sd-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-sd-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-sd-lvds-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-sd-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-sd-lvds-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-wifi-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-wifi-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-wifi-lvds-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-wifi-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-wifi-lvds-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-sd-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-sd-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-sd-lvds-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-sd-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-sd-lvds-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-wifi-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-wifi-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-wifi-lvds-dp.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-wifi-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-legacy-wifi-lvds-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-m4-sd-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-m4-sd-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-m4-sd-lvds-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-m4-wifi-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-m4-wifi-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-m4-wifi-lvds-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-sd-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-sd-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-sd-lvds-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-wifi-hdmi.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-wifi-lvds.dtb
+	freescale/imx8mq-var-dart-dt8mcustomboard-wifi-lvds-hdmi.dtb"
 
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
@@ -73,11 +73,13 @@ IMXGSTPLG="imx-gst1.0-plugin-mx8mq"
 # Flashing variables
 BOOTLOADER_OFFSET=33
 
-BOOT_DTB="fsl-imx8mq-var-dart.dtb"
-DEFAULT_BOOT_DTB="fsl-imx8mq-var-dart-sd-lvds.dtb"
+#Boot dtb
+BOOT_DTB="imx8mq-var-dart-dt8mcustomboard.dtb"
+DEFAULT_BOOT_DTB="imx8mq-var-dart-dt8mcustomboard-sd-lvds.dtb"
 
-BOOT_DTB2="fsl-imx8mq-var-dart-cb12.dtb"
-DEFAULT_BOOT_DTB2="fsl-imx8mq-var-dart-sd-lvds-cb12.dtb"
+#Legacy SOM boot device
+BOOT_DTB2="imx8mq-var-dart-dt8mcustomboard-legacy.dtb"
+DEFAULT_BOOT_DTB2="imx8mq-var-dart-dt8mcustomboard-legacy-sd-lvds.dtb"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
