@@ -39,7 +39,7 @@ check_board()
 		BLOCK=mmcblk2
 	elif grep -q "i.MX8MQ" /sys/devices/soc0/soc_id; then
 		BOARD=imx8mq-var-dart
-		DTB_PREFIX=fsl-imx8mq-var-dart
+		DTB_PREFIX=imx8mq-var-dart-dt8mcustomboard
 		BLOCK=mmcblk0
 		if [[ $DISPLAY != "lvds" && $DISPLAY != "hdmi" && \
 		    $DISPLAY != "dp" && $DISPLAY != "lvds-dp" && $DISPLAY != "lvds-hdmi" ]]; then
@@ -164,9 +164,9 @@ install_rootfs_to_emmc()
 
 	if [[ ${BOARD} = "imx8mq-var-dart" ]]; then
 		# Create DTB symlink
+		# Create DTB symlinks
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-wifi-${DISPLAY}-cb12.dtb ${DTB_PREFIX}-cb12.dtb)
-
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-legacy-wifi-${DISPLAY}.dtb ${DTB_PREFIX}-legacy.dtb)
 		# Update blacklist.conf
 		if [ -f ${MOUNTDIR}/etc/modprobe.d/blacklist.conf ]; then
 			echo "blacklist fec" >> ${MOUNTDIR}/etc/modprobe.d/blacklist.conf
