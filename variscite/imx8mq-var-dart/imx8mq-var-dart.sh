@@ -54,21 +54,23 @@ readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
 readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
-readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p1.0"
-readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.2.4.p4.0"
-readonly GST_MM_VERSION="MM_04.05.01_1909_L4.19.35"
-readonly IMX_FIRMWARE_VERSION="8.5"
-readonly WESTON_PACKAGE_DIR="imx8mq-vivante"
+readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p2.4"
+readonly G_GPU_IMX_VIV_GBM_DIR="libgbm1"
+readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.4.0.p2.0"
+readonly GST_MM_VERSION="MM_04.05.03_1911_L5.4.0"
 
-readonly G_IMX_CODEC_DIR="imxcodec-4.5.1"
-readonly G_IMX_PARSER_DIR="imxparser-4.5.1"
-readonly G_IMX_VPU_HANTRO_DIR="imxvpuhantro-1.15.0"
-readonly G_IMX_VPU_WRAPPER_DIR="imxvpuwrap-4.5.1"
+readonly G2D_PACKAGE_DIR="imx-gpu-g2d-6.4.0.p2.0"
+readonly IMX_FIRMWARE_VERSION="8.8"
+readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d"
 
-#Have custom OpenCV build
-readonly G_OPENCV_DIR="opencv"
+G2DPACKAGE="imx-gpu-g2d"
 
-IMXGSTPLG="imx-gst1.0-plugin-mx8mq"
+readonly G_IMX_CODEC_DIR="imxcodec-4.5.3"
+readonly G_IMX_PARSER_DIR="imxparser-4.5.3"
+readonly G_IMX_VPU_HANTRO_DIR="imxvpuhantro-1.16.0"
+readonly G_IMX_VPU_WRAPPER_DIR="imxvpuwrap-4.5.3"
+
+IMXGSTPLG="imx-gst1.0-plugin-mx8mm"
 
 # Flashing variables
 BOOTLOADER_OFFSET=33
@@ -98,3 +100,13 @@ TEE_LOAD_ADDR=0xfe000000
 ATF_LOAD_ADDR=0x00910000
 UBOOT_DTB="imx8mq-var-dart-customboard.dtb"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mq.bin"
+
+#rootfs package group control
+#Default compilation of rootfs (Console Base + Multimedia + Graphics)
+#set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it
+
+#Multimedia - GStreamer Packages - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
+
+#Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
