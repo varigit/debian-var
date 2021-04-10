@@ -707,7 +707,8 @@ function make_bcm_fw()
 	install -d ${2}/lib/firmware/bcm
 	install -d ${2}/lib/firmware/brcm
 	install -m 0644 ${1}/brcm/* ${2}/lib/firmware/brcm/
-	if [ "${MACHINE}" != "imx8mn-var-som" ]; then
+	if [ "${MACHINE}" != "imx8mn-var-som" ] &&
+	   [ "${MACHINE}" != "imx8mq-var-dart" ]; then
 		install -m 0644 ${1}/*.hcd ${2}/lib/firmware/bcm/
 		install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
 	fi
