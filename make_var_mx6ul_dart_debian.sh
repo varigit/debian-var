@@ -223,7 +223,7 @@ readonly TWONAV_KERNEL_VERSION_PATH="${G_LINUX_KERNEL_SRC_DIR}/twonav_kernel_ver
 readonly G_LINUX_KERNEL_DEF_CONFIG="imx6ul-var-dart-${UNIFIED_DEVICE}_defconfig"
 
 readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-$UNIFIED_DEVICE linux-image-4.1.15-$UNIFIED_DEVICE"
-readonly G_TWONAV_PACKAGES=$DEVICE
+readonly G_TWONAV_PACKAGES=twonav-all-2018
 
 ##uboot formatted name
 readonly TWONAV_UBOOT_NAME_FOR_EMMC="u-boot_$DEVICE.imx"
@@ -342,9 +342,9 @@ function make_debian_rootfs() {
 echo "deb $PARAM_DEB_LOCAL_MIRROR ${DEB_RELEASE} main contrib non-free
 " > etc/apt/sources.list
 
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/Production/TwoNav/" >> etc/apt/sources.list.d/twonav.list
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/Production/Kernel/" >> etc/apt/sources.list.d/twonav.list
-echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018/Production/Extras/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018_UnifiedTwoNav/Beta/TwoNav/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018_UnifiedTwoNav/Beta/Kernel/" >> etc/apt/sources.list.d/twonav.list
+echo "deb http://apt.twonav.com/ CompeGPS_Channels/Product2018_UnifiedTwoNav/Beta/Extras/" >> etc/apt/sources.list.d/twonav.list
 
 echo "
 # /dev/mmcblk0p1  /boot           vfat    defaults        0       0
@@ -360,6 +360,9 @@ iface lo inet loopback
 
 mkdir etc/twonav
 echo "1234-5678-7654" > etc/twonav/VeloDevID.txt
+
+mkdir proc/device-tree
+echo "$DEVICE" > proc/device-tree/model
 
 mkdir opt/twonav
 cp -r ${G_TWONAV_PATH}/recovery opt/twonav
