@@ -76,10 +76,15 @@ readonly G_UBOOT_NAME_FOR_EMMC='u-boot.imx'
 ## ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'
 
+num_cpus() {
+	local NCPUS=$(awk '/^processor/{print $3}' </proc/cpuinfo | wc -l)
+	echo $((NCPUS + 0 > 0 ? NCPUS : 4))
+}
+
 ## CROSS_COMPILER config and paths
 readonly G_CROSS_COMPILEER_PATH="${G_TOOLS_PATH}/gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf/bin"
 readonly G_CROSS_COMPILEER_PREFFIX="arm-linux-gnueabihf-"
-readonly G_CROSS_COMPILEER_JOPTION="-j 4"
+readonly G_CROSS_COMPILEER_JOPTION="-j $(num_cpus)"
 readonly G_EXT_CROSS_COMPILER_NAME='gcc-linaro-4.9-2016.02-x86_64_arm-linux-gnueabihf.tar.xz'
 readonly G_EXT_CROSS_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/arm-linux-gnueabihf/${G_EXT_CROSS_COMPILER_NAME}"
 
@@ -97,7 +102,7 @@ PARAM_CMD="all"
 PARAM_BLOCK_DEVICE="na"
 PARAM_KERNEL_NAME=""
 PARAM_DEVICE="ALL"
-PARAM_DEVICE_TYPE="twonav-trail-2018"
+PARAM_DEVICE_TYPE="twonav-aventura-2018"
 
 
 ### usage ###
@@ -210,6 +215,7 @@ readonly G_ROOTFS_TARBAR_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBAR_NAME}"
 
 ## device type: twonav-aventura/trail-2018/crosstop-2018
 readonly DEVICE="$PARAM_DEVICE_TYPE"
+readonly DEVICE_FACTORY="twonav-factory-2018"
 
 readonly UNIFIED_DEVICE="twonav-2018"
 
@@ -226,7 +232,7 @@ readonly G_KERNEL_PACKAGES="linux-headers-4.1.15-$UNIFIED_DEVICE linux-image-4.1
 readonly G_TWONAV_PACKAGES=twonav-all-2018
 
 ##uboot formatted name
-readonly TWONAV_UBOOT_NAME_FOR_EMMC="u-boot_$DEVICE.imx"
+readonly TWONAV_UBOOT_NAME_FOR_EMMC="u-boot_$DEVICE_FACTORY.imx"
 
 ###### local functions ######
 
@@ -360,6 +366,9 @@ iface lo inet loopback
 
 mkdir etc/twonav
 echo "1234-5678-7654" > etc/twonav/VeloDevID.txt
+
+## Fake model (required by twonav-all-2018 postinst, in order to apply specific /opt/twonav-products/ files)
+pr_info "rootfs: Fake model \"${DEVICE}\" "
 
 mkdir proc/device-tree
 echo "$DEVICE" > proc/device-tree/model
@@ -592,6 +601,10 @@ rm -f user-stage
 	chmod +x user-stage
 	LANG=C chroot ${ROOTFS_BASE} /user-stage
 
+## Remove faked model
+	pr_info "rootfs: Removing faked model \"${DEVICE}\" "
+	rm -rf proc/device-tree
+	pr_info "rootfs: Removed faked model \"${DEVICE}\" "
 };
 
 ## fix files links and missing files ##
@@ -872,7 +885,7 @@ function make_uboot() {
 	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} ${G_UBOOT_DEF_CONFIG_MMC}
 
 	# make uboot
-	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} KCFLAGS="-DTWONAV_DEVICE=\\\"$DEVICE\\\""
+	make ARCH=arm -C ${1} CROSS_COMPILE=${G_CROSS_COMPILEER_PATH}/${G_CROSS_COMPILEER_PREFFIX} ${G_CROSS_COMPILEER_JOPTION} KCFLAGS="-DTWONAV_DEVICE=\\\"$DEVICE_FACTORY\\\""
 
 	# copy images
 	cp ${1}/${G_UBOOT_NAME_FOR_EMMC} ${2}/${TWONAV_UBOOT_NAME_FOR_EMMC}
