@@ -293,8 +293,8 @@ protected_install mtd-utils
 protected_install bluetooth
 protected_install bluez-obexd
 protected_install bluez-tools
-protected_install blueman
-protected_install gconf2
+protected_install pulseaudio
+protected_install pulseaudio-module-bluetooth
 
 # wifi support packages
 protected_install hostapd
