@@ -41,7 +41,7 @@ function make_debian_weston_rootfs()
 	cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 
-	# copy display and gpu pacakges onlly if distro feature enabled
+	# copy display and gpu packages only if distro feature enabled
 	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
 		# cairo
 		cp -r ${G_VARISCITE_PATH}/deb/cairo/* \
@@ -83,7 +83,7 @@ function make_debian_weston_rootfs()
 		fi
 	fi
 
-	# copy gstreamer and multimedia pacakges only if distro feature enabled
+	# copy gstreamer and multimedia packages only if distro feature enabled
 	if [ "${G_DEBIAN_DISTRO_FEATURE_MM}" = "y" ]; then
 		# imxcodec
 		if [ ! -z "${G_IMX_CODEC_DIR}" ]; then
