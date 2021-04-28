@@ -282,7 +282,7 @@ protected_install i2c-tools
 protected_install usbutils
 
 # net tools
-protected_install iperf
+protected_install iperf3
 
 protected_install rng-tools
 
