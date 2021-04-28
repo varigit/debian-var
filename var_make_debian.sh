@@ -68,7 +68,7 @@ function usage()
 	echo "Make Debian ${DEB_RELEASE} image and create a bootabled SD card"
 	echo
 	echo "Usage:"
-	echo " MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8qxp-var-som|imx8qm-var-som|imx8mn-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
+	echo " MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8mp-var-dart|imx8qxp-var-som|imx8qm-var-som|imx8mn-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
 	echo
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
@@ -490,6 +490,33 @@ function make_uboot()
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+	elif [ "${MACHINE}" = "imx8mp-var-dart" ]; then
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mp.bin \
+			src/imx-mkimage/iMX8M/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_dmem_202006.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_dmem_202006.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_1d_imem_202006.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_1d_imem_202006.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_dmem_202006.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_dmem_202006.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_imem_202006.bin \
+			src/imx-mkimage/iMX8M/lpddr4_pmu_train_2d_imem_202006.bin
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		if [ ! -z "${UBOOT_DTB_EXTRA}" ]; then
+			cp ${1}/arch/arm/dts/${UBOOT_DTB_EXTRA} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		fi
+		if [ ! -z "${UBOOT_DTB_EXTRA2}" ]; then
+			cp ${1}/arch/arm/dts/${UBOOT_DTB_EXTRA2} ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
+		fi
+		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make SOC=iMX8MP flash_evk
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8mn-var-som" ]; then
 		cd ${DEF_SRC_DIR}/imx-atf
 		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
@@ -708,7 +735,8 @@ function make_bcm_fw()
 	install -d ${2}/lib/firmware/brcm
 	install -m 0644 ${1}/brcm/* ${2}/lib/firmware/brcm/
 	if [ "${MACHINE}" != "imx8mn-var-som" ] &&
-	   [ "${MACHINE}" != "imx8mq-var-dart" ]; then
+	   [ "${MACHINE}" != "imx8mq-var-dart" ] &&
+	   [ "${MACHINE}" != "imx8mp-var-dart" ]; then
 		install -m 0644 ${1}/*.hcd ${2}/lib/firmware/bcm/
 		install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
 	fi
@@ -765,6 +793,12 @@ function cmd_make_deploy()
 		if [ "${MACHINE}" = "imx8mq-var-dart" ]; then
 			cd ${G_IMXBOOT_SRC_DIR}
 			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-dart-mx8m-support.patch
+			cd -
+		fi
+		# patch IMX boot for imx8mp-var-dart
+		if [ "${MACHINE}" = "imx8mp-var-dart" ]; then
+			cd ${G_IMXBOOT_SRC_DIR}
+			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-dart-imx8mp-support.patch
 			cd -
 		fi
 		};
