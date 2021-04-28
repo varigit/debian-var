@@ -594,7 +594,7 @@ EOF
 
 	#Build kernel headers on the target
 	pr_info "rootfs: Building kernel-headers"
-	cp -ar ${ROOTFS_BASE}/../output/kernel-headers ${ROOTFS_BASE}/tmp/
+	cp -ar ${PARAM_OUTPUT_DIR}/kernel-headers ${ROOTFS_BASE}/tmp/
 
 	echo "#!/bin/bash
 	# update packages
