@@ -103,6 +103,12 @@ function make_debian_weston_rootfs()
 				${ROOTFS_BASE}/srv/local-apt-repository
 		fi
 
+		# imxvpuhantro-vc
+		if [ ! -z "${G_IMX_VPU_HANTRO_VC_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_HANTRO_VC_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+
 		# imx-vpuwrap
 		if [ ! -z "${G_IMX_VPU_WRAPPER_DIR}" ]; then
 			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_WRAPPER_DIR}/* \
