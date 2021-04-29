@@ -148,6 +148,16 @@ function make_debian_weston_rootfs()
 		fi
 	fi
 
+	# copy machine lerning packages only if distro feature enabled
+	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
+
+		# imx-nn
+		if [ ! -z "${G_IMX_NN_DIR}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_NN_DIR}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
+	fi
+
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -480,6 +490,54 @@ fi
 rm -f rootfs-stage-gstreamer
 EOF
 
+# rootfs packages machine learning stage
+cat > rootfs-stage-ml << EOF
+#!/bin/bash
+# apply debconfig options
+debconf-set-selections /debconf.set
+rm -f /debconf.set
+
+function protected_install()
+{
+	local _name=\${1}
+	local repeated_cnt=5;
+	local RET_CODE=1;
+
+	echo Installing \${_name}
+	for (( c=0; c<\${repeated_cnt}; c++ ))
+	do
+		apt install -y \${_name} && {
+			RET_CODE=0;
+			break;
+		};
+
+		echo
+		echo "##########################"
+		echo "## Fix missing packages ##"
+		echo "##########################"
+		echo
+
+		sleep 2;
+
+		apt --fix-broken install -y && {
+			RET_CODE=0;
+			break;
+		};
+	done
+
+	return \${RET_CODE}
+}
+
+# update packages and install base
+apt-get update || apt-get upgrade
+
+# machine learning packages
+protected_install imx-nn
+
+# sudo kill rootfs-stage-ml
+rm -f rootfs-stage-ml
+EOF
+
 	pr_info "rootfs: install selected Debian packages (console-only-stage)"
 	chmod +x rootfs-stage-base
 	chroot ${ROOTFS_BASE} /rootfs-stage-base
@@ -498,6 +556,14 @@ EOF
 		chroot ${ROOTFS_BASE} /rootfs-stage-gstreamer
 	else
 		rm -f ${ROOTFS_BASE}/rootfs-stage-gstreamer
+	fi
+
+	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
+		pr_info "rootfs: install selected Debian packages (Machine Learning)"
+		chmod +x rootfs-stage-ml
+		chroot ${ROOTFS_BASE} /rootfs-stage-ml
+	else
+		rm -f ${ROOTFS_BASE}/rootfs-stage-ml
 	fi
 
 	# install variscite-bt service
