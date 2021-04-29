@@ -46,6 +46,11 @@ check_board()
 			red_bold_echo "ERROR: invalid display, should be lvds, hdmi, dp, lvds-dp or lvds-hdmi"
 			exit 1
 		fi
+	elif grep -q "i.MX8MP" /sys/devices/soc0/soc_id; then
+		BOARD=imx8mp-var-dart
+		DTB_PREFIX=imx8mp-var-dart-dt8mcustomboard
+		BOOTLOADER_OFFSET=32
+		BLOCK=mmcblk2
 	elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
 		BOARD=imx8qxp-var-som
 		DTB_PREFIX=fsl-imx8qxp-var-som
