@@ -667,6 +667,8 @@ rm -f user-stage
 	mkdir -p ${ROOTFS_BASE}/lib/firmware/ti-connectivity
 	cp -r ${G_TWONAV_PATH}/firmware/ti-connectivity ${ROOTFS_BASE}/lib/firmware
 
+## add preconfigured ssids
+	cp -ar ${G_TWONAV_PATH}/system⁻connections/* ${ROOTFS_BASE}/etc/NetworkManager/system-connections
 
 # added mirror to source list
 echo "#deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
