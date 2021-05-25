@@ -245,10 +245,16 @@ function get_git_src()
 # get remote file
 # $1 - remote file
 # $2 - local file
+# $3 - optional sha256sum
 function get_remote_file()
 {
 	# download remote file
 	wget -c ${1} -O ${2}
+
+	# verify sha256sum
+	if [ -n "${3}" ]; then
+		echo "${3} ${2}" | sha256sum -c
+	fi
 }
 
 function make_prepare()
