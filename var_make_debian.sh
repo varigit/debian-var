@@ -380,6 +380,25 @@ function install_kernel_modules()
 		INSTALL_MOD_PATH=${4} modules_install
 }
 
+# generate seco firmware
+# $1 -- output directory
+function make_imx_seco_fw()
+{
+	# Cleanup
+	rm -rf ${G_IMX_SECO_SRC_DIR}
+	mkdir -p ${G_IMX_SECO_SRC_DIR}
+
+	# Fetch
+	cd ${G_IMX_SECO_SRC_DIR}
+	get_remote_file ${G_IMX_SECO_URL} ${G_IMX_SECO_SRC_DIR}/${G_IMX_SECO_BIN} ${G_IMX_SECO_SHA256SUM}
+
+	# Build
+	chmod +x ${G_IMX_SECO_SRC_DIR}/${G_IMX_SECO_BIN}
+	${G_IMX_SECO_SRC_DIR}/${G_IMX_SECO_BIN} --auto-accept
+	cp ${G_IMX_SECO_IMG} $1
+	cd -
+}
+
 # make U-Boot
 # $1 U-Boot path
 # $2 Output dir
@@ -563,8 +582,9 @@ function make_uboot()
 		cd -
 		cp ${DEF_SRC_DIR}/imx-atf/build/imx8qm/release/bl31.bin \
 			src/imx-mkimage/iMX8QM/bl31.bin
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qm-ahab-container.img \
-			src/imx-mkimage/iMX8QM/
+		# imx-seco
+		make_imx_seco_fw "${DEF_SRC_DIR}/imx-mkimage/iMX8QM/"
+
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QM/
 		cd ${DEF_SRC_DIR}/imx-mkimage
 		make SOC=iMX8QM flash
