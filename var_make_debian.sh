@@ -556,7 +556,12 @@ function make_uboot()
 	elif [ "${MACHINE}" = "imx8qm-var-som" ]; then
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
 			src/imx-mkimage/iMX8QM/
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8qm.bin \
+		# imx-atf
+		cd ${DEF_SRC_DIR}/imx-atf
+		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+				PLAT=imx8qm bl31
+		cd -
+		cp ${DEF_SRC_DIR}/imx-atf/build/imx8qm/release/bl31.bin \
 			src/imx-mkimage/iMX8QM/bl31.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qm-ahab-container.img \
 			src/imx-mkimage/iMX8QM/
