@@ -65,6 +65,9 @@ UBOOT_DTB="imx8mn-var-som-symphony.dtb"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mn.bin"
 IMXBOOT_TARGETS="flash_ddr4_evk"
 
+# default mirror
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
+
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
 #set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it

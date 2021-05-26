@@ -101,6 +101,9 @@ ATF_LOAD_ADDR=0x00910000
 UBOOT_DTB="imx8mq-var-dart-customboard.dtb"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mq.bin"
 
+# default mirror
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
+
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
 #set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it

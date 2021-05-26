@@ -24,7 +24,6 @@ readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
 readonly DEB_RELEASE="bullseye"
 readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
 
@@ -56,7 +55,6 @@ readonly G_USER_PACKAGES=""
 export LC_ALL=C
 
 #### Input params ####
-PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
 PARAM_OUTPUT_DIR="${DEF_BUILDENV}/output"
 PARAM_DEBUG="0"
 PARAM_CMD="all"
@@ -132,6 +130,7 @@ else
 	exit 1
 fi
 
+PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
 G_CROSS_COMPILER_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_NAME}/bin"
 
 ## parse input arguments ##
