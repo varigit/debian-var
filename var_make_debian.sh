@@ -778,7 +778,7 @@ function make_bcm_fw()
 	if [ "${MACHINE}" != "imx8mn-var-som" ] &&
 	   [ "${MACHINE}" != "imx8mq-var-dart" ] &&
 	   [ "${MACHINE}" != "imx8mp-var-dart" ]; then
-		install -m 0644 ${1}/*.hcd ${2}/lib/firmware/bcm/
+		install -m 0644 ${1}/brcm/*.hcd ${2}/lib/firmware/bcm/
 		install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
 	fi
 	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
