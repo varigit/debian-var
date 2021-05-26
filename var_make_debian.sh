@@ -380,6 +380,17 @@ function install_kernel_modules()
 		INSTALL_MOD_PATH=${4} modules_install
 }
 
+# build sc firmware
+# $1 -- output directory
+function make_imx_sc_fw()
+{
+    cd ${G_IMX_SC_FW_SRC_DIR}/src/scfw_export_${G_IMX_SC_MACHINE_NAME}
+    TOOLS=${G_TOOLS_PATH} make clean-${G_IMX_SC_FW_FAMILY}
+    TOOLS=${G_TOOLS_PATH} make ${G_IMX_SC_FW_FAMILY} R=B0 B=var_som V=1
+    cp build_${G_IMX_SC_MACHINE_NAME}/scfw_tcm.bin $1
+	cd -
+}
+
 # generate seco firmware
 # $1 -- output directory
 function make_imx_seco_fw()
@@ -573,8 +584,8 @@ function make_uboot()
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx8qm-var-som" ]; then
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
-			src/imx-mkimage/iMX8QM/
+		# scfw
+		make_imx_sc_fw "${DEF_SRC_DIR}/imx-mkimage/iMX8QM/"
 		# imx-atf
 		cd ${DEF_SRC_DIR}/imx-atf
 		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
@@ -785,6 +796,28 @@ function cmd_make_deploy()
 		tar -xJf ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE} \
 			-C ${G_TOOLS_PATH}/
 	};
+
+	# get scfw dependencies
+	if [ -n ${G_IMX_SC_FW_REV} ]; then
+		# get scfw toolchain
+		readonly G_SCFW_CROSS_COMPILER_PATH="${G_TOOLS_PATH}/${G_IMX_SC_FW_TOOLCHAIN_NAME}"
+		(( `ls ${G_SCFW_CROSS_COMPILER_PATH} 2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get and unpack scfw cross compiler";
+			get_remote_file ${G_IMX_SC_FW_TOOLCHAIN_LINK} \
+				${DEF_SRC_DIR}/${G_IMX_SC_FW_TOOLCHAIN_ARCHIVE} \
+				${G_IMX_SC_FW_TOOLCHAIN_SHA256SUM}
+			tar -xf ${DEF_SRC_DIR}/${G_IMX_SC_FW_TOOLCHAIN_ARCHIVE} \
+				-C ${G_TOOLS_PATH}/
+		};
+
+		# get scfw src
+		(( `ls ${G_IMX_SC_FW_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get scfw repository";
+			get_git_src ${G_IMX_SC_FW_GIT} ${G_IMX_SC_FW_BRANCH} \
+				${G_IMX_SC_FW_SRC_DIR} ${G_IMX_SC_FW_REV}
+		};
+
+	fi
 
 	# get U-Boot repository
 	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
