@@ -597,8 +597,9 @@ function make_uboot()
 		make_imx_seco_fw "${DEF_SRC_DIR}/imx-mkimage/iMX8QM/"
 
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QM/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QM/
 		cd ${DEF_SRC_DIR}/imx-mkimage
-		make SOC=iMX8QM flash
+		make SOC=iMX8QM flash_spl
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QM/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}

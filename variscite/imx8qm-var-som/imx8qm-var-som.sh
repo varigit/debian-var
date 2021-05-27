@@ -3,8 +3,8 @@ readonly ARCH_CPU="64BIT"
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="imx_v2018.03_4.14.98_2.0.0_ga_var01"
-readonly G_UBOOT_REV="9da725ccf4f80881a989e084e1200d7b237dd63e"
+readonly G_UBOOT_BRANCH="imx_v2020.04_5.4.24_2.1.0_var02"
+readonly G_UBOOT_REV="48cabcbc64484ca6c201746e526a11b4b43eb359"
 G_UBOOT_DEF_CONFIG_MMC='imx8qm_var_som_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
