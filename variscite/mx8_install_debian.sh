@@ -64,7 +64,7 @@ check_board()
 		fi
 	elif grep -q "i.MX8QM" /sys/devices/soc0/soc_id; then
 		BOARD=imx8qm-var-som
-		DTB_PREFIX=fsl-imx8qm-var-som
+		DTB_PREFIX=imx8qm-var-som
 		BOOTLOADER_OFFSET=32
 		BLOCK=mmcblk0
 
@@ -186,7 +186,7 @@ install_rootfs_to_emmc()
 	if [[ ${BOARD} = "imx8qm-var-som" ]]; then
 		# Create DTB symlinks
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
-		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs fsl-imx8qm-var-spear-${DISPLAY}.dtb fsl-imx8qm-var-spear.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs imx8qm-var-spear-${DISPLAY}.dtb imx8qm-var-spear.dtb)
 	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs

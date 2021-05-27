@@ -11,15 +11,15 @@ readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 # Linux kernel
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="imx_4.14.98_2.0.0_ga_var01"
-readonly G_LINUX_KERNEL_REV="9d26d0a1da22f0a642721a2f9c7af0386b5930c0"
+readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"
+readonly G_LINUX_KERNEL_REV="786d1c620c9279028a5c13770721c0be1db7ee95"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
-G_LINUX_DTB="freescale/fsl-imx8qm-var-som-dp.dtb
-	freescale/fsl-imx8qm-var-som-hdmi.dtb
-	freescale/fsl-imx8qm-var-som-lvds.dtb
-	freescale/fsl-imx8qm-var-spear-dp.dtb
-	freescale/fsl-imx8qm-var-spear-hdmi.dtb
-	freescale/fsl-imx8qm-var-spear-lvds.dtb"
+G_LINUX_DTB="freescale/imx8qm-var-som-dp.dtb
+	freescale/imx8qm-var-som-hdmi.dtb
+	freescale/imx8qm-var-som-lvds.dtb
+	freescale/imx8qm-var-spear-dp.dtb
+	freescale/imx8qm-var-spear-hdmi.dtb
+	freescale/imx8qm-var-spear-lvds.dtb"
 
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
@@ -71,7 +71,7 @@ readonly G_IMX_SECO_URL="https://www.nxp.com/lgfiles/NMG/MAD/YOCTO/imx-seco-${G_
 # Flashing variables
 BOOTLOADER_OFFSET=32
 
-BOOT_DTB="fsl-imx8qm-var-som.dtb"
-BOOT_SPEAR8_DTB="fsl-imx8qm-var-spear.dtb"
-DEFAULT_BOOT_DTB="fsl-imx8qm-var-som-lvds.dtb"
-DEFAULT_BOOT_SPEAR8_DTB="fsl-imx8qm-var-spear-lvds.dtb"
+BOOT_DTB="imx8qm-var-som.dtb"
+BOOT_SPEAR8_DTB="imx8qm-var-spear.dtb"
+DEFAULT_BOOT_DTB="imx8qm-var-som-lvds.dtb"
+DEFAULT_BOOT_SPEAR8_DTB="imx8qm-var-spear-lvds.dtb"
