@@ -77,7 +77,7 @@ DEFAULT_BOOT_DTB="imx8qm-var-som-lvds.dtb"
 DEFAULT_BOOT_SPEAR8_DTB="imx8qm-var-spear-lvds.dtb"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210601T084324Z/"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
