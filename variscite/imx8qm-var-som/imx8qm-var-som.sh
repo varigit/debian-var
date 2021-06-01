@@ -27,15 +27,18 @@ readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
 readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
-readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.2.4.p4.0"
-readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.2.4.p4.0"
-readonly GST_MM_VERSION="MM_04.04.05_1902_L4.14.98_GA"
-readonly G2D_PACKAGE_DIR="imx-dpu-g2d-1.7.0"
-readonly IMX_FIRMWARE_VERSION="8.1"
+readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p2.4"
+readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.4.0.p2.0"
+readonly GST_MM_VERSION="MM_04.05.05_2005_L5.4.24"
+readonly G2D_PACKAGE_DIR="imx-dpu-g2d-1.8.7"
+readonly IMX_FIRMWARE_VERSION="8.8"
 readonly HDMI_FIRMWARE_PACKAGE="imx-firmware-hdmi"
-readonly WESTON_PACKAGE_DIR="imx8qxm-dpu-g2d"
-IMXGSTPLG="imx-gst1.0-plugin-mx8x"
+readonly WESTON_PACKAGE_DIR="imx8qxm-dpu-g2d/weston-9"
+IMXGSTPLG="imx-gst1.0-plugin-mx8qm"
 G2DPACKAGE="imx-dpu-g2d"
+
+readonly G_IMX_CODEC_DIR="imxcodec-4.5.5"
+readonly G_IMX_PARSER_DIR="imxparser-4.5.5"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
@@ -84,7 +87,7 @@ readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210601T
 #set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it
 
 #Multimedia - GStreamer Packages - Set it to "n" if you want to disable it
-readonly G_DEBIAN_DISTRO_FEATURE_MM="n"
+readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
 
 #Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
-readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="n"
+readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
