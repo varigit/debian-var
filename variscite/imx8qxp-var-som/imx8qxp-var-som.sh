@@ -20,8 +20,8 @@ G_LINUX_DTB="freescale/fsl-imx8qxp-var-som-sd.dtb
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="6.0.0.121"
-readonly G_BCM_FW_GIT_REV="7bce9b69b51ffd967176c1597feed79305927370"
+readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
+readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
 readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.2.4.p4.0"
 readonly GST_MM_VERSION="MM_04.04.05_1902_L4.14.98_GA"
