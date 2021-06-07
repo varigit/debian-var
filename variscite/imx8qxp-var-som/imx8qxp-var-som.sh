@@ -15,7 +15,9 @@ readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"
 readonly G_LINUX_KERNEL_REV="2925ec326b5e784f8bd976076aaa1ed44b3762e4"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 G_LINUX_DTB="freescale/imx8qxp-var-som-symphony-sd.dtb
-             freescale/imx8qxp-var-som-symphony-wifi.dtb"
+             freescale/imx8qxp-var-som-symphony-sd-m4.dtb
+             freescale/imx8qxp-var-som-symphony-wifi.dtb
+             freescale/imx8qxp-var-som-symphony-wifi-m4.dtb"
 
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
