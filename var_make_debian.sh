@@ -60,13 +60,15 @@ PARAM_DEBUG="0"
 PARAM_CMD="all"
 PARAM_BLOCK_DEVICE="na"
 
+IS_QXP_B0=false
+
 ### usage ###
 function usage()
 {
 	echo "Make Debian ${DEB_RELEASE} image and create a bootabled SD card"
 	echo
 	echo "Usage:"
-	echo " MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8mp-var-dart|imx8qxp-var-som|imx8qm-var-som|imx8mn-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
+	echo " MACHINE=<imx8mq-var-dart|imx8mm-var-dart|imx8mp-var-dart|imx8qxp-var-som|imx8qxpb0-var-som|imx8qm-var-som|imx8mn-var-som|imx6ul-var-dart|var-som-mx7> ./${SCRIPT_NAME} options"
 	echo
 	echo "Options:"
 	echo "  -h|--help   -- print this help"
@@ -94,6 +96,11 @@ function usage()
 	echo "  create SD card:                   sudo ./${SCRIPT_NAME} --cmd sdcard --dev /dev/sdX"
 	echo
 }
+
+if [ "${MACHINE}" = "imx8qxpb0-var-som" ]; then
+	MACHINE="imx8qxp-var-som"
+	IS_QXP_B0=true
+fi
 
 if [ ! -e ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh ]; then
 	echo "Illegal MACHINE: ${MACHINE}"
@@ -184,6 +191,11 @@ done
 };
 
 echo "=============== Build summary ==============="
+if [ "${IS_QXP_B0}" = true ]; then
+	echo "Building Debian ${DEB_RELEASE} for imx8qxpb0-var-som"
+else
+	echo "Building Debian ${DEB_RELEASE} for ${MACHINE}"
+fi
 echo "Building Debian ${DEB_RELEASE} for ${MACHINE}"
 echo "U-Boot config:      ${G_UBOOT_DEF_CONFIG_MMC}"
 echo "Kernel config:      ${G_LINUX_KERNEL_DEF_CONFIG}"
@@ -440,6 +452,8 @@ function make_uboot()
 	cp ${1}/tools/env/fw_printenv ${2}
 
 	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
+
+		#Compile C0 bootloader
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
 			src/imx-mkimage/iMX8QX/
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8qx.bin \
@@ -449,10 +463,26 @@ function make_uboot()
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
 		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
 		cd ${DEF_SRC_DIR}/imx-mkimage
-		make SOC=iMX8QX flash_spl
+		make REV=C0 SOC=iMX8QX flash_spl
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+
+		#Compile B0 bootloader
+		cd ${DEF_BUILDENV}
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/scfw_tcm.bin \
+			src/imx-mkimage/iMX8QX/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/bl31-imx8qx.bin \
+			src/imx-mkimage/iMX8QX/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/mx8qx-ahab-container.img \
+			src/imx-mkimage/iMX8QX/
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make REV=B0 SOC=iMX8QX flash_spl
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_B0_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_B0_EMMC}
 	elif [ "${MACHINE}" = "imx8mq-var-dart" ]; then
 		cd ${DEF_SRC_DIR}/imx-atf
 		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
