@@ -42,6 +42,18 @@ readonly G_IMX_ATF_GIT="git://github.com/varigit/imx-atf.git"
 readonly G_IMX_ATF_BRANCH="imx_5.4.24_2.1.0_var01"
 readonly G_IMX_ATF_REV="7575633e03ff952a18c0a2c0aa543dee793fda5f"
 
+# imx-sc-firmware
+readonly G_IMX_SC_FW_SRC_DIR="${DEF_SRC_DIR}/imx-sc-firmware"
+readonly G_IMX_SC_FW_GIT="git://github.com/varigit/imx-sc-firmware.git"
+readonly G_IMX_SC_FW_BRANCH="1.5.1"
+readonly G_IMX_SC_FW_REV="495e846a5e1ff5d4208c2fb6529397d80c40ebf7"
+readonly G_IMX_SC_FW_TOOLCHAIN_NAME="gcc-arm-none-eabi-8-2018-q4-major"
+readonly G_IMX_SC_FW_TOOLCHAIN_ARCHIVE="${G_IMX_SC_FW_TOOLCHAIN_NAME}-linux.tar.bz2"
+readonly G_IMX_SC_FW_TOOLCHAIN_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2018q4/${G_IMX_SC_FW_TOOLCHAIN_ARCHIVE}"
+readonly G_IMX_SC_FW_TOOLCHAIN_SHA256SUM="fb31fbdfe08406ece43eef5df623c0b2deb8b53e405e2c878300f7a1f303ee52"
+readonly G_IMX_SC_FW_FAMILY="qx"
+readonly G_IMX_SC_MACHINE_NAME="mx8${G_IMX_SC_FW_FAMILY}_b0"
+
 # imx-seco
 readonly G_IMX_SECO_SRC_DIR="${DEF_SRC_DIR}/imx-seco"
 readonly G_IMX_SECO_REV="3.6.3"

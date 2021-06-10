@@ -454,8 +454,9 @@ function make_uboot()
 	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
 		if [ "${IS_QXP_B0}" = true ]; then
 			#Compile B0 bootloader
-			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/scfw_tcm.bin \
-				src/imx-mkimage/iMX8QX/
+
+			# scfw
+			make_imx_sc_fw "${DEF_SRC_DIR}/imx-mkimage/iMX8QX/"
 			# imx-atf
 			cd ${DEF_SRC_DIR}/imx-atf
 			LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
@@ -471,12 +472,13 @@ function make_uboot()
 			cd ${DEF_SRC_DIR}/imx-mkimage
 			make REV=B0 SOC=iMX8QX flash_spl
 			cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
-				${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_B0_EMMC}
-			cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_B0_EMMC}
+				${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+			cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 		else
 			#Compile C0 bootloader
-			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
-				src/imx-mkimage/iMX8QX/
+
+			# scfw
+			make_imx_sc_fw "${DEF_SRC_DIR}/imx-mkimage/iMX8QX/"
 			# imx-atf
 			cd ${DEF_SRC_DIR}/imx-atf
 			LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
