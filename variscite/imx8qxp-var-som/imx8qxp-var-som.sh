@@ -42,6 +42,18 @@ readonly G_IMX_ATF_GIT="git://github.com/varigit/imx-atf.git"
 readonly G_IMX_ATF_BRANCH="imx_5.4.24_2.1.0_var01"
 readonly G_IMX_ATF_REV="7575633e03ff952a18c0a2c0aa543dee793fda5f"
 
+# imx-seco
+readonly G_IMX_SECO_SRC_DIR="${DEF_SRC_DIR}/imx-seco"
+readonly G_IMX_SECO_REV="3.6.3"
+readonly G_IMX_SECO_SHA256SUM="52ba07633e0f8707d8c26724b5cd03ef96444c8de1e0e134acac50acacf3e7dd"
+readonly G_IMX_SECO_BIN="imx-seco_${G_IMX_SECO_REV}.bin"
+if [ "${IS_QXP_B0}" = true ]; then
+	readonly G_IMX_SECO_IMG="${G_IMX_SECO_SRC_DIR}/imx-seco-${G_IMX_SECO_REV}/firmware/seco/mx8qxb0-ahab-container.img"
+else
+	readonly G_IMX_SECO_IMG="${G_IMX_SECO_SRC_DIR}/imx-seco-${G_IMX_SECO_REV}/firmware/seco/mx8qxc0-ahab-container.img"
+fi
+readonly G_IMX_SECO_URL="https://www.nxp.com/lgfiles/NMG/MAD/YOCTO/imx-seco-${G_IMX_SECO_REV}.bin"
+
 # Flashing variables
 BOOTLOADER_OFFSET=32
 

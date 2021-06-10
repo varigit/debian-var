@@ -452,7 +452,6 @@ function make_uboot()
 	cp ${1}/tools/env/fw_printenv ${2}
 
 	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
-
 		if [ "${IS_QXP_B0}" = true ]; then
 			#Compile B0 bootloader
 			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/scfw_tcm.bin \
@@ -464,8 +463,9 @@ function make_uboot()
 			cd -
 			cp ${DEF_SRC_DIR}/imx-atf/build/imx8qx/release/bl31.bin \
 				src/imx-mkimage/iMX8QX/bl31.bin
-			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/mx8qx-ahab-container.img \
-				src/imx-mkimage/iMX8QX/
+			# imx-seco
+			make_imx_seco_fw "${DEF_SRC_DIR}/imx-mkimage/iMX8QX/"
+
 			cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
 			cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
 			cd ${DEF_SRC_DIR}/imx-mkimage
@@ -484,8 +484,9 @@ function make_uboot()
 			cd -
 			cp ${DEF_SRC_DIR}/imx-atf/build/imx8qx/release/bl31.bin \
 				src/imx-mkimage/iMX8QX/bl31.bin
-			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qx-ahab-container.img \
-				src/imx-mkimage/iMX8QX/
+			# imx-seco
+			make_imx_seco_fw "${DEF_SRC_DIR}/imx-mkimage/iMX8QX/"
+
 			cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
 			cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
 			cd ${DEF_SRC_DIR}/imx-mkimage
