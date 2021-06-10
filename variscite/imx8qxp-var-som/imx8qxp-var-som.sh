@@ -34,6 +34,9 @@ readonly WESTON_PACKAGE_DIR="imx8qxm-dpu-g2d/weston-9"
 IMXGSTPLG="imx-gst1.0-plugin-mx8x"
 G2DPACKAGE="imx-dpu-g2d"
 
+readonly G_IMX_CODEC_DIR="imxcodec-4.5.5"
+readonly G_IMX_PARSER_DIR="imxparser-4.5.5"
+
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
 readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
