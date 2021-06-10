@@ -86,7 +86,7 @@ readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210601T
 #set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it
 
 #Multimedia - GStreamer Packages - Set it to "n" if you want to disable it
-readonly G_DEBIAN_DISTRO_FEATURE_MM="n"
+readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
 
 #Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
-readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="n"
+readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
