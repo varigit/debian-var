@@ -453,36 +453,47 @@ function make_uboot()
 
 	if [ "${MACHINE}" = "imx8qxp-var-som" ]; then
 
-		#Compile C0 bootloader
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
-			src/imx-mkimage/iMX8QX/
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8qx.bin \
-			src/imx-mkimage/iMX8QX/bl31.bin
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qx-ahab-container.img \
-			src/imx-mkimage/iMX8QX/
-		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
-		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
-		cd ${DEF_SRC_DIR}/imx-mkimage
-		make REV=C0 SOC=iMX8QX flash_spl
-		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
-			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
-		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
-
-		#Compile B0 bootloader
-		cd ${DEF_BUILDENV}
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/scfw_tcm.bin \
-			src/imx-mkimage/iMX8QX/
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/bl31-imx8qx.bin \
-			src/imx-mkimage/iMX8QX/bl31.bin
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/mx8qx-ahab-container.img \
-			src/imx-mkimage/iMX8QX/
-		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
-		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
-		cd ${DEF_SRC_DIR}/imx-mkimage
-		make REV=B0 SOC=iMX8QX flash_spl
-		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
-			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_B0_EMMC}
-		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_B0_EMMC}
+		if [ "${IS_QXP_B0}" = true ]; then
+			#Compile B0 bootloader
+			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/scfw_tcm.bin \
+				src/imx-mkimage/iMX8QX/
+			# imx-atf
+			cd ${DEF_SRC_DIR}/imx-atf
+			LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+					PLAT=imx8qx bl31
+			cd -
+			cp ${DEF_SRC_DIR}/imx-atf/build/imx8qx/release/bl31.bin \
+				src/imx-mkimage/iMX8QX/bl31.bin
+			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools-b0/mx8qx-ahab-container.img \
+				src/imx-mkimage/iMX8QX/
+			cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+			cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+			cd ${DEF_SRC_DIR}/imx-mkimage
+			make REV=B0 SOC=iMX8QX flash_spl
+			cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
+				${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_B0_EMMC}
+			cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_B0_EMMC}
+		else
+			#Compile C0 bootloader
+			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/scfw_tcm.bin \
+				src/imx-mkimage/iMX8QX/
+			# imx-atf
+			cd ${DEF_SRC_DIR}/imx-atf
+			LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+					PLAT=imx8qx bl31
+			cd -
+			cp ${DEF_SRC_DIR}/imx-atf/build/imx8qx/release/bl31.bin \
+				src/imx-mkimage/iMX8QX/bl31.bin
+			cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx8qx-ahab-container.img \
+				src/imx-mkimage/iMX8QX/
+			cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+			cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/
+			cd ${DEF_SRC_DIR}/imx-mkimage
+			make REV=C0 SOC=iMX8QX flash_spl
+			cp ${DEF_SRC_DIR}/imx-mkimage/iMX8QX/flash.bin \
+				${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+			cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
+		fi
 	elif [ "${MACHINE}" = "imx8mq-var-dart" ]; then
 		cd ${DEF_SRC_DIR}/imx-atf
 		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
