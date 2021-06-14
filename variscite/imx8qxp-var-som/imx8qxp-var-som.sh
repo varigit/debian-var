@@ -31,7 +31,7 @@ readonly GST_MM_VERSION="MM_04.05.05_2005_L5.4.24"
 readonly G2D_PACKAGE_DIR="imx-dpu-g2d-1.8.7"
 readonly IMX_FIRMWARE_VERSION="8.8"
 readonly WESTON_PACKAGE_DIR="imx8qxm-dpu-g2d/weston-9"
-IMXGSTPLG="imx-gst1.0-plugin-mx8x"
+IMXGSTPLG="imx-gst1.0-plugin-mx8qm"
 G2DPACKAGE="imx-dpu-g2d"
 
 readonly G_IMX_CODEC_DIR="imxcodec-4.5.5"
