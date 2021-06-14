@@ -4,7 +4,7 @@ readonly ARCH_CPU="64BIT"
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2020.04_5.4.24_2.1.0_var02"
-readonly G_UBOOT_REV="a7f63083956fa80d3f95e921b9439c51feaeba0a"
+readonly G_UBOOT_REV="4cf3f408d1f0c2f0a6cf5ce8978f9c421ae717b5"
 G_UBOOT_DEF_CONFIG_MMC='imx8qxp_var_som_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
