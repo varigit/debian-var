@@ -53,7 +53,7 @@ check_board()
 		BLOCK=mmcblk2
 	elif grep -q "i.MX8QXP" /sys/devices/soc0/soc_id; then
 		BOARD=imx8qxp-var-som
-		DTB_PREFIX=imx8qxp-var-som
+		DTB_PREFIX=imx8qxp-var-som-symphony
 		BOOTLOADER_OFFSET=32
 		BLOCK=mmcblk0
 
