@@ -1,0 +1,41 @@
+Format: 1.8
+Date: Mon, 05 Mar 2021 12:23:53 +0100
+Source: weston
+Binary: libweston-9-0 libweston-9-0-dbgsym libweston-9-dev weston weston-dbgsym
+Architecture: arm64
+Version: 9.0.0-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
+Changed-By: Felix Radensky <felix.r@variscite.com>
+Description:
+ libweston-9-0 - reference implementation of a wayland compositor (shared libs)
+ libweston-9-dev - reference implementation of a wayland compositor (shared libs)
+ weston     - reference implementation of a wayland compositor
+Changes:
+ weston (9.0.0-1) unstable; urgency=medium
+ .
+   * New upstream release
+   * debian/libweston-9-0.symbols: update
+   * libexec_weston.so*,weston-direct-display.xml: new files
+Checksums-Sha1:
+ 8409c320aa2ee93bc9ba974a56a3aca155683e71 1094220 libweston-9-0-dbgsym_9.0.0-1_arm64.deb
+ 60b62b21818843310dc3be0070242acb1305f372 218404 libweston-9-0_9.0.0-1_arm64.deb
+ 42269a4a46d8343909950ea71a9b25a0e5bfe962 36600 libweston-9-dev_9.0.0-1_arm64.deb
+ 96e4b62f82b1d698596929747cd50ce5142ff447 4330524 weston-dbgsym_9.0.0-1_arm64.deb
+ 074588c1665c44a09bf8144114bc43b1c66b4b84 5035 weston_9.0.0-1_arm64.buildinfo
+ 132d7d66fcd2e23bce8e56bd5008b718d0db20c4 782464 weston_9.0.0-1_arm64.deb
+Checksums-Sha256:
+ cf3eeddd3a903ffd885d863f729e4138d126b40c8519b849e662df65cfdab500 1094220 libweston-9-0-dbgsym_9.0.0-1_arm64.deb
+ 05e55120adef9cfed3c413b4d5fbeb1c5208a1ae66c41a87733c8050f0abe6ae 218404 libweston-9-0_9.0.0-1_arm64.deb
+ 585a2670f7093bc44c2c417c6c1a9dc7176a4170e249002ee4abc8301119fcdb 36600 libweston-9-dev_9.0.0-1_arm64.deb
+ be6fa25fdffef9156d0d44461d707c831f214199c63c2e738fe05bd3d69d93c5 4330524 weston-dbgsym_9.0.0-1_arm64.deb
+ 11fcd981715686e53778c932390082f7bb915d914c6b0e6d6e9c5ac38bfdbcdd 5035 weston_9.0.0-1_arm64.buildinfo
+ 9f6a8f4c7d310d436382884babe7cc87d55c6e67c9b3fd41eb1538e5d195c39e 782464 weston_9.0.0-1_arm64.deb
+Files:
+ c40d08287f788fe2e4b5a690eca2a00a 1094220 debug optional libweston-9-0-dbgsym_9.0.0-1_arm64.deb
+ 9f4531391a66c73c3753f2287edc9b33 218404 libs - libweston-9-0_9.0.0-1_arm64.deb
+ a85076698dd87b3ea1d10ab1dc452930 36600 libdevel - libweston-9-dev_9.0.0-1_arm64.deb
+ f95b248b66b86445d19cae8b6f6f6fdf 4330524 debug optional weston-dbgsym_9.0.0-1_arm64.deb
+ ac6c67302b437015f62921224f5b8128 5035 - - weston_9.0.0-1_arm64.buildinfo
+ 2851fa6415af0472a64371421c3028f6 782464 - - weston_9.0.0-1_arm64.deb

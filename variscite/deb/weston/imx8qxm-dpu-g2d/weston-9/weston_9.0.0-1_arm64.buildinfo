@@ -1,0 +1,160 @@
+Format: 1.0
+Source: weston
+Binary: libweston-9-0 libweston-9-0-dbgsym libweston-9-dev weston weston-dbgsym
+Architecture: arm64
+Version: 9.0.0-1
+Checksums-Md5:
+ c40d08287f788fe2e4b5a690eca2a00a 1094220 libweston-9-0-dbgsym_9.0.0-1_arm64.deb
+ 9f4531391a66c73c3753f2287edc9b33 218404 libweston-9-0_9.0.0-1_arm64.deb
+ a85076698dd87b3ea1d10ab1dc452930 36600 libweston-9-dev_9.0.0-1_arm64.deb
+ f95b248b66b86445d19cae8b6f6f6fdf 4330524 weston-dbgsym_9.0.0-1_arm64.deb
+ 2851fa6415af0472a64371421c3028f6 782464 weston_9.0.0-1_arm64.deb
+Checksums-Sha1:
+ 8409c320aa2ee93bc9ba974a56a3aca155683e71 1094220 libweston-9-0-dbgsym_9.0.0-1_arm64.deb
+ 60b62b21818843310dc3be0070242acb1305f372 218404 libweston-9-0_9.0.0-1_arm64.deb
+ 42269a4a46d8343909950ea71a9b25a0e5bfe962 36600 libweston-9-dev_9.0.0-1_arm64.deb
+ 96e4b62f82b1d698596929747cd50ce5142ff447 4330524 weston-dbgsym_9.0.0-1_arm64.deb
+ 132d7d66fcd2e23bce8e56bd5008b718d0db20c4 782464 weston_9.0.0-1_arm64.deb
+Checksums-Sha256:
+ cf3eeddd3a903ffd885d863f729e4138d126b40c8519b849e662df65cfdab500 1094220 libweston-9-0-dbgsym_9.0.0-1_arm64.deb
+ 05e55120adef9cfed3c413b4d5fbeb1c5208a1ae66c41a87733c8050f0abe6ae 218404 libweston-9-0_9.0.0-1_arm64.deb
+ 585a2670f7093bc44c2c417c6c1a9dc7176a4170e249002ee4abc8301119fcdb 36600 libweston-9-dev_9.0.0-1_arm64.deb
+ be6fa25fdffef9156d0d44461d707c831f214199c63c2e738fe05bd3d69d93c5 4330524 weston-dbgsym_9.0.0-1_arm64.deb
+ 9f6a8f4c7d310d436382884babe7cc87d55c6e67c9b3fd41eb1538e5d195c39e 782464 weston_9.0.0-1_arm64.deb
+Build-Origin: Debian
+Build-Architecture: arm64
+Build-Date: Wed, 12 May 2021 14:10:15 +0000
+Build-Tainted-By:
+ usr-local-has-includes
+Installed-Build-Depends:
+ base-files (= 11),
+ base-passwd (= 3.5.48),
+ bash (= 5.1-1),
+ binutils (= 2.35.1-6),
+ binutils-aarch64-linux-gnu (= 2.35.1-6),
+ binutils-common (= 2.35.1-6),
+ bsdutils (= 1:2.36.1-3),
+ build-essential (= 12.8),
+ bzip2 (= 1.0.8-4),
+ coreutils (= 8.32-4),
+ cpp (= 4:10.2.0-1),
+ cpp-10 (= 10.2.1-3),
+ dash (= 0.5.11+git20200708+dd9ef66-5),
+ debconf (= 1.5.74),
+ debianutils (= 4.11.2),
+ diffutils (= 1:3.7-3),
+ dpkg (= 1.20.5),
+ dpkg-dev (= 1.20.5),
+ findutils (= 4.7.0+git20201010-2),
+ g++ (= 4:10.2.0-1),
+ g++-10 (= 10.2.1-3),
+ gawk (= 1:5.0.1+dfsg-1),
+ gcc (= 4:10.2.0-1),
+ gcc-10 (= 10.2.1-3),
+ gcc-10-base (= 10.2.1-3),
+ grep (= 3.6-1),
+ gzip (= 1.10-2),
+ hostname (= 3.23),
+ init-system-helpers (= 1.60),
+ libacl1 (= 2.2.53-9),
+ libasan6 (= 10.2.1-3),
+ libatomic1 (= 10.2.1-3),
+ libattr1 (= 1:2.4.48-6),
+ libaudit-common (= 1:3.0-1),
+ libaudit1 (= 1:3.0-1),
+ libbinutils (= 2.35.1-6),
+ libblkid1 (= 2.36.1-3),
+ libbz2-1.0 (= 1.0.8-4),
+ libc-bin (= 2.31-6),
+ libc-dev-bin (= 2.31-6),
+ libc6 (= 2.31-6),
+ libc6-dev (= 2.31-6),
+ libcap-ng0 (= 0.7.9-2.2+b1),
+ libcc1-0 (= 10.2.1-3),
+ libcom-err2 (= 1.45.6-1),
+ libcrypt-dev (= 1:4.4.17-1),
+ libcrypt1 (= 1:4.4.17-1),
+ libctf-nobfd0 (= 2.35.1-6),
+ libctf0 (= 2.35.1-6),
+ libdb5.3 (= 5.3.28+dfsg1-0.6),
+ libdebconfclient0 (= 0.255),
+ libdpkg-perl (= 1.20.5),
+ libgcc-10-dev (= 10.2.1-3),
+ libgcc-s1 (= 10.2.1-3),
+ libgcrypt20 (= 1.8.7-2),
+ libgdbm-compat4 (= 1.18.1-5.1),
+ libgdbm6 (= 1.18.1-5.1),
+ libgmp10 (= 2:6.2.1+dfsg-1),
+ libgomp1 (= 10.2.1-3),
+ libgpg-error0 (= 1.38-2),
+ libgssapi-krb5-2 (= 1.18.3-4),
+ libisl23 (= 0.23-1),
+ libitm1 (= 10.2.1-3),
+ libk5crypto3 (= 1.18.3-4),
+ libkeyutils1 (= 1.6.1-2),
+ libkrb5-3 (= 1.18.3-4),
+ libkrb5support0 (= 1.18.3-4),
+ liblsan0 (= 10.2.1-3),
+ liblz4-1 (= 1.9.3-1),
+ liblzma5 (= 5.2.4-1+b1),
+ libmount1 (= 2.36.1-3),
+ libmpc3 (= 1.2.0-1),
+ libmpfr6 (= 4.1.0-3),
+ libnsl-dev (= 1.3.0-2),
+ libnsl2 (= 1.3.0-2),
+ libpam-modules (= 1.3.1-5),
+ libpam-modules-bin (= 1.3.1-5),
+ libpam-runtime (= 1.3.1-5),
+ libpam0g (= 1.3.1-5),
+ libpcre2-8-0 (= 10.36-2),
+ libpcre3 (= 2:8.39-13),
+ libperl5.32 (= 5.32.0-6),
+ libreadline8 (= 8.1-1),
+ libselinux1 (= 3.1-2+b2),
+ libsigsegv2 (= 2.12-3),
+ libsmartcols1 (= 2.36.1-3),
+ libssl1.1 (= 1.1.1i-1),
+ libstdc++-10-dev (= 10.2.1-3),
+ libstdc++6 (= 10.2.1-3),
+ libsystemd0 (= 247.1-3+deb11u1),
+ libtinfo6 (= 6.2+20201114-1),
+ libtirpc-common (= 1.2.6-3),
+ libtirpc-dev (= 1.2.6-3),
+ libtirpc3 (= 1.2.6-3),
+ libtsan0 (= 10.2.1-3),
+ libubsan1 (= 10.2.1-3),
+ libudev1 (= 247.1-3+deb11u1),
+ libuuid1 (= 2.36.1-3),
+ libzstd1 (= 1.4.8+dfsg-1),
+ linux-libc-dev (= 5.9.15-1),
+ login (= 1:4.8.1-1),
+ lsb-base (= 11.1.0),
+ make (= 4.3-4),
+ mawk (= 1.3.4.20200120-2),
+ ncurses-base (= 6.2+20201114-1),
+ ncurses-bin (= 6.2+20201114-1),
+ patch (= 2.7.6-6),
+ perl (= 5.32.0-6),
+ perl-base (= 5.32.0-6),
+ perl-modules-5.32 (= 5.32.0-6),
+ readline-common (= 8.1-1),
+ sed (= 4.7-1),
+ sysvinit-utils (= 2.96-5),
+ tar (= 1.32+dfsg-1),
+ util-linux (= 2.36.1-3),
+ xz-utils (= 5.2.4-1+b1),
+ zlib1g (= 1:1.2.11.dfsg-2)
+Environment:
+ DEB_BUILD_OPTIONS="parallel=16"
+ LANG="en_US.UTF-8"
+ LC_ADDRESS="en_US.UTF-8"
+ LC_IDENTIFICATION="en_US.UTF-8"
+ LC_MEASUREMENT="en_US.UTF-8"
+ LC_MONETARY="en_US.UTF-8"
+ LC_NAME="en_US.UTF-8"
+ LC_NUMERIC="en_US.UTF-8"
+ LC_PAPER="en_US.UTF-8"
+ LC_TELEPHONE="en_US.UTF-8"
+ LC_TIME="en_US.UTF-8"
+ MAKEFLAGS=" -j16"
+ SOURCE_DATE_EPOCH="1614943433"
