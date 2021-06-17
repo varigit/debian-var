@@ -1,0 +1,65 @@
+Format: 1.8
+Date: Tue, 24 Sep 2019 11:39:46 +0300
+Source: gst-plugins-base1.0
+Binary: gir1.2-gst-plugins-base-1.0 gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-plugins-base gstreamer1.0-plugins-base-apps gstreamer1.0-plugins-base-dbg gstreamer1.0-plugins-base-doc gstreamer1.0-x libgstreamer-gl1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer-plugins-base1.0-dev
+Architecture: arm64 all
+Version: 1.16.1-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Maintainers of GStreamer packages <gst-plugins-base1.0@packages.debian.org>
+Changed-By: Sebastian Dröge <slomo@debian.org>
+Description:
+ gir1.2-gst-plugins-base-1.0 - GObject introspection data for the GStreamer Plugins Base library
+ gstreamer1.0-alsa - GStreamer plugin for ALSA
+ gstreamer1.0-gl - GStreamer plugins for GL
+ gstreamer1.0-plugins-base - GStreamer plugins from the "base" set
+ gstreamer1.0-plugins-base-apps - GStreamer helper programs from the "base" set
+ gstreamer1.0-plugins-base-dbg - GStreamer plugins from the "base" set
+ gstreamer1.0-plugins-base-doc - GStreamer documentation for plugins from the "base" set
+ gstreamer1.0-x - GStreamer plugins for X11 and Pango
+ libgstreamer-gl1.0-0 - GStreamer GL libraries
+ libgstreamer-plugins-base1.0-0 - GStreamer libraries from the "base" set
+ libgstreamer-plugins-base1.0-dev - GStreamer development files for libraries from the "base" set
+Changes:
+ gst-plugins-base1.0 (1.16.1-1) unstable; urgency=medium
+ .
+   * New upstream bugfix release
+Checksums-Sha1:
+ 5e0a73f221cfbf59cbe3d14605e70076fa17304c 1390020 gir1.2-gst-plugins-base-1.0_1.16.1-1_arm64.deb
+ b71b6b053268e27a597168fd0d15dd731ed58018 17875 gst-plugins-base1.0_1.16.1-1_arm64.buildinfo
+ 692577dba03e3a6d148bd1ccf0eada11ccc2d401 1335348 gstreamer1.0-alsa_1.16.1-1_arm64.deb
+ 2dd34e1d7aa3a8d08e4f1eef4896461242b3ef36 1404904 gstreamer1.0-gl_1.16.1-1_arm64.deb
+ 662343d3eb7a359fc60db2bfd99b5dc18b80e091 1335264 gstreamer1.0-plugins-base-apps_1.16.1-1_arm64.deb
+ 119a8d3bec1e7b9c8f76e41a267f6fb48f46a598 7971256 gstreamer1.0-plugins-base-dbg_1.16.1-1_arm64.deb
+ 2267a7c479329fa4999c738f5c0faee4d0e1fb55 1310284 gstreamer1.0-plugins-base-doc_1.16.1-1_all.deb
+ 58feeba8b12eb257a8f5b21ffbfbbdff11431971 1850940 gstreamer1.0-plugins-base_1.16.1-1_arm64.deb
+ 89c5b4d9e9572d72f20629a9ade2aa6a09caa5e3 1372088 gstreamer1.0-x_1.16.1-1_arm64.deb
+ 9b43068acbc4c620fcdd3c38198586684427655b 1451944 libgstreamer-gl1.0-0_1.16.1-1_arm64.deb
+ 34b77d2d7c020d99b4a5eea26bfef5c2d089fe94 2002576 libgstreamer-plugins-base1.0-0_1.16.1-1_arm64.deb
+ ed5eab28f9b9eb746ff3e50be22ffc261a0f1b1a 1699004 libgstreamer-plugins-base1.0-dev_1.16.1-1_arm64.deb
+Checksums-Sha256:
+ 70ecfbd59288c591497ab19a290a28d303ca99b8081c2422b8926607dad4ca57 1390020 gir1.2-gst-plugins-base-1.0_1.16.1-1_arm64.deb
+ 637515dbe8496914873ddf174cee52f06097159c01ecfb159f03e61fe13f2b75 17875 gst-plugins-base1.0_1.16.1-1_arm64.buildinfo
+ e17fdb6f7d74c43a4a7e7ab91f3af7d0ea0a2f2898dddd730dc6cea0d1871ba7 1335348 gstreamer1.0-alsa_1.16.1-1_arm64.deb
+ 1b3f2d11e21a810538bec5f1137ad91cf44dd9beb47d4bfd7656381c80397e1c 1404904 gstreamer1.0-gl_1.16.1-1_arm64.deb
+ ffe37112f177f8d300ee22fd550ae616b4feb9d4de5525f9d39933e934452992 1335264 gstreamer1.0-plugins-base-apps_1.16.1-1_arm64.deb
+ f009be4ac00ca03d5ceca83b1c75f56d389787321d4580948ed3187d4bb5bed2 7971256 gstreamer1.0-plugins-base-dbg_1.16.1-1_arm64.deb
+ c0c9618138eb786392001a90b00eaf8008691c43653f40fc4c584cfe1775aadf 1310284 gstreamer1.0-plugins-base-doc_1.16.1-1_all.deb
+ 50de67bde27d423e9119d17a66a8910dbc92084eab8b5bf6d23371c7c79c8076 1850940 gstreamer1.0-plugins-base_1.16.1-1_arm64.deb
+ 33bed4b26fed6044f7424ec8b7a5f54e1fa25ce7bd914523c9ac8055520c4773 1372088 gstreamer1.0-x_1.16.1-1_arm64.deb
+ 816b13f04938b96b1fe8a723adb01bb7f6bf071b7a936bec572d618b7d408bd2 1451944 libgstreamer-gl1.0-0_1.16.1-1_arm64.deb
+ 83ffd1ddacd0e189e69a6a8c5de7726d4d7e058b04f6497aaa4aefce2b492c79 2002576 libgstreamer-plugins-base1.0-0_1.16.1-1_arm64.deb
+ d3a7fb4df1dc316428722ad559deaeeb5332edaf9cbb2d27a0b3794761e9771b 1699004 libgstreamer-plugins-base1.0-dev_1.16.1-1_arm64.deb
+Files:
+ e2908452fac24760236e14c028dd2474 1390020 introspection optional gir1.2-gst-plugins-base-1.0_1.16.1-1_arm64.deb
+ 3ea9bc3a99176ae6e34212dc06babe5a 17875 libs optional gst-plugins-base1.0_1.16.1-1_arm64.buildinfo
+ 1f603809ee455811c10e4ff07393d30c 1335348 libs optional gstreamer1.0-alsa_1.16.1-1_arm64.deb
+ c7924a85e56534e3baad4696145f1d6a 1404904 libs optional gstreamer1.0-gl_1.16.1-1_arm64.deb
+ 20aba06c6bb75cd5868c419080e01f2b 1335264 utils optional gstreamer1.0-plugins-base-apps_1.16.1-1_arm64.deb
+ b1e82f820d0db79c57267abcb40c54b7 7971256 debug extra gstreamer1.0-plugins-base-dbg_1.16.1-1_arm64.deb
+ ba9b5f0876b7f0b9650db731c4c2f56a 1310284 doc optional gstreamer1.0-plugins-base-doc_1.16.1-1_all.deb
+ 89dc8fc8adcd7fe2e5c0e79536ec6518 1850940 libs optional gstreamer1.0-plugins-base_1.16.1-1_arm64.deb
+ d4ebf6edf29869f00a0221dc04999329 1372088 libs optional gstreamer1.0-x_1.16.1-1_arm64.deb
+ 599138c8bcff4d524c42a55baf826e50 1451944 libs optional libgstreamer-gl1.0-0_1.16.1-1_arm64.deb
+ 9b2af251d4e8f5c8fdd766761d96d99d 2002576 libs optional libgstreamer-plugins-base1.0-0_1.16.1-1_arm64.deb
+ 8f6b8729541764471138d4cacf862099 1699004 libdevel optional libgstreamer-plugins-base1.0-dev_1.16.1-1_arm64.deb
