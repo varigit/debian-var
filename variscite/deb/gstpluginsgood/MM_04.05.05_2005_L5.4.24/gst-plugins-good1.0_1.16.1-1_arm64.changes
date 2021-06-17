@@ -1,0 +1,45 @@
+Format: 1.8
+Date: Wed, 25 Sep 2019 10:22:14 +0300
+Source: gst-plugins-good1.0
+Binary: gstreamer1.0-gtk3 gstreamer1.0-plugins-good gstreamer1.0-plugins-good-dbg gstreamer1.0-plugins-good-doc gstreamer1.0-pulseaudio gstreamer1.0-qt5
+Architecture: arm64 all
+Version: 1.16.1-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Maintainers of GStreamer packages <gst-plugins-good1.0@packages.debian.org>
+Changed-By: Sebastian Dröge <slomo@debian.org>
+Description:
+ gstreamer1.0-gtk3 - GStreamer plugin for GTK+3
+ gstreamer1.0-plugins-good - GStreamer plugins from the "good" set
+ gstreamer1.0-plugins-good-dbg - GStreamer plugins from the "good" set
+ gstreamer1.0-plugins-good-doc - GStreamer documentation for plugins from the "good" set
+ gstreamer1.0-pulseaudio - GStreamer plugin for PulseAudio
+ gstreamer1.0-qt5 - GStreamer plugin for Qt5
+Changes:
+ gst-plugins-good1.0 (1.16.1-1) unstable; urgency=medium
+ .
+   * New upstream bugfix release
+Checksums-Sha1:
+ 1eeac3c8ecc1b7c00c0ab8e974b37556e2772c14 19290 gst-plugins-good1.0_1.16.1-1_arm64.buildinfo
+ af36246f97acbe840e3e9d3c322d3d493dc5b760 1324700 gstreamer1.0-gtk3_1.16.1-1_arm64.deb
+ 818add608972d8457d15a471678f5aaffc152ed8 10239764 gstreamer1.0-plugins-good-dbg_1.16.1-1_arm64.deb
+ 4ee96bc439ab9544e21922b7661abd14d69cd3c1 1309620 gstreamer1.0-plugins-good-doc_1.16.1-1_all.deb
+ 9091e6e7773cd8ed967ba5463d71fd595db44402 2833020 gstreamer1.0-plugins-good_1.16.1-1_arm64.deb
+ 99557c9e8f5609045e1093efaa10263e5f73f606 1346224 gstreamer1.0-pulseaudio_1.16.1-1_arm64.deb
+ 3eab1779f69e2f3deae21c570fb513e1d3062521 1335140 gstreamer1.0-qt5_1.16.1-1_arm64.deb
+Checksums-Sha256:
+ 852edec320d0bb8cca5480e6e493d17d3e0faf05f377c7e15a8237115f388b30 19290 gst-plugins-good1.0_1.16.1-1_arm64.buildinfo
+ 406121dc2a73316ea9412d303b1d11c1e5b5606c07be0fc6bcd9319cd239b140 1324700 gstreamer1.0-gtk3_1.16.1-1_arm64.deb
+ d4bd69a851c2153de284152970c16735eaaaa9fbb36ac679fb275adeda5c988e 10239764 gstreamer1.0-plugins-good-dbg_1.16.1-1_arm64.deb
+ 56f24fd71252839be51e82763aebb40b5b74c8e45f9f28824db1895626030ebc 1309620 gstreamer1.0-plugins-good-doc_1.16.1-1_all.deb
+ 4643b8e53003a2319feb04846877ccc16bdef685990cf066d9df8fff67c2dcf1 2833020 gstreamer1.0-plugins-good_1.16.1-1_arm64.deb
+ 2ade3109b05ca2f6ac42d02c019d8577dba795b2cfa1a4caa26fbb0056a0cce7 1346224 gstreamer1.0-pulseaudio_1.16.1-1_arm64.deb
+ 7b872ca288d727b9a41c698f792695c2e3025c0f79919980d7653312908f7d25 1335140 gstreamer1.0-qt5_1.16.1-1_arm64.deb
+Files:
+ dd9d3fc0d953f83adae85a1d31a68965 19290 libs optional gst-plugins-good1.0_1.16.1-1_arm64.buildinfo
+ 9073b18885d98c407094a6ce7d1fbd2f 1324700 graphics optional gstreamer1.0-gtk3_1.16.1-1_arm64.deb
+ ad68880bcac5928bc09611e2bca5e28f 10239764 debug extra gstreamer1.0-plugins-good-dbg_1.16.1-1_arm64.deb
+ df6e79853e188001573370ba0036aaf3 1309620 doc optional gstreamer1.0-plugins-good-doc_1.16.1-1_all.deb
+ 53a21771ce85b2514b351a06127f4968 2833020 libs optional gstreamer1.0-plugins-good_1.16.1-1_arm64.deb
+ 0299c8b3cce19f1770d8d8d4ead81dd0 1346224 sound optional gstreamer1.0-pulseaudio_1.16.1-1_arm64.deb
+ 91ca4f31b541871db4a844b3923caefe 1335140 graphics optional gstreamer1.0-qt5_1.16.1-1_arm64.deb
