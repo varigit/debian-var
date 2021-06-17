@@ -1,0 +1,57 @@
+Format: 1.8
+Date: Wed, 25 Sep 2019 10:41:55 +0300
+Source: gst-plugins-bad1.0
+Binary: gir1.2-gst-plugins-bad-1.0 gstreamer1.0-opencv gstreamer1.0-plugins-bad gstreamer1.0-plugins-bad-dbg gstreamer1.0-plugins-bad-doc libgstreamer-opencv1.0-0 libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-bad1.0-dev
+Architecture: arm64 all
+Version: 1.16.1-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Maintainers of GStreamer packages <gst-plugins-bad1.0@packages.debian.org>
+Changed-By: Sebastian Dröge <slomo@debian.org>
+Description:
+ gir1.2-gst-plugins-bad-1.0 - GObject introspection data for the GStreamer libraries from the "
+ gstreamer1.0-opencv - GStreamer OpenCV plugins
+ gstreamer1.0-plugins-bad - GStreamer plugins from the "bad" set
+ gstreamer1.0-plugins-bad-dbg - GStreamer plugins from the "bad" set (debug symbols)
+ gstreamer1.0-plugins-bad-doc - GStreamer documentation for plugins from the "bad" set
+ libgstreamer-opencv1.0-0 - GStreamer OpenCV libraries
+ libgstreamer-plugins-bad1.0-0 - GStreamer libraries from the "bad" set
+ libgstreamer-plugins-bad1.0-dev - GStreamer development files for libraries from the "bad" set
+Closes: 929185
+Changes:
+ gst-plugins-bad1.0 (1.16.1-1) unstable; urgency=medium
+ .
+   * debian/patches/03_default-soundfont.patch:
+     + Set a reasonable default soundfont patch (Closes: #929185).
+       Thanks to Fabian Greffrath for the patch.
+   * New upstream bugfix release
+Checksums-Sha1:
+ 4655e35a863ec6a891f5c9bb9859c56e4190298d 1753316 gir1.2-gst-plugins-bad-1.0_1.16.1-1_arm64.deb
+ 2c1e2e1f9084700030f67e9ad81a686d4f7ad279 28290 gst-plugins-bad1.0_1.16.1-1_arm64.buildinfo
+ ef68e841541645ac9c19d8965c43c6530f75ee85 1795536 gstreamer1.0-opencv_1.16.1-1_arm64.deb
+ 712c7a4cb6a56e147d2cdb53fa4c18b5f115a3fb 13200340 gstreamer1.0-plugins-bad-dbg_1.16.1-1_arm64.deb
+ 2edac4478f17fe1f1c810e0c2b55916fd3dac61b 1730380 gstreamer1.0-plugins-bad-doc_1.16.1-1_all.deb
+ bc1664a26df5f8784b6912ac2275a29fbaceca7c 3258992 gstreamer1.0-plugins-bad_1.16.1-1_arm64.deb
+ 9992296fd1d5f8f607b893462a29a6359ab82c6f 1734968 libgstreamer-opencv1.0-0_1.16.1-1_arm64.deb
+ a32d8d470ff9df0d4e9ce1286f536fcc3fd3a7ed 1980444 libgstreamer-plugins-bad1.0-0_1.16.1-1_arm64.deb
+ 2f5d2a2a095869ca2a13ac7355a2b682a39c05ce 1839176 libgstreamer-plugins-bad1.0-dev_1.16.1-1_arm64.deb
+Checksums-Sha256:
+ 03fba46dfd71afd619b69517ad5d81271c85fc131e5d8f8d28735c46de4c6b3a 1753316 gir1.2-gst-plugins-bad-1.0_1.16.1-1_arm64.deb
+ b9cdc6c804eff34d693c5caf615800bca2af199a7c274c78c4bb831af935859c 28290 gst-plugins-bad1.0_1.16.1-1_arm64.buildinfo
+ 86cf989aa52a44cafdbed295c1f12df85fb4e2f6127e1013685632f23088a4ed 1795536 gstreamer1.0-opencv_1.16.1-1_arm64.deb
+ 7ef7f117705153eb99f0f3c91c74ac027f4496f286c6fcc5da48df55bab85b5b 13200340 gstreamer1.0-plugins-bad-dbg_1.16.1-1_arm64.deb
+ 32f9fb46b19fded79066e1e10f8301573b5670614c7b60cec15298501fe81ace 1730380 gstreamer1.0-plugins-bad-doc_1.16.1-1_all.deb
+ 3443acb741d05e7d149f33af4c36a90f95edbea463e8ab7273e72a848ce99a67 3258992 gstreamer1.0-plugins-bad_1.16.1-1_arm64.deb
+ d5e156f4d3409159e4b996f18aa6b13b558745e1ba326c76a2cc9aba8c713faf 1734968 libgstreamer-opencv1.0-0_1.16.1-1_arm64.deb
+ 659129303e4884abac3234f2a1b52d46d867562deffa15a2b3ee1d771e01dc8d 1980444 libgstreamer-plugins-bad1.0-0_1.16.1-1_arm64.deb
+ 90902795d6b83ccf820b5fc5ce95f7c83c2d99abf7de3b5826d11b8e01b14374 1839176 libgstreamer-plugins-bad1.0-dev_1.16.1-1_arm64.deb
+Files:
+ b704a27fe33b34ccbb441c9f18ed2154 1753316 introspection extra gir1.2-gst-plugins-bad-1.0_1.16.1-1_arm64.deb
+ a21a37fdf26796743b37c8d57c866d60 28290 libs extra gst-plugins-bad1.0_1.16.1-1_arm64.buildinfo
+ 8a4470e5084bc06f64fce7b6d34ddf4c 1795536 libs extra gstreamer1.0-opencv_1.16.1-1_arm64.deb
+ 313be0ac4dbc55241f828be1982fcba7 13200340 debug extra gstreamer1.0-plugins-bad-dbg_1.16.1-1_arm64.deb
+ 0a51e22a8d6a6dced93074d886168b3d 1730380 doc extra gstreamer1.0-plugins-bad-doc_1.16.1-1_all.deb
+ e1ee44b345cafc80de46d0f68bf995c1 3258992 libs extra gstreamer1.0-plugins-bad_1.16.1-1_arm64.deb
+ b698c8d5ea6b76e6931768e7fdc322d8 1734968 libs extra libgstreamer-opencv1.0-0_1.16.1-1_arm64.deb
+ db192c2ce1cb34e6745e68e9ff5ac847 1980444 libs extra libgstreamer-plugins-bad1.0-0_1.16.1-1_arm64.deb
+ 5f87003e9cb921b2e3a75f6edf40ec4c 1839176 libdevel extra libgstreamer-plugins-bad1.0-dev_1.16.1-1_arm64.deb
