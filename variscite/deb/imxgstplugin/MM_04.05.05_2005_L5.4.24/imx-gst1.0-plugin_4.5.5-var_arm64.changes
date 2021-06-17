@@ -1,0 +1,25 @@
+Format: 1.8
+Date: Mon, 7 Jun 2021 16:09:23 -0700
+Source: imx-gst1.0-plugin
+Binary: imx-gst1.0-plugin-mx8qm
+Architecture: arm64
+Version: 4.5.5-var
+Distribution: bullseye
+Urgency: medium
+Maintainer: Harshesh Valera <harshesh.v@variscite.com>
+Changed-By: Nate Drude <nate.d@variscite.com>
+Description:
+ imx-gst1.0-plugin-mx8qm - NXP gstreamer1.0 plugin library
+Changes:
+ imx-gst1.0-plugin (4.5.5-var) bullseye; urgency=medium
+ .
+   * Debianize imx-gst1.0-plugin for iMX8QM
+Checksums-Sha1:
+ 8861aa5d37cec0abf20854e18995dab1510a2e58 290928 imx-gst1.0-plugin-mx8qm_4.5.5-var_arm64.deb
+ 6798cb6c6a6b22f106242f62f8b1eefce6d3767e 17522 imx-gst1.0-plugin_4.5.5-var_arm64.buildinfo
+Checksums-Sha256:
+ 9385c53ec0368e73a3a715d591dabbaa933ace5d84fc3652056f99a7a80019a8 290928 imx-gst1.0-plugin-mx8qm_4.5.5-var_arm64.deb
+ 17eb0d33da1efa56cb5fb546fce741582c348db313afcb02f7b141be721b6688 17522 imx-gst1.0-plugin_4.5.5-var_arm64.buildinfo
+Files:
+ 78bc348bb631434bbe05c6cc7178dd2e 290928 multimedia optional imx-gst1.0-plugin-mx8qm_4.5.5-var_arm64.deb
+ 1291394185730331d869ec4b267e2533 17522 restricted/libs optional imx-gst1.0-plugin_4.5.5-var_arm64.buildinfo
