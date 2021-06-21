@@ -750,6 +750,46 @@ EOF
 		cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
 	fi
 
+	# install freertos-variscite
+	if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
+
+		# Install FS helper scripts
+		install -d ${ROOTFS_BASE}/etc/remoteproc
+		install -m 0755 ${G_VARISCITE_PATH}/variscite-rproc-u-boot ${ROOTFS_BASE}/etc/remoteproc
+		install -m 0755 ${G_VARISCITE_PATH}/variscite-rproc-linux ${ROOTFS_BASE}/etc/remoteproc
+		install -m 0644 ${G_VARISCITE_PATH}/variscite-rproc-common.sh ${ROOTFS_BASE}/etc/remoteproc
+		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-rproc.conf ${ROOTFS_BASE}/etc/remoteproc
+
+		# install freertos demos
+		readonly CM_BUILD_TARGETS=" \
+		    debug \
+		    ddr_debug \
+		"
+		# Install all demos in CM_DEMOS
+		for CM_DEMO in ${CM_DEMOS}; do
+		    DIR_GCC="${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+		    # Install all build targets
+		    for CM_BUILD_TARGET in ${CM_BUILD_TARGETS}; do
+			# Install elf
+			FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
+			install -m 0644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
+			# Install bin
+			FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.bin)"
+			install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/boot/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
+		    done
+		done
+
+		# Install disable_cache demos (all demos in CM_DEMOS_DISABLE_CACHE)
+		for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
+		    DIR_GCC="${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+		    # Install all build targets
+		    CM_BUILD_TARGET="debug"
+		    # Install elf
+		    FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
+		    install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
+		done
+	fi
+
 	#clenup command
 	echo "#!/bin/bash
 	apt-get clean

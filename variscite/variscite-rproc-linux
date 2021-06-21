@@ -1,0 +1,63 @@
+#!/bin/sh -e
+
+readonly FILE_SCRIPT="$(basename "$0")"
+readonly DIR_SCRIPT="$( cd "$( dirname $0 )" >/dev/null 2>&1 && pwd )"
+
+. ${DIR_SCRIPT}/variscite-rproc-common.sh
+
+readonly FILE_DEFAULT_FW=${FILE_DEFAULT_FW_LINUX}
+readonly DIR_FW="/lib/firmware"
+
+# Parse firmware file from command line
+parse_args "$@"
+
+readonly REMOTEPROC_DIR="/sys/class/remoteproc/remoteproc${CM_CORE}"
+readonly REMOTEPROC_STATE="${REMOTEPROC_DIR}/state"
+readonly REMOTEPROC_FW="${REMOTEPROC_DIR}/firmware"
+
+cm_stop() {
+    if [ "running" = "$(cat ${REMOTEPROC_STATE})" ]; then
+        echo "Cortex-M: Stopping"
+        echo "stop" > ${REMOTEPROC_STATE}
+    fi
+}
+
+cm_load() {
+    CM_NEW_FW=$1
+    echo "Cortex-M: Loading ${CM_NEW_FW}"
+    echo "${CM_NEW_FW}" > ${REMOTEPROC_FW}
+}
+
+cm_start() {
+    echo "Cortex-M: Starting"
+    echo "start" > ${REMOTEPROC_STATE}
+}
+
+# Warn user if remoteproc not found
+if [ ! -e "${REMOTEPROC_DIR}" ]; then
+    echo ""
+    echo "Error: ${REMOTEPROC_DIR} not found."
+    echo "Please enable remoteproc driver."
+    echo "Most likely you need to use the correct device tree, for example:"
+    echo "fw_setenv fdt_file ${CM_DTB} && reboot"
+    echo ""
+    exit
+fi
+
+if [ "i.MX8QXP" = "${SOC}" ] && [ "cm_disable_cache.elf.debug" != "${FILE_CM_BIN}" ]; then
+    cm_stop
+    cm_load "cm_disable_cache.elf.debug"
+    cm_start
+    sleep 0.1
+fi
+
+if [ "i.MX8QM" = "${SOC}" ] && [ "cm_disable_cache_m4${CM_CORE}.elf.debug" != "${FILE_CM_BIN}" ]; then
+    cm_stop
+    cm_load "cm_disable_cache_m4${CM_CORE}.elf.debug"
+    cm_start
+    sleep 0.1
+fi
+
+cm_stop
+cm_load ${FILE_CM_BIN}
+cm_start

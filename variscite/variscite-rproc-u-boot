@@ -1,0 +1,51 @@
+#!/bin/sh -e
+
+readonly FILE_SCRIPT="$(basename "$0")"
+readonly DIR_SCRIPT="$( cd "$( dirname $0 )" >/dev/null 2>&1 && pwd )"
+
+. ${DIR_SCRIPT}/variscite-rproc-common.sh
+
+readonly FILE_DEFAULT_FW=${FILE_DEFAULT_FW_U_BOOT}
+readonly DIR_FW="/boot"
+
+# Parse firmware file from command line
+parse_args "$@"
+
+# Determine if DDR or TCM
+case "$FILE_CM_BIN" in
+    *"ddr"*) :
+        echo "Configuring for DDR memory"
+        CM_LOAD_ADDR=${CM_LOAD_ADDR_DDR}
+        ;;
+    *"tcm"*) :
+        echo "Configuring for TCM memory"
+        CM_LOAD_ADDR=${CM_LOAD_ADDR_TCM}
+        ;;
+    *) :
+        echo "Error: Unknown target in file ${MACHINE}"
+        exit
+esac
+
+if [ "${CM_CORES}" -gt 1 ]; then
+    CM_CORE_UBOOT="${CM_CORE}"
+else
+    CM_CORE_UBOOT=""
+fi
+
+# Configure U-Boot environment variables
+if [ "i.MX8QM" = "${SOC}" ] || [ "i.MX8QXP" = "${SOC}" ]; then
+    # i.MX8QM and i.MX8QXP always load to DDR, and u-boot copies to TCM
+    set -x
+else
+    set -x
+    fw_setenv ${CM_SERIES}_addr "${CM_LOAD_ADDR}"
+fi
+fw_setenv fdt_file "${CM_DTB}"
+fw_setenv use_${CM_SERIES}${CM_CORE_UBOOT} "yes"
+fw_setenv ${CM_SERIES}${CM_CORE_UBOOT}_bin "${FILE_CM_BIN}"
+
+{ set +x; } 2>/dev/null
+
+echo
+echo "Finished: Please reboot, the ${CM_SERIES} firmware will run during U-Boot"
+echo

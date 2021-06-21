@@ -1,0 +1,115 @@
+From 296a928804eaf47a6201bc59fc4886c2417b61e1 Mon Sep 17 00:00:00 2001
+From: FrancescoFerraro <francesco.f@variscite.com>
+Date: Sat, 13 Feb 2021 11:50:03 +0100
+Subject: [PATCH 1/2] MIMX8QM6_cm4: changes to build disable_cache_m4 firmware
+
+Signed-off-by: FrancescoFerraro <francesco.f@variscite.com>
+---
+ devices/MIMX8QM6/system_MIMX8QM6_cm4_core0.c | 23 ++++++++++++++------
+ devices/MIMX8QM6/system_MIMX8QM6_cm4_core1.c | 21 ++++++++++++------
+ 2 files changed, 30 insertions(+), 14 deletions(-)
+
+diff --git a/devices/MIMX8QM6/system_MIMX8QM6_cm4_core0.c b/devices/MIMX8QM6/system_MIMX8QM6_cm4_core0.c
+index 4bc14571..4f03af66 100644
+--- a/devices/MIMX8QM6/system_MIMX8QM6_cm4_core0.c
++++ b/devices/MIMX8QM6/system_MIMX8QM6_cm4_core0.c
+@@ -99,27 +99,36 @@ void SystemInit (void) {
+   CM4_0__WDOG->TOVAL = 0xFFFF;
+   CM4_0__WDOG->CS = (uint32_t) ((CM4_0__WDOG->CS) & ~WDOG_CS_EN_MASK) | WDOG_CS_UPDATE_MASK;
+ #endif /* (DISABLE_WDOG) */
+-  
++
++  /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++   * This changes are need to generate a M core application to disable the caches.
++   * This is necessary to avoid M core does not run when multiply DDR applications
++   * are loaded from linux user space using remoteproc framework.
++   * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++   */
++
+   /* Initialize Cache */
+-  /* Enable Code Bus Cache */
++  /* Disable Code Bus Cache */
+   /* set command to invalidate all ways, and write GO bit to initiate command */
+   LMEM->PCCCR |= LMEM_PCCCR_INVW1_MASK | LMEM_PCCCR_INVW0_MASK;
+   LMEM->PCCCR |= LMEM_PCCCR_GO_MASK;
+   /* Wait until the command completes */
+   while ((LMEM->PCCCR & LMEM_PCCCR_GO_MASK) != 0U) {
+   }
+-  /* Enable cache, enable write buffer */
+-  LMEM->PCCCR |= (LMEM_PCCCR_ENWRBUF_MASK | LMEM_PCCCR_ENCACHE_MASK);
++  /* Disable cache, enable write buffer */
++  LMEM->PCCCR &= ~LMEM_PCCCR_ENCACHE_MASK;
+   
+-  /* Enable System Bus Cache */
++  /* Disable System Bus Cache */
+   /* set command to invalidate all ways, and write GO bit to initiate command */
+   LMEM->PSCCR |= LMEM_PSCCR_INVW1_MASK | LMEM_PSCCR_INVW0_MASK;
+   LMEM->PSCCR |= LMEM_PSCCR_GO_MASK;
+   /* Wait until the command completes */
+   while ((LMEM->PSCCR & LMEM_PSCCR_GO_MASK) != 0U) {
+   }
+-  /* Enable cache, enable write buffer */
+-  LMEM->PSCCR |= (LMEM_PSCCR_ENWRBUF_MASK | LMEM_PSCCR_ENCACHE_MASK);
++
++  /* Disable cache, enable write buffer */
++  LMEM->PSCCR &= ~LMEM_PSCCR_ENCACHE_MASK;
++  do{}while(1);
+ /* i.MX8QM systemInit */
+ }
+ 
+diff --git a/devices/MIMX8QM6/system_MIMX8QM6_cm4_core1.c b/devices/MIMX8QM6/system_MIMX8QM6_cm4_core1.c
+index a4ff50be..1025e80c 100644
+--- a/devices/MIMX8QM6/system_MIMX8QM6_cm4_core1.c
++++ b/devices/MIMX8QM6/system_MIMX8QM6_cm4_core1.c
+@@ -62,7 +62,6 @@ static sc_ipc_t ipcHandle;
+ /* ----------------------------------------------------------------------------
+    -- SystemInit()
+    ---------------------------------------------------------------------------- */
+-
+ void SystemInit (void) {
+ #if (ENABLE_ECC_DEBUG)
+   volatile uint32_t *p = (uint32_t *)0xE0080480;
+@@ -99,26 +98,34 @@ void SystemInit (void) {
+   CM4_1__WDOG->CS = (uint32_t) ((CM4_1__WDOG->CS) & ~WDOG_CS_EN_MASK) | WDOG_CS_UPDATE_MASK;
+ #endif /* (DISABLE_WDOG) */
+ 
++  /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++   * This changes are need to generate a M core application to disable the caches.
++   * This is necessary to avoid M core does not run when multiply DDR applications
++   * are loaded from linux user space using remoteproc framework.
++   * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
++   */
++
+   /* Initialize Cache */
+-  /* Enable Code Bus Cache */
++  /* Disable Code Bus Cache */
+   /* set command to invalidate all ways, and write GO bit to initiate command */
+   LMEM->PCCCR |= LMEM_PCCCR_INVW1_MASK | LMEM_PCCCR_INVW0_MASK;
+   LMEM->PCCCR |= LMEM_PCCCR_GO_MASK;
+   /* Wait until the command completes */
+   while ((LMEM->PCCCR & LMEM_PCCCR_GO_MASK) != 0U) {
+   }
+-  /* Enable cache, enable write buffer */
+-  LMEM->PCCCR |= (LMEM_PCCCR_ENWRBUF_MASK | LMEM_PCCCR_ENCACHE_MASK);
++  /* Disable cache, enable write buffer */
++  LMEM->PCCCR &= ~LMEM_PCCCR_ENCACHE_MASK;
+   
+-  /* Enable System Bus Cache */
++  /* Disable System Bus Cache */
+   /* set command to invalidate all ways, and write GO bit to initiate command */
+   LMEM->PSCCR |= LMEM_PSCCR_INVW1_MASK | LMEM_PSCCR_INVW0_MASK;
+   LMEM->PSCCR |= LMEM_PSCCR_GO_MASK;
+   /* Wait until the command completes */
+   while ((LMEM->PSCCR & LMEM_PSCCR_GO_MASK) != 0U) {
+   }
+-  /* Enable cache, enable write buffer */
+-  LMEM->PSCCR |= (LMEM_PSCCR_ENWRBUF_MASK | LMEM_PSCCR_ENCACHE_MASK);
++  /* Disable cache, enable write buffer */
++  LMEM->PSCCR &= ~LMEM_PSCCR_ENCACHE_MASK;
++  do{}while(1);
+ /* i.MX8QM systemInit */
+ }
+ 
+-- 
+2.25.1
+

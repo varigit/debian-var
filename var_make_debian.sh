@@ -392,6 +392,48 @@ function install_kernel_modules()
 		INSTALL_MOD_PATH=${4} modules_install
 }
 
+compile_fw() {
+    DIR_GCC="$1"
+    cd ${DIR_GCC}
+    ./clean.sh
+    ./build_all.sh > /dev/null
+}
+
+# build freertos_variscite
+# $1 -- output directory
+function make_freertos_variscite()
+{
+    export ARMGCC_DIR=${G_TOOLS_PATH}/${G_CM_GCC_OUT_DIR}
+
+    # Copy and patch hello_world demo to disable_cache demo
+    if [ -e "${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}" ]; then
+        # Copy hello_world demo
+        cp -r ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/hello_world/ ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache
+        # Rename hello_world strings to disable_cache
+        grep -rl hello_world ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache | xargs sed -i 's/hello_world/disable_cache/g'
+        # Rename hello_world files to disable_cache
+        find ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache/ -name '*hello_world*' -exec sh -c 'mv "$1" "$(echo "$1" | sed s/hello_world/disable_cache/)"' _ {} \;
+    fi
+
+    # Build all demos in CM_DEMOS
+    for CM_DEMO in ${CM_DEMOS}; do
+        compile_fw "${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+    done
+
+    # Build firmware to reset cache
+    if [ -e "${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}" ]; then
+        # Apply patch to disable cache for machine
+        cd $G_FREERTOS_VAR_SRC_DIR && git apply ${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}
+
+        # Build the firmware
+        for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
+                compile_fw "${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+        done
+    fi
+
+    cd -
+}
+
 # build sc firmware
 # $1 -- output directory
 function make_imx_sc_fw()
@@ -932,6 +974,30 @@ function cmd_make_deploy()
 				${G_IMX_SDMA_FW_GIT_REV}
 		};
 	fi
+
+	# get freertos-variscite dependencies
+	if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
+		# get Cortex-M toolchain
+		readonly G_CM_GCC_PATH="${G_TOOLS_PATH}/${G_CM_GCC_NAME}"
+		(( `ls ${G_CM_GCC_PATH} 2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get and unpack Cortex-M cross compiler";
+			get_remote_file ${G_CM_GCC_LINK} \
+				${DEF_SRC_DIR}/${G_CM_GCC_ARCHIVE} \
+				${G_CM_GCC_SHA256SUM}
+			mkdir -p ${G_TOOLS_PATH}/${G_CM_GCC_OUT_DIR}
+			tar -xf ${DEF_SRC_DIR}/${G_CM_GCC_ARCHIVE} --strip-components=1 \
+				-C ${G_TOOLS_PATH}/${G_CM_GCC_OUT_DIR}/
+		};
+
+		# get freertos-variscite repository
+		(( `ls ${G_FREERTOS_VAR_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get freertos-variscite source repository";
+			get_git_src ${G_FREERTOS_VAR_SRC_GIT} \
+				${G_FREERTOS_VAR_SRC_BRANCH} ${G_FREERTOS_VAR_SRC_DIR} \
+				${G_FREERTOS_VAR_SRC_REV}
+		};
+	fi
+
 	return 0
 }
 
@@ -968,6 +1034,11 @@ function cmd_make_rootfs()
 		make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} \
 				${G_UBI_FILE_NAME}
 	fi
+}
+
+function cmd_make_freertos_variscite()
+{
+	make_freertos_variscite ${G_FREERTOS_VAR_SRC_DIR} ${PARAM_OUTPUT_DIR}
 }
 
 function cmd_make_uboot()
@@ -1099,11 +1170,15 @@ case $PARAM_CMD in
 	rtar )
 		cmd_make_rfs_tar
 		;;
+	freertosvariscite )
+		cmd_make_freertos_variscite
+		;;
 	all )
 		cmd_make_uboot  &&
 		cmd_make_kernel &&
 		cmd_make_kmodules &&
 		cmd_make_kernel_header_deb &&
+		cmd_make_freertos_variscite &&
 		cmd_make_rootfs
 		;;
 	clean )
