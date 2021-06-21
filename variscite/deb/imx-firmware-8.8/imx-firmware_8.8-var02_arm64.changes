@@ -1,0 +1,36 @@
+Format: 1.8
+Date: Mon, 21 Jun 2021 20:40:39 +0000
+Source: imx-firmware
+Binary: imx-firmware-epdc imx-firmware-hdmi imx-firmware-sdma imx-firmware-vpu
+Architecture: arm64
+Version: 8.8-var02
+Distribution: bullseye
+Urgency: medium
+Maintainer: Harshesh Valera <harshesh.v@variscite.com>
+Description:
+ imx-firmware-epdc - NXP firmware for EPDC
+ imx-firmware-hdmi - NXP firmware for HDMI
+ imx-firmware-sdma - NXP firmware for SDMA
+ imx-firmware-vpu - NXP firmware for VPU
+Changes:
+ imx-firmware (8.8-var02) bullseye; urgency=medium
+ .
+   * Add imx-firmware-hdmi package
+Checksums-Sha1:
+ a886768fcb2ce294dd0f8018310440c421ebc7d9 79208 imx-firmware-epdc_8.8-var02_arm64.deb
+ 33743401bc667cfd2a418e674c6cb4476cbcb7c4 76632 imx-firmware-hdmi_8.8-var02_arm64.deb
+ 992f6441304fad40ab4cca102fa531e8e4408f0b 19232 imx-firmware-sdma_8.8-var02_arm64.deb
+ cf7e0f7b02ba5ae10fb19f20bcec327f6c3589d7 458556 imx-firmware-vpu_8.8-var02_arm64.deb
+ 26a0f6aa67c71644f3942ee525eff3d6adbac7c4 5963 imx-firmware_8.8-var02_arm64.buildinfo
+Checksums-Sha256:
+ 08a1ae65b16d3c6e6f4b96846265d4b981d32de8e986678d2e7f72f809bdcf79 79208 imx-firmware-epdc_8.8-var02_arm64.deb
+ 6061ef819b2d64494e3983d8a1abb9a76268a5f8971f038c7773a93d7bef4262 76632 imx-firmware-hdmi_8.8-var02_arm64.deb
+ 980299ca7dce97c5f2abe48a87bbb7b4625f3f37d844211beeb146763faf5913 19232 imx-firmware-sdma_8.8-var02_arm64.deb
+ f4182bcb5b683087927452cd2301a00ed75575dfe90b9555382d954819f52d9e 458556 imx-firmware-vpu_8.8-var02_arm64.deb
+ 4f77e2d52191d9e90439d79c8f344301fe2b38965c1a35d3f25e0f630f1ae76f 5963 imx-firmware_8.8-var02_arm64.buildinfo
+Files:
+ c954551b271c0310763783914f961660 79208 restricted/base optional imx-firmware-epdc_8.8-var02_arm64.deb
+ d39ecb2c4ef5a878aaed81c8ba3e1d2d 76632 restricted/base optional imx-firmware-hdmi_8.8-var02_arm64.deb
+ 57ca04c671d87dead2b0378f17d414cb 19232 restricted/base optional imx-firmware-sdma_8.8-var02_arm64.deb
+ f1ca97cec318b30a20e0998ad28b7a73 458556 restricted/base optional imx-firmware-vpu_8.8-var02_arm64.deb
+ 43d37677246c772075fa252848dcba3a 5963 restricted/libs optional imx-firmware_8.8-var02_arm64.buildinfo
