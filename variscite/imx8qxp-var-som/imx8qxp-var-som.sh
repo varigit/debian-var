@@ -104,7 +104,7 @@ BOOT_DTB="imx8qxp-var-som-symphony.dtb"
 DEFAULT_BOOT_DTB="imx8qxp-var-som-symphony-sd.dtb"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210601T084324Z/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210621T090656Z/"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
