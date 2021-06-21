@@ -45,6 +45,34 @@ readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git
 readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
 readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
 
+#freertos-variscite
+readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
+readonly G_FREERTOS_VAR_SRC_GIT="git://github.com/varigit/freertos-variscite.git"
+readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.9.x-var01"
+readonly G_FREERTOS_VAR_SRC_REV="a8b9a7ea089d791cd30c00cc691c2768f83cc307"
+readonly CM_BOARD="som_mx8qm"
+readonly DISABLE_CACHE_PATCH="disable_cache.patch"
+readonly CM_DEMOS_DISABLE_CACHE="demo_apps/disable_cache/cm4_core0 demo_apps/disable_cache/cm4_core1"
+readonly CM_DEMOS=" \
+    multicore_examples/rpmsg_lite_str_echo_rtos/cm4_core0 \
+    multicore_examples/rpmsg_lite_pingpong_rtos/linux_remote/cm4_core0 \
+    demo_apps/hello_world/cm4_core0 \
+    multicore_examples/rpmsg_lite_str_echo_rtos/cm4_core1 \
+    multicore_examples/rpmsg_lite_pingpong_rtos/linux_remote/cm4_core1 \
+    demo_apps/hello_world/cm4_core1 \
+"
+readonly G_CM_GCC_NAME="gcc-arm-none-eabi-9-2020-q2-update"
+#
+# To avoid scfw compilation errors the Cortex-M gcc toolchain is unpacked in specific folder (G_CM_GCC_OUT_DIR)
+# The below line in the scfw Makefile cause the problem selecting a not proper gcc toolchain version
+# CROSS_COMPILE = $(TOOLS)/gcc-arm-none-eabi-*/bin/arm-none-eabi-
+# https://github.com/varigit/imx-sc-firmware/blob/495e846a5e1ff5d4208c2fb6529397d80c40ebf7/src/scfw_export_mx8qx_b0/Makefile#L343
+readonly G_CM_GCC_OUT_DIR="cm-${G_CM_GCC_NAME}"
+
+readonly G_CM_GCC_ARCHIVE="${G_CM_GCC_NAME}-x86_64-linux.tar.bz2"
+readonly G_CM_GCC_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/${G_CM_GCC_ARCHIVE}"
+readonly G_CM_GCC_SHA256SUM="5adc2ee03904571c2de79d5cfc0f7fe2a5c5f54f44da5b645c17ee57b217f11f"
+
 #imx-atf
 readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
 readonly G_IMX_ATF_GIT="git://github.com/varigit/imx-atf.git"
