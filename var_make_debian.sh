@@ -111,6 +111,9 @@ fi
 
 source ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh
 
+# freertos-variscite globals
+readonly G_FREERTOS_VAR_BUILD_DIR="${G_FREERTOS_VAR_SRC_DIR}.build"
+
 # Setup cross compiler path, name, kernel dtb path, kernel image type, helper scripts
 if [ "${ARCH_CPU}" = "64BIT" ]; then
 	G_CROSS_COMPILER_NAME=${G_CROSS_COMPILER_64BIT_NAME}
@@ -405,29 +408,33 @@ function make_freertos_variscite()
 {
     export ARMGCC_DIR=${G_TOOLS_PATH}/${G_CM_GCC_OUT_DIR}
 
+    # Clean previous build
+    rm -rf ${G_FREERTOS_VAR_BUILD_DIR}
+    cp -r ${G_FREERTOS_VAR_SRC_DIR} ${G_FREERTOS_VAR_BUILD_DIR}
+
     # Copy and patch hello_world demo to disable_cache demo
     if [ -e "${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}" ]; then
         # Copy hello_world demo
-        cp -r ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/hello_world/ ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache
+        cp -r ${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/demo_apps/hello_world/ ${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache
         # Rename hello_world strings to disable_cache
-        grep -rl hello_world ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache | xargs sed -i 's/hello_world/disable_cache/g'
+        grep -rl hello_world ${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache | xargs sed -i 's/hello_world/disable_cache/g'
         # Rename hello_world files to disable_cache
-        find ${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache/ -name '*hello_world*' -exec sh -c 'mv "$1" "$(echo "$1" | sed s/hello_world/disable_cache/)"' _ {} \;
+        find ${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache/ -name '*hello_world*' -exec sh -c 'mv "$1" "$(echo "$1" | sed s/hello_world/disable_cache/)"' _ {} \;
     fi
 
     # Build all demos in CM_DEMOS
     for CM_DEMO in ${CM_DEMOS}; do
-        compile_fw "${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+        compile_fw "${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
     done
 
     # Build firmware to reset cache
     if [ -e "${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}" ]; then
         # Apply patch to disable cache for machine
-        cd $G_FREERTOS_VAR_SRC_DIR && git apply ${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}
+        cd $G_FREERTOS_VAR_BUILD_DIR && git apply ${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}
 
         # Build the firmware
         for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
-                compile_fw "${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+                compile_fw "${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
         done
     fi
 

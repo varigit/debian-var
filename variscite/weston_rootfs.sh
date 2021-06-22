@@ -751,7 +751,7 @@ EOF
 	fi
 
 	# install freertos-variscite
-	if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
+	if [ ! -z "${G_FREERTOS_VAR_BUILD_DIR}" ]; then
 
 		# Install FS helper scripts
 		install -d ${ROOTFS_BASE}/etc/remoteproc
@@ -767,7 +767,7 @@ EOF
 		"
 		# Install all demos in CM_DEMOS
 		for CM_DEMO in ${CM_DEMOS}; do
-		    DIR_GCC="${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+		    DIR_GCC="${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
 		    # Install all build targets
 		    for CM_BUILD_TARGET in ${CM_BUILD_TARGETS}; do
 			# Install elf
@@ -781,7 +781,7 @@ EOF
 
 		# Install disable_cache demos (all demos in CM_DEMOS_DISABLE_CACHE)
 		for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
-		    DIR_GCC="${G_FREERTOS_VAR_SRC_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+		    DIR_GCC="${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
 		    # Install all build targets
 		    CM_BUILD_TARGET="debug"
 		    # Install elf
