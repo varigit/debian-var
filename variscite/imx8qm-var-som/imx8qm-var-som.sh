@@ -17,9 +17,15 @@ readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 G_LINUX_DTB="freescale/imx8qm-var-som-dp.dtb
 	freescale/imx8qm-var-som-hdmi.dtb
 	freescale/imx8qm-var-som-lvds.dtb
+	freescale/imx8qm-var-som-lvds-m4.dtb
+	freescale/imx8qm-var-som-hdmi-m4.dtb
+	freescale/imx8qm-var-som-dp-m4.dtb
 	freescale/imx8qm-var-spear-dp.dtb
 	freescale/imx8qm-var-spear-hdmi.dtb
-	freescale/imx8qm-var-spear-lvds.dtb"
+	freescale/imx8qm-var-spear-lvds.dtb
+	freescale/imx8qm-var-spear-lvds-m4.dtb
+	freescale/imx8qm-var-spear-hdmi-m4.dtb
+	freescale/imx8qm-var-spear-dp-m4.dtb"
 
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
