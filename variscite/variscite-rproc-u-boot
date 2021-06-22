@@ -17,13 +17,10 @@ case "$FILE_CM_BIN" in
         echo "Configuring for DDR memory"
         CM_LOAD_ADDR=${CM_LOAD_ADDR_DDR}
         ;;
-    *"tcm"*) :
+    *) :
         echo "Configuring for TCM memory"
         CM_LOAD_ADDR=${CM_LOAD_ADDR_TCM}
         ;;
-    *) :
-        echo "Error: Unknown target in file ${MACHINE}"
-        exit
 esac
 
 if [ "${CM_CORES}" -gt 1 ]; then
