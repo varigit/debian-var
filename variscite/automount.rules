@@ -15,6 +15,6 @@
 
 # Media automounting
 ACTION=="add", SUBSYSTEMS=="usb", SUBSYSTEM=="block", ENV{ID_FS_USAGE}=="filesystem", \
-	RUN{program}+="/usr/bin/systemd-mount --no-block --automount=yes --collect $devnode"
+	RUN{program}+="/usr/bin/systemd-mount --no-block --automount=no --collect $devnode"
 ACTION=="add", SUBSYSTEMS=="mmc", SUBSYSTEM=="block", ENV{ID_FS_USAGE}=="filesystem", \
-	RUN{program}+="/usr/bin/systemd-mount --no-block --automount=yes --collect $devnode"
+	RUN{program}+="/usr/bin/systemd-mount --no-block --automount=no --collect $devnode"
