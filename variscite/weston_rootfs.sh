@@ -179,7 +179,7 @@ Pin-Priority: 600
 echo "Acquire::Check-Valid-Until no;" > etc/apt/apt.conf.d/99no-check-valid-until
 
 echo "
-# /dev/mmcblk0p1  /boot           vfat    defaults        0       0
+/dev/root            /                    auto       defaults              1  1
 " > etc/fstab
 
 echo "${MACHINE}" > etc/hostname
