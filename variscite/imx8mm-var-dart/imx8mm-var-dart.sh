@@ -30,13 +30,12 @@ readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
 readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
-readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p2.0"
-readonly G_GPU_IMX_VIV_GBM_DIR="libgbm1"
+readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.3.p1.0"
 readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.4.0.p2.0"
 readonly GST_MM_VERSION="MM_04.05.03_1911_L5.4.0"
-readonly G2D_PACKAGE_DIR="imx-gpu-g2d-6.4.0.p2.0"
+readonly G2D_PACKAGE_DIR="imx-gpu-g2d-6.4.3.p1.0"
 readonly IMX_FIRMWARE_VERSION="8.8"
-readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d"
+readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d/weston-9"
 
 readonly G_IMX_CODEC_DIR="imxcodec-4.5.3"
 readonly G_IMX_PARSER_DIR="imxparser-4.5.3"
@@ -72,7 +71,7 @@ IMXBOOT_TARGETS="flash_lpddr4_ddr4_evk"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mm.bin"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210622T152506Z/"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
