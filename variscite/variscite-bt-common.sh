@@ -28,7 +28,7 @@ soc_is_imx8()
 # Return true if SOM is VAR-SOM-MX8M-MINI
 som_is_var_som_mx8mm()
 {
-	grep -q VAR-SOM-MX8MM /sys/devices/soc0/machine
+	grep -q VAR-SOM-MX8M-MINI /sys/devices/soc0/machine
 }
 
 # Return true if SOM is VAR-SOM-MX8M-PLUS

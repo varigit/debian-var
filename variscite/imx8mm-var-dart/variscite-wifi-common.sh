@@ -1,7 +1,7 @@
 # Return true if board is DART-MX8M-MINI
 board_is_dart_mx8m_mini()
 {
-	grep -q DART-MX8MM /sys/devices/soc0/machine
+	grep -q DART-MX8M-MINI /sys/devices/soc0/machine
 }
 
 # Setup WIFI control GPIOs
@@ -40,7 +40,7 @@ wifi_up()
 {
 	# Unbind WIFI device from MMC controller
 	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
-	   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
         fi
 
 	# WIFI_3V3 up
@@ -90,7 +90,7 @@ wifi_down()
 
 	# Unbind WIFI device from MMC controller
 	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
-	   echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
 	fi
 
 	# WIFI_EN down
@@ -116,10 +116,30 @@ wifi_down()
 	echo 0 > /sys/class/gpio/gpio${WIFI_3V3_GPIO}/value
 }
 
+# Return true if SOM has WIFI module assembled
+wifi_is_available()
+{
+	# Read SOM options EEPROM field
+	opt=$(i2cget -f -y 0x0 0x52 0x20)
+
+	# Check WIFI bit in SOM options
+	if [ $((opt & 0x1)) -eq 1 ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # Return true if WIFI should be started
 wifi_should_not_be_started()
 {
- 	[ -d /sys/class/net/wlan0 ] && return 0
+	# Do not start WIFI if it is not available
+	if ! wifi_is_available; then
+		return 0
+	fi
+
+	# Do not start WIFI if it is already started
+	[ -d /sys/class/net/wlan0 ] && return 0
 
 	return 1
 }
@@ -127,5 +147,10 @@ wifi_should_not_be_started()
 # Return true if WIFI should not be stopped
 wifi_should_not_be_stopped()
 {
+	# Do not stop WIFI if it is not available
+	if ! wifi_is_available; then
+		return 0
+	fi
+
 	return 1
 }
