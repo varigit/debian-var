@@ -32,17 +32,18 @@ readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
 readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.3.p1.0"
 readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.4.0.p2.0"
-readonly GST_MM_VERSION="MM_04.05.03_1911_L5.4.0"
+readonly GST_MM_VERSION="MM_04.05.07_2011_L5.4.70"
 readonly G2D_PACKAGE_DIR="imx-gpu-g2d-6.4.3.p1.0"
 readonly IMX_FIRMWARE_VERSION="8.8"
 readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d/weston-9"
 
-readonly G_IMX_CODEC_DIR="imxcodec-4.5.3"
-readonly G_IMX_PARSER_DIR="imxparser-4.5.3"
-readonly G_IMX_VPU_HANTRO_DIR="imxvpuhantro-1.16.0"
-readonly G_IMX_VPU_WRAPPER_DIR="imxvpuwrap-4.5.3"
+readonly G_IMX_CODEC_DIR="imxcodec-4.5.7"
+readonly G_IMX_PARSER_DIR="imxparser-4.5.7"
+readonly G_IMX_VPU_HANTRO_DIR="imxvpuhantro-1.20.0"
+readonly G_IMX_VPU_WRAPPER_DIR="imxvpuwrap-4.5.7"
+readonly G_IMX_VPU_HANTRO_VC_DIR="imxvpuhantro-vc-1.3.0"
 
-IMXGSTPLG="imx-gst1.0-plugin-mx8mm"
+IMXGSTPLG="imx-gst1.0-plugin-mx8mp"
 G2DPACKAGE="imx-gpu-g2d"
 
 # Flashing variables
