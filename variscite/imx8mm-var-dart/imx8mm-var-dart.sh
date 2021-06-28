@@ -3,8 +3,8 @@ readonly ARCH_CPU="64BIT"
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
-readonly G_UBOOT_BRANCH="lf-5.4.y_v2019.04_var01"
-readonly G_UBOOT_REV="3f4358b340b0fe8aa7f8b7ad80ce36d83e717041"
+readonly G_UBOOT_BRANCH="imx_v2020.04_5.4.24_2.1.0_var02"
+readonly G_UBOOT_REV="a7f63083956fa80d3f95e921b9439c51feaeba0a"
 G_UBOOT_DEF_CONFIG_MMC="imx8mm_var_dart_defconfig"
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
@@ -46,19 +46,25 @@ G2DPACKAGE="imx-gpu-g2d"
 # Flashing variables
 BOOTLOADER_OFFSET=33
 
-BOOT_DTB="fsl-imx8mm-var-dart.dtb"
-DEFAULT_BOOT_DTB="fsl-imx8mm-var-dart.dtb"
+BOOT_DTB="imx8mm-var-dart.dtb"
+DEFAULT_BOOT_DTB="imx8mm-var-dart.dtb"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
-readonly G_IMXBOOT_BRACH="lf-5.4.y"
-readonly G_IMXBOOT_REV="1c2277b95ce59f5d0265f26fec522e2ac2581e59"
+readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
+readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
+
+#imx-atf
+readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
+readonly G_IMX_ATF_GIT="git://github.com/varigit/imx-atf.git"
+readonly G_IMX_ATF_BRANCH="imx_5.4.24_2.1.0_var01"
+readonly G_IMX_ATF_REV="7575633e03ff952a18c0a2c0aa543dee793fda5f"
+
 HDMI=no
 TEE_LOAD_ADDR=0xbe000000
 ATF_LOAD_ADDR=0x00920000
-UBOOT_DTB="fsl-imx8mm-var-dart.dtb"
-UBOOT_DTB_EXTRA="fsl-imx8mm-var-som.dtb"
-UBOOT_DTB_EXTRA2="fsl-imx8mm-var-som-rev10.dtb"
+UBOOT_DTB="imx8mm-var-dart-customboard.dtb"
+UBOOT_DTB_EXTRA="imx8mm-var-som-symphony.dtb"
 IMXBOOT_TARGETS="flash_lpddr4_ddr4_evk"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mm.bin"
 

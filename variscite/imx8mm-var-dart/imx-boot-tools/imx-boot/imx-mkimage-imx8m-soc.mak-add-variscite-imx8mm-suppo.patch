@@ -1,0 +1,69 @@
+From 470d22541afdc181f1e693f11297ac057d48da57 Mon Sep 17 00:00:00 2001
+From: Nate Drude <nate.d@variscite.com>
+Date: Fri, 23 Oct 2020 16:07:35 -0500
+Subject: [PATCH] imx-mkimage: imx8m: soc.mak: add variscite imx8mm support
+
+Signed-off-by: Nate Drude <nate.d@variscite.com>
+
+---
+ iMX8M/soc.mak | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
+index b7b3986..fd63e3a 100644
+--- a/iMX8M/soc.mak
++++ b/iMX8M/soc.mak
+@@ -113,6 +113,21 @@ u-boot-spl-ddr4.bin: u-boot-spl.bin $(ddr4_imem_1d) $(ddr4_dmem_1d) $(ddr4_imem_
+ 	@cat u-boot-spl-pad.bin ddr4_1d_fw.bin ddr4_2d_fw.bin > u-boot-spl-ddr4.bin
+ 	@rm -f u-boot-spl-pad.bin ddr4_1d_fw.bin ddr4_2d_fw.bin ddr4_imem_1d_pad.bin ddr4_dmem_1d_pad.bin ddr4_imem_2d_pad.bin
+ 
++u-boot-spl-lpddr4-ddr4.bin: u-boot-spl.bin lpddr4_pmu_train_1d_imem.bin lpddr4_pmu_train_1d_dmem.bin lpddr4_pmu_train_2d_imem.bin lpddr4_pmu_train_2d_dmem.bin $(ddr4_imem_1d) $(ddr4_dmem_1d) $(ddr4_imem_2d) $(ddr4_dmem_2d)
++	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_1d_imem.bin lpddr4_pmu_train_1d_imem_pad.bin
++	@objcopy -I binary -O binary --pad-to 0x1000 --gap-fill=0x0 lpddr4_pmu_train_1d_dmem.bin lpddr4_pmu_train_1d_dmem_pad.bin
++	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 lpddr4_pmu_train_2d_imem.bin lpddr4_pmu_train_2d_imem_pad.bin
++	@objcopy -I binary -O binary --pad-to 0x1000 --gap-fill=0x0 lpddr4_pmu_train_2d_dmem.bin lpddr4_pmu_train_2d_dmem_pad.bin
++	@cat lpddr4_pmu_train_1d_imem_pad.bin lpddr4_pmu_train_1d_dmem_pad.bin > lpddr4_pmu_train_1d_fw.bin
++	@cat lpddr4_pmu_train_2d_imem_pad.bin lpddr4_pmu_train_2d_dmem_pad.bin > lpddr4_pmu_train_2d_fw.bin
++	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(ddr4_imem_1d) ddr4_imem_1d_pad.bin
++	dd if=$(ddr4_dmem_1d) of=ddr4_dmem_1d_pad.bin bs=1K count=4
++	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(ddr4_imem_2d) ddr4_imem_2d_pad.bin
++	@cat ddr4_imem_1d_pad.bin ddr4_dmem_1d_pad.bin > ddr4_1d_fw.bin
++	@cat ddr4_imem_2d_pad.bin ddr4_dmem_2d.bin > ddr4_2d_fw.bin
++	@cat u-boot-spl.bin lpddr4_pmu_train_1d_fw.bin lpddr4_pmu_train_2d_fw.bin ddr4_1d_fw.bin ddr4_2d_fw.bin > u-boot-spl-lpddr4-ddr4.bin
++	@rm -f ddr4_1d_fw.bin ddr4_2d_fw.bin ddr4_imem_1d_pad.bin ddr4_dmem_1d_pad.bin ddr4_imem_2d_pad.bin lpddr4_pmu_train_1d_fw.bin lpddr4_pmu_train_2d_fw.bin lpddr4_pmu_train_1d_imem_pad.bin lpddr4_pmu_train_1d_dmem_pad.bin lpddr4_pmu_train_2d_imem_pad.bin lpddr4_pmu_train_2d_dmem_pad.bin
++
+ u-boot-spl-ddr3l.bin: u-boot-spl.bin ddr3_imem_1d.bin ddr3_dmem_1d.bin
+ 	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 ddr3_imem_1d.bin ddr3_imem_1d.bin_pad.bin
+ 	@cat ddr3_imem_1d.bin_pad.bin ddr3_dmem_1d.bin > ddr3_pmu_train_fw.bin
+@@ -181,6 +196,12 @@ u-boot-ddr4-evk.itb: $(dtbs_ddr4_evk)
+ 	./mkimage_uboot -E -p 0x3000 -f u-boot-ddr4-evk.its u-boot-ddr4-evk.itb
+ 	@rm -f u-boot.its $(dtbs_ddr4_evk)
+ 
++dtbs_lpddr4_ddr4_evk = $(PLAT)-var-dart-customboard.dtb $(PLAT)-var-som-symphony.dtb
++u-boot-lpddr4-ddr4-evk.itb: $(dtbs_lpddr4_ddr4_evk)
++	./$(PAD_IMAGE) bl31.bin
++	DEK_BLOB_LOAD_ADDR=$(DEK_BLOB_LOAD_ADDR) TEE_LOAD_ADDR=$(TEE_LOAD_ADDR) ATF_LOAD_ADDR=$(ATF_LOAD_ADDR) ./mkimage_fit_atf.sh $(dtbs_lpddr4_ddr4_evk) > u-boot-lpddr4-ddr4-evk.its
++	./mkimage_uboot -E -p 0x3000 -f u-boot-lpddr4-ddr4-evk.its u-boot-lpddr4-ddr4-evk.itb
++
+ ifeq ($(HDMI),yes)
+ flash_evk: $(MKIMG) signed_hdmi_imx8m.bin u-boot-spl-ddr.bin u-boot.itb
+ 	./mkimage_imx8 -fit -signed_hdmi signed_hdmi_imx8m.bin -loader u-boot-spl-ddr.bin $(SPL_LOAD_ADDR) -second_loader u-boot.itb 0x40200000 0x60000 -out $(OUTIMG)
+@@ -208,6 +229,8 @@ flash_evk_emmc_fastboot: flash_evk_no_hdmi_emmc_fastboot
+ 
+ flash_ddr4_evk: flash_ddr4_evk_no_hdmi
+ 
++flash_lpddr4_ddr4_evk: flash_lpddr4_ddr4_evk_no_hdmi
++
+ flash_ddr3l_val: flash_ddr3l_val_no_hdmi
+ 
+ flash_ddr4_val: flash_ddr4_val_no_hdmi
+@@ -245,6 +268,9 @@ flash_ddr4_evk_flexspi: $(MKIMG) u-boot-spl-ddr4.bin u-boot-ddr4-evk.itb
+ 	./mkimage_imx8 -version $(VERSION) -dev flexspi -fit -loader u-boot-spl-ddr4.bin $(SPL_FSPI_LOAD_ADDR) -second_loader u-boot-ddr4-evk.itb 0x40200000 0x60000 -out $(OUTIMG)
+ 	./$(QSPI_PACKER) $(QSPI_HEADER)
+ 
++flash_lpddr4_ddr4_evk_no_hdmi: $(MKIMG) u-boot-spl-lpddr4-ddr4.bin u-boot-lpddr4-ddr4-evk.itb
++	./mkimage_imx8 -version $(VERSION) -fit -loader u-boot-spl-lpddr4-ddr4.bin $(SPL_LOAD_ADDR) -second_loader u-boot-lpddr4-ddr4-evk.itb 0x40200000 0x60000 -out $(OUTIMG)
++
+ flash_hdmi_spl_uboot: flash_evk
+ 
+ flash_dp_spl_uboot: flash_dp_evk

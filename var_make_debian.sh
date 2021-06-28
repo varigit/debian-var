@@ -582,8 +582,12 @@ function make_uboot()
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC_DP}
 		cp ${G_UBOOT_NAME_FOR_EMMC_DP} ${2}/${G_UBOOT_NAME_FOR_EMMC_DP}
 	elif [ "${MACHINE}" = "imx8mm-var-dart" ]; then
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/bl31-imx8mm.bin \
-			src/imx-mkimage/iMX8M/bl31.bin
+		cd ${DEF_SRC_DIR}/imx-atf
+		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+				PLAT=imx8mm bl31
+		cd -
+		cp ${DEF_SRC_DIR}/imx-atf/build/imx8mm/release/bl31.bin \
+			${DEF_SRC_DIR}/imx-mkimage/iMX8M/bl31.bin
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_dmem_1d.bin \
 			src/imx-mkimage/iMX8M/
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/ddr4_dmem_2d.bin \
@@ -600,8 +604,6 @@ function make_uboot()
 			src/imx-mkimage/iMX8M/
 		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_pmu_train_2d_imem.bin \
 			src/imx-mkimage/iMX8M/
-		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/soc.mak \
-			src/imx-mkimage/iMX8M/
 		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/u-boot-nodtb.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
 		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX8M/
@@ -614,7 +616,7 @@ function make_uboot()
 		fi
 		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX8M/mkimage_uboot
 		cd ${DEF_SRC_DIR}/imx-mkimage
-		make SOC=iMX8MM flash_lpddr4_ddr4_evk
+		make SOC=iMX8MM dtbs=${UBOOT_DTB} flash_lpddr4_ddr4_evk
 		cp ${DEF_SRC_DIR}/imx-mkimage/iMX8M/flash.bin \
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
@@ -944,6 +946,12 @@ function cmd_make_deploy()
 		if [ "${MACHINE}" = "imx8mn-var-som" ]; then
 			cd ${G_IMXBOOT_SRC_DIR}
 			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-var-som-imx8m-nano-support.patch
+			cd -
+		fi
+		# patch IMX boot for imx8mm-var-dart
+		if [ "${MACHINE}" = "imx8mm-var-dart" ]; then
+			cd ${G_IMXBOOT_SRC_DIR}
+			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-variscite-imx8mm-suppo.patch
 			cd -
 		fi
 		# patch IMX boot for imx8mq-var-dart
