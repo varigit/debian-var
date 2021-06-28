@@ -11,16 +11,19 @@ readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 # Linux kernel
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
-readonly G_LINUX_KERNEL_BRANCH="lf-5.4.y_var01"
-readonly G_LINUX_KERNEL_REV="050b21f4b39414cc928c5e0537c51e08c80497b8"
+readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"
+readonly G_LINUX_KERNEL_REV="0243069daad804780a1255e6927efeba82046bb7"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
-G_LINUX_DTB="freescale/imx8mm-var-dart.dtb
-       freescale/imx8mm-var-som.dtb
-       freescale/imx8mm-var-som-rev10.dtb
-       freescale/imx8mm-var-dart-m4.dtb
-       freescale/imx8mm-var-som-m4.dtb
-       freescale/imx8mm-var-som-rev10-m4.dtb
-       "
+G_LINUX_DTB="
+       freescale/imx8mm-var-dart-dt8mcustomboard.dtb
+       freescale/imx8mm-var-dart-dt8mcustomboard-legacy.dtb
+       freescale/imx8mm-var-som-symphony.dtb
+       freescale/imx8mm-var-som-symphony-legacy.dtb
+       freescale/imx8mm-var-dart-dt8mcustomboard-m4.dtb
+       freescale/imx8mm-var-dart-dt8mcustomboard-legacy-m4.dtb
+       freescale/imx8mm-var-som-symphony-m4.dtb
+       freescale/imx8mm-var-som-symphony-legacy-m4.dtb"
+
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
