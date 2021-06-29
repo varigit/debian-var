@@ -330,9 +330,11 @@ protected_install pm-utils
 
 # install dpkg-dev for dpkg-buildpackage
 protected_install debhelper
-protected_install execstack
 protected_install dh-python
 protected_install apt-src
+if [ "${G_NO_EXECSTACK}" != "y" ]; then
+	protected_install execstack
+fi
 
 apt-get -y autoremove
 

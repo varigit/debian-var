@@ -43,6 +43,7 @@ readonly G_IMX_PARSER_DIR="imxparser-4.5.7"
 readonly G_IMX_VPU_HANTRO_DIR="imxvpuhantro-1.20.0"
 readonly G_IMX_VPU_WRAPPER_DIR="imxvpuwrap-4.5.7"
 readonly G_IMX_VPU_HANTRO_VC_DIR="imxvpuhantro-vc-1.3.0"
+readonly G_NO_EXECSTACK="y"
 
 IMXGSTPLG="imx-gst1.0-plugin-mx8mp"
 G2DPACKAGE="imx-gpu-g2d"
