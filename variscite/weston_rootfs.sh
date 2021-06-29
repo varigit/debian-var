@@ -398,7 +398,12 @@ protected_install libdrm-vivante1
 protected_install libgbm1
 protected_install imx-gpu-viv-core
 protected_install dpkg-dev
-protected_install imx-gpu-viv-wl
+if [ ! -z "${IMX_GPU_VIV_DEFAULT_WL_PACKAGE}" ]
+then
+	echo "Default Vivante WL package is imx-gpu-viv-core"
+else
+	protected_install imx-gpu-viv-wl
+fi
 
 
 if [ ! -z "${G2DPACKAGE}" ]
