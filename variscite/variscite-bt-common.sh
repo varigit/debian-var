@@ -150,6 +150,8 @@ bt_start()
 # Stop BT hardware
 bt_stop()
 {
+	[ -f /sys/class/bluetooth/hci0 ] || exit 0
+
 	if som_is_var_som_mx8mp; then
 		BT_EN_GPIO=${BT_EN_GPIO_SOM}
 		BT_BUF_GPIO=${BT_BUF_GPIO_SOM}
