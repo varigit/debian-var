@@ -4,7 +4,7 @@ readonly ARCH_CPU="64BIT"
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
 readonly G_UBOOT_BRANCH="imx_v2020.04_5.4.24_2.1.0_var02"
-readonly G_UBOOT_REV="4cf3f408d1f0c2f0a6cf5ce8978f9c421ae717b5"
+readonly G_UBOOT_REV="b3eb88c9fe46ee45371051092298f1cf3e686dfb"
 G_UBOOT_DEF_CONFIG_MMC='imx8qxp_var_som_defconfig'
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
@@ -12,7 +12,7 @@ readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"
-readonly G_LINUX_KERNEL_REV="343970224e3d8a10acdb2a6c8483c5328235196b"
+readonly G_LINUX_KERNEL_REV="601330bfa4d56345159cb571f90b0e19adebb1fd"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 G_LINUX_DTB="freescale/imx8qxp-var-som-symphony-sd.dtb
              freescale/imx8qxp-var-som-symphony-sd-m4.dtb
