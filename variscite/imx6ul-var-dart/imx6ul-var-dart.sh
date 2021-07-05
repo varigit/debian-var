@@ -26,6 +26,10 @@ G_LINUX_DTB="imx6ull-var-dart-6ulcustomboard-emmc-sd-card.dtb
 	imx6ull-var-som-concerto-board-emmc-wifi.dtb
 	imx6ull-var-som-concerto-board-nand-sd-card.dtb
 	imx6ull-var-som-concerto-board-nand-wifi.dtb
+	imx6ull-var-som-symphony-board-emmc-sd-card.dtb
+	imx6ull-var-som-symphony-board-emmc-wifi.dtb
+	imx6ull-var-som-symphony-board-nand-sd-card.dtb
+	imx6ull-var-som-symphony-board-nand-wifi.dtb
 	imx6ul-var-dart-6ulcustomboard-emmc-sd-card.dtb
 	imx6ul-var-dart-6ulcustomboard-emmc-wifi.dtb
 	imx6ul-var-dart-6ulcustomboard-nand-sd-card.dtb
@@ -34,6 +38,10 @@ G_LINUX_DTB="imx6ull-var-dart-6ulcustomboard-emmc-sd-card.dtb
 	imx6ul-var-som-concerto-board-emmc-wifi.dtb
 	imx6ul-var-som-concerto-board-nand-sd-card.dtb
 	imx6ul-var-som-concerto-board-nand-wifi.dtb
+	imx6ul-var-som-symphony-board-emmc-sd-card.dtb
+	imx6ul-var-som-symphony-board-emmc-wifi.dtb
+	imx6ul-var-som-symphony-board-nand-sd-card.dtb
+	imx6ul-var-som-symphony-board-nand-wifi.dtb
 	imx6ulz-var-dart-6ulcustomboard-emmc-sd-card.dtb
 	imx6ulz-var-dart-6ulcustomboard-emmc-wifi.dtb
 	imx6ulz-var-dart-6ulcustomboard-nand-sd-card.dtb
@@ -41,7 +49,11 @@ G_LINUX_DTB="imx6ull-var-dart-6ulcustomboard-emmc-sd-card.dtb
 	imx6ulz-var-som-concerto-board-emmc-sd-card.dtb
 	imx6ulz-var-som-concerto-board-emmc-wifi.dtb
 	imx6ulz-var-som-concerto-board-nand-sd-card.dtb
-	imx6ulz-var-som-concerto-board-nand-wifi.dtb"
+	imx6ulz-var-som-concerto-board-nand-wifi.dtb
+	imx6ulz-var-som-symphony-board-emmc-sd-card.dtb
+	imx6ulz-var-som-symphony-board-emmc-wifi.dtb
+	imx6ulz-var-som-symphony-board-nand-sd-card.dtb
+	imx6ulz-var-som-symphony-board-nand-wifi.dtb"
 
 BUILD_IMAGE_TYPE="zImage"
 KERNEL_BOOT_IMAGE_SRC="arch/arm/boot/"
