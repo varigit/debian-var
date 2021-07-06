@@ -34,14 +34,8 @@ function make_debian_x11_rootfs() {
 	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
 	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
 
-	# udisk2
-	cp -r ${G_VARISCITE_PATH}/deb/udisks2/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
 	# gstreamer-imx
 	cp -r ${G_VARISCITE_PATH}/deb/gstreamer-imx/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
-	# shared-mime-info
-	cp -r ${G_VARISCITE_PATH}/deb/shared-mime-info/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 
 # add mirror to source list
