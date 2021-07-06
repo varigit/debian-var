@@ -41,9 +41,10 @@ function make_debian_x11_rootfs() {
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
-deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
-deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE}-backports main contrib non-free
 " > etc/apt/sources.list
+
+# Don't check valid until for snapshot releases
+echo "Acquire::Check-Valid-Until no;" > etc/apt/apt.conf.d/99no-check-valid-until
 
 # raise backports priority
 echo "Package: *
