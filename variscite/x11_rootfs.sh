@@ -431,7 +431,7 @@ function make_x11_sdcard() {
 	readonly local DEBIAN_IMAGES_TO_ROOTFS_POINT="opt/images/Debian"
 
 	readonly local BOOTLOAD_RESERVE=4
-	readonly local BOOT_ROM_SIZE=8
+	readonly local BOOT_ROM_SIZE=12
 	readonly local SPARE_SIZE=0
 
 	[ "${LPARAM_BLOCK_DEVICE}" = "na" ] && {
@@ -559,13 +559,13 @@ n
 p
 1
 8192
-24575
+32767
 t
 c
 n
 p
 2
-24576
+32768
 
 p
 w
