@@ -13,6 +13,8 @@ function make_debian_x11_rootfs() {
 	rm -rf ${ROOTFS_BASE}/*
 
 	pr_info "rootfs: debootstrap"
+	sudo mkdir -p ${ROOTFS_BASE}
+	sudo chown -R root:root ${ROOTFS_BASE}
 	debootstrap --verbose --no-check-gpg --foreign --arch armhf ${DEB_RELEASE} \
 		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
 
@@ -23,7 +25,7 @@ function make_debian_x11_rootfs() {
 	mount -o bind /dev ${ROOTFS_BASE}/dev
 	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
 	mount -o bind /sys ${ROOTFS_BASE}/sys
-	chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage
+	chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage --verbose
 
 	# delete unused folder
 	chroot $ROOTFS_BASE rm -rf  ${ROOTFS_BASE}/debootstrap
