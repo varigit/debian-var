@@ -110,9 +110,10 @@ if [ ! -e ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh ]; then
 fi
 
 source ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh
-
 # freertos-variscite globals
-readonly G_FREERTOS_VAR_BUILD_DIR="${G_FREERTOS_VAR_SRC_DIR}.build"
+if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
+	readonly G_FREERTOS_VAR_BUILD_DIR="${G_FREERTOS_VAR_SRC_DIR}.build"
+fi
 
 # Setup cross compiler path, name, kernel dtb path, kernel image type, helper scripts
 if [ "${ARCH_CPU}" = "64BIT" ]; then
@@ -1053,7 +1054,9 @@ function cmd_make_rootfs()
 
 function cmd_make_freertos_variscite()
 {
-	make_freertos_variscite ${G_FREERTOS_VAR_SRC_DIR} ${PARAM_OUTPUT_DIR}
+	if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
+		make_freertos_variscite ${G_FREERTOS_VAR_SRC_DIR} ${PARAM_OUTPUT_DIR}
+	fi
 }
 
 function cmd_make_uboot()
