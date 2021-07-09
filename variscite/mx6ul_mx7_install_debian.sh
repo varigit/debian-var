@@ -80,7 +80,7 @@ set_fw_env_config_to_nand()
 	sed -i "/mmcblk/ s/^#*/#/" $1
 	sed -i "s/#*\/dev\/mtd/\/dev\/mtd/" $1
 
-	MTD_DEV=`grep /dev/mtd $1 | cut -f1 | sed "s/\/dev\/*//"`
+	MTD_DEV=`grep /dev/mtd $1 | cut -f1 | cut -d " " -f1 | sed "s/\/dev\/*//"`
 	MTD_ERASESIZE=$(printf 0x%x $(cat /sys/class/mtd/${MTD_DEV}/erasesize))
 	awk -i inplace -v n=4 -v ERASESIZE="${MTD_ERASESIZE}" '/\/dev\/mtd/{$(n)=ERASESIZE}1' $1
 }
