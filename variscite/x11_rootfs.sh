@@ -224,6 +224,9 @@ systemctl disable hostapd.service
 # can support
 protected_install can-utils
 
+# pmount
+protected_install pmount
+
 # pm-utils
 protected_install pm-utils
 
