@@ -429,17 +429,18 @@ function make_freertos_variscite()
         compile_fw "${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
     done
 
-    # Build firmware to reset cache
-    if [ -e "${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}" ]; then
-        # Apply patch to disable cache for machine
-        cd $G_FREERTOS_VAR_BUILD_DIR && git apply ${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}
+    if [ ! -z "${DISABLE_CACHE_PATCH}" ]; then
+        # Build firmware to reset cache
+        if [ -e "${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}" ]; then
+            # Apply patch to disable cache for machine
+            cd $G_FREERTOS_VAR_BUILD_DIR && git apply ${G_VARISCITE_PATH}/${MACHINE}/${DISABLE_CACHE_PATCH}
 
-        # Build the firmware
-        for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
-                compile_fw "${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
-        done
+            # Build the firmware
+            for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
+                    compile_fw "${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+            done
+        fi
     fi
-
     cd -
 }
 
