@@ -29,7 +29,7 @@ readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
 readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
 readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p2.4"
-readonly G_GPU_IMX_VIV_GBM_DIR="libgbm1"
+readonly G_GPU_IMX_VIV_GBM_DIR="libgbm1_20.3.4-1"
 readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.4.0.p2.0"
 readonly GST_MM_VERSION="MM_04.05.03_1911_L5.4.0"
 
@@ -42,6 +42,8 @@ G2DPACKAGE="imx-gpu-g2d"
 readonly G_GST_EXTRA_PLUGINS="gstreamer1.0-libav"
 readonly G_SW_ENCODER_DECODERS="x265 x264"
 readonly G_SW_GST_CODEC_DIR="gstreamer-libav"
+
+readonly G_NO_EXECSTACK="y"
 
 # Flashing variables
 BOOTLOADER_OFFSET=32
@@ -66,7 +68,7 @@ IMX_BOOT_TOOL_BL_BIN="bl31-imx8mn.bin"
 IMXBOOT_TARGETS="flash_ddr4_evk"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210712T151030Z/"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
