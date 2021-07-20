@@ -77,6 +77,7 @@ function usage()
 	echo "       deploy      -- prepare environment for all commands"
 	echo "       all         -- build or rebuild kernel/bootloader/rootfs"
 	echo "       bootloader  -- build or rebuild U-Boot"
+	echo "       freertosvariscite - build or rebuild freertos for M4/M7 core"
 	echo "       kernel      -- build or rebuild the Linux kernel"
 	echo "       kernelheaders -- build or rebuild Linux kernel headers"
 	echo "       modules     -- build or rebuild the Linux kernel modules & headers and install them in the rootfs dir"
