@@ -62,7 +62,7 @@ IMXBOOT_TARGETS="flash_evk"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mp.bin"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210712T151030Z/"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
