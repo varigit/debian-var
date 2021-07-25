@@ -67,6 +67,32 @@ IMX_BOOT_TOOL_BL_BIN="bl31-imx8mp.bin"
 # default mirror
 readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210712T151030Z/"
 
+#freertos-variscite
+readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
+readonly G_FREERTOS_VAR_SRC_GIT="git://github.com/varigit/freertos-variscite.git"
+readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.9.x-var01"
+readonly G_FREERTOS_VAR_SRC_REV="a8b9a7ea089d791cd30c00cc691c2768f83cc307"
+readonly CM_BOARD="dart_mx8mp"
+readonly CM_DEMOS=" \
+	multicore_examples/rpmsg_lite_str_echo_rtos \
+	multicore_examples/rpmsg_lite_pingpong_rtos/linux_remote \
+	demo_apps/hello_world \
+	multicore_examples/rpmsg_lite_str_echo_rtos \
+	multicore_examples/rpmsg_lite_pingpong_rtos/linux_remote \
+	demo_apps/hello_world \
+"
+readonly G_CM_GCC_NAME="gcc-arm-none-eabi-9-2020-q2-update"
+#
+# To avoid scfw compilation errors the Cortex-M gcc toolchain is unpacked in specific folder (G_CM_GCC_OUT_DIR)
+# The below line in the scfw Makefile cause the problem selecting a not proper gcc toolchain version
+# CROSS_COMPILE = $(TOOLS)/gcc-arm-none-eabi-*/bin/arm-none-eabi-
+# https://github.com/varigit/imx-sc-firmware/blob/495e846a5e1ff5d4208c2fb6529397d80c40ebf7/src/scfw_export_mx8qx_b0/Makefile#L343
+readonly G_CM_GCC_OUT_DIR="cm-${G_CM_GCC_NAME}"
+
+readonly G_CM_GCC_ARCHIVE="${G_CM_GCC_NAME}-x86_64-linux.tar.bz2"
+readonly G_CM_GCC_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/${G_CM_GCC_ARCHIVE}"
+readonly G_CM_GCC_SHA256SUM="5adc2ee03904571c2de79d5cfc0f7fe2a5c5f54f44da5b645c17ee57b217f11f"
+
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
 #set package group below from G_DEBIAN_DISTRO_FEATURE_XX="n" to disable it
