@@ -32,6 +32,7 @@ readonly G_GST_PLUGINS_BAD_DIR="MM_04.05.07_2011_L5.4.70_U1"
 readonly G2D_PACKAGE_DIR="imx-gpu-g2d-6.4.3.p1.0"
 readonly IMX_FIRMWARE_VERSION="8.10"
 readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d/weston-9"
+readonly IMX_GPU_VIV_DEFAULT_WL_PACKAGE="imx-gpu-viv-core"
 
 readonly G_IMX_CODEC_DIR="imxcodec-4.5.7"
 readonly G_IMX_PARSER_DIR="imxparser-4.5.7"
@@ -42,6 +43,7 @@ readonly G_IMX_NN_DIR="imx-nn-1.1.9"
 
 IMXGSTPLG="imx-gst1.0-plugin-mx8mp"
 G2DPACKAGE="imx-gpu-g2d"
+readonly G_NO_EXECSTACK="y"
 
 # Flashing variables
 BOOTLOADER_OFFSET=32
