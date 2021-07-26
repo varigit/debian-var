@@ -25,7 +25,7 @@ readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
 readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
-readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.3.p1.0"
+readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.3.p1.4"
 readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.4.0.p2.0"
 readonly GST_MM_VERSION="MM_04.05.07_2011_L5.4.70"
 readonly G_GST_PLUGINS_BAD_DIR="MM_04.05.07_2011_L5.4.70_U1"
