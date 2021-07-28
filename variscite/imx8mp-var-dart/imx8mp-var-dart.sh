@@ -18,6 +18,10 @@ G_LINUX_DTB="freescale/imx8mp-var-dart-dt8mcustomboard.dtb
        freescale/imx8mp-var-dart-dt8mcustomboard-legacy.dtb
        freescale/imx8mp-var-som-symphony.dtb
        freescale/imx8mp-var-som-symphony-2nd-ov5640.dtb
+       freescale/imx8mp-var-som-symphony-2nd-ov5640-m7.dtb
+       freescale/imx8mp-var-som-symphony-m7.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-m7.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-m7.dtb
        "
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
