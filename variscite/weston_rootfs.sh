@@ -304,6 +304,11 @@ protected_install i2c-tools
 # usb tools
 protected_install usbutils
 
+# libgpiod
+protected_install gpiod
+protected_install libgpiod2
+protected_install python3-libgpiod
+
 # net tools
 protected_install iperf3
 
