@@ -119,7 +119,7 @@ install_kernel_to_nand()
 
 	flash_erase /dev/mtd3 0 0 2> /dev/null
 	nandwrite -p /dev/mtd3 $IMGS_PATH/$KERNEL_IMAGE > /dev/null
-	nandwrite -p /dev/mtd3 -s 0x7e0000 $IMGS_PATH/$KERNEL_DTB > /dev/null
+	nandwrite -p /dev/mtd3 -s 0xbe0000 $IMGS_PATH/$KERNEL_DTB > /dev/null
 	sync
 }
 
