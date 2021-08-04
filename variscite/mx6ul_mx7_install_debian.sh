@@ -475,7 +475,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 		exit 1
 	fi
 	part=p
-	mountdir_prefix=/tmp/media/${block}${part}
+	mountdir_prefix=/run/media/${block}${part}
 
 	if [[ $swupdate == 0 ]] ; then
 		bootpart=1
@@ -490,6 +490,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	fi
 
 	check_images
+	umount ${node}${part}*  2> /dev/null || true
 	delete_emmc
 	if [[ $swupdate == 0 ]] ; then
 		create_emmc_parts
