@@ -285,7 +285,7 @@ usage()
 	echo " Usage: $0 OPTIONS"
 	echo
 	echo " OPTIONS:"
-	echo " -b <dart6ul|som6ul|mx7>  Board model (DART-6UL/VAR-SOM-6UL/VAR-SOM-MX7) - optional, autodetected if not provided."
+	echo " -b <dart6ul|som6ul|som6ul_symphony|mx7>  Board model (DART-6UL/VAR-SOM-6UL/VAR-SOM-MX7) - optional, autodetected if not provided."
 	echo " -r <nand|emmc>		storage device (NAND flash/eMMC) - optional, autodetected if not provided."
 	echo " -v <wifi|sd>		DART-6UL/VAR-SOM-6UL mmc0 device (WiFi/SD card) - mandatory in case of 6UL with NAND flash; ignored otherwise."
 	echo " -m			VAR-SOM-MX7 optional Cortex-M4 support; ignored in case of 6UL."
@@ -311,6 +311,8 @@ SOC=`cat /sys/bus/soc/devices/soc0/soc_id`
 if [[ $SOC == i.MX6UL* ]] ; then
 	if grep -iq DART /sys/devices/soc0/machine ; then
 		BOARD=dart6ul
+	elif grep -iq Symphony /sys/devices/soc0/machine ; then
+		BOARD=som6ul_symphony
 	else
 		BOARD=som6ul
 	fi
@@ -359,7 +361,7 @@ STR=""
 
 if [[ $BOARD == "dart6ul" ]] ; then
 	STR="DART-6UL ($SOC)"
-elif [[ $BOARD == "som6ul" ]] ; then
+elif [[ $BOARD == "som6ul" || $BOARD == "som6ul_symphony" ]] ; then
 	STR="VAR-SOM-6UL ($SOC)"
 elif [[ $BOARD == "mx7" ]] ; then
 	STR="VAR-SOM-MX7"
@@ -390,7 +392,7 @@ fi
 printf "Installing to internal storage device: "
 echo $STR
 
-if [[ $BOARD == *6ul ]] ; then
+if [[ $BOARD == *6ul* ]] ; then
 	if [[ $STORAGE_DEV == "nand" ]] ; then
 		if [[ $MX6UL_MMC0_DEV == "wifi" ]] ; then
 			STR="WiFi (no SD card)"
@@ -417,6 +419,9 @@ if [[ $BOARD == *6ul ]] ; then
 	elif [[ $BOARD == "som6ul" ]] ; then
 		som="var-som"
 		carrier="concerto-board"
+	elif [[ $BOARD == "som6ul_symphony" ]] ; then
+		som="var-som"
+		carrier="symphony-board"
 	fi
 	if [[ $MX6UL_MMC0_DEV == "sd" ]] ; then
 		mx6ul_mmc0_dev="sd-card"
@@ -429,7 +434,7 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 	SPL_IMAGE=SPL.nand
 	UBOOT_IMAGE=u-boot.img.nand
 
-	if [[ $BOARD == *6ul ]] ; then
+	if [[ $BOARD == *6ul* ]] ; then
 		KERNEL_DTB="${soc}-${som}-${carrier}-${STORAGE_DEV}-${mx6ul_mmc0_dev}.dtb"
 	elif [[ $BOARD == "mx7" ]] ; then
 		KERNEL_DTB="imx7d-var-som-nand${VARSOMMX7_VARIANT}.dtb"
@@ -459,7 +464,7 @@ elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	SPL_IMAGE=SPL.mmc
 	UBOOT_IMAGE=u-boot.img.mmc
 
-	if [[ $BOARD == *6ul ]] ; then
+	if [[ $BOARD == *6ul* ]] ; then
 		block=mmcblk1
 		KERNEL_DTBS="${soc}-${som}-${carrier}-${STORAGE_DEV}-*.dtb"
 		FAT_VOLNAME=BOOT-VAR6UL
