@@ -1,0 +1,12 @@
+[Unit]
+Description=Start the bluez-alsa service
+After=bluetooth.service
+After=systemd-remount-fs.service
+
+[Service]
+Type=forking
+ExecStart=/etc/bluetooth/bluez-alsa start
+ExecStop=/etc/bluetooth/bluez-alsa stop
+
+[Install]
+WantedBy=bluetooth.target

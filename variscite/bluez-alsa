@@ -1,0 +1,44 @@
+#!/bin/sh
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DESC="Start the bluez-alsa daemon"
+NAME="bluez-alsa"
+PIDFILE="/var/run/${NAME}.pid"
+DAEMON=/usr/bin/bluealsa
+DAEMON_ARGS="--a2dp-keep-alive 30 -p a2dp-sink -p a2dp-source"
+
+test -x $DAEMON || exit 0
+
+set -e
+
+case $1 in
+  start)
+    echo "Starting ${DESC}: $NAME"
+    start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS
+  ;;
+  stop)
+    echo "Stopping ${DESC}: $NAME"
+    start-stop-daemon --stop --pidfile $PIDFILE
+  ;;
+  restart|force-reload)
+    $0 stop
+    $0 start
+  ;;
+  status)
+    pidof ${DAEMON} >/dev/null
+    status=$?
+    if [ $status -eq 0 ]; then
+        echo "${NAME} is running."
+    else
+        echo "${NAME} is not running"
+    fi
+    exit $status
+   ;;
+   *)
+    N=/etc/init.d/bluez-alsa
+    echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0
