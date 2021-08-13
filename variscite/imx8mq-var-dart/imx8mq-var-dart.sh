@@ -68,7 +68,7 @@ G2DPACKAGE="imx-gpu-g2d"
 readonly G_IMX_CODEC_DIR="imxcodec-4.5.5"
 readonly G_IMX_PARSER_DIR="imxparser-4.5.5"
 readonly G_IMX_VPU_HANTRO_DIR="imxvpuhantro-1.16.0"
-readonly G_IMX_VPU_WRAPPER_DIR="imxvpuwrap-4.5.3"
+readonly G_IMX_VPU_WRAPPER_DIR="imxvpuwrap-4.5.5"
 
 IMXGSTPLG="imx-gst1.0-plugin-mx8mm"
 
