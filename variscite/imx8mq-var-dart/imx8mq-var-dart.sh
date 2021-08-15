@@ -128,7 +128,7 @@ UBOOT_DTB="imx8mq-var-dart-customboard.dtb"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mq.bin"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20201231T203441Z/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210712T151030Z/"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
