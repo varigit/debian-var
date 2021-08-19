@@ -208,8 +208,6 @@ protected_install mtd-utils
 protected_install bluetooth
 protected_install bluez-obexd
 protected_install bluez-tools
-protected_install blueman
-protected_install gconf2
 
 #shared-mime-info
 protected_install shared-mime-info
