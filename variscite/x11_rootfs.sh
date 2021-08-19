@@ -40,6 +40,10 @@ function make_debian_x11_rootfs() {
 	cp -r ${G_VARISCITE_PATH}/deb/gstreamer-imx/* \
 		${ROOTFS_BASE}/srv/local-apt-repository
 
+	# bluez-alsa
+	cp -r ${G_VARISCITE_PATH}/deb/bluez-alsa/* \
+		${ROOTFS_BASE}/srv/local-apt-repository
+
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -208,6 +212,7 @@ protected_install mtd-utils
 protected_install bluetooth
 protected_install bluez-obexd
 protected_install bluez-tools
+protected_install bluez-alsa-utils
 
 #shared-mime-info
 protected_install shared-mime-info
@@ -280,15 +285,11 @@ EOF
 	ln -s /lib/systemd/system/obex.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
 
-	# install pulse audio configuration
-	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/pulseaudio/pulseaudio.service \
+	# install bluez-alsa configuration
+	install -m 0644 ${G_VARISCITE_PATH}/bluez-alsa.service \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/pulseaudio.service \
-		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/pulseaudio.service
-	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/pulseaudio/pulseaudio-bluetooth.conf \
-		${ROOTFS_BASE}/etc/dbus-1/system.d
-	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/pulseaudio/system.pa \
-		${ROOTFS_BASE}/etc/pulse/
+	install -m 0755 ${G_VARISCITE_PATH}/bluez-alsa \
+		${ROOTFS_BASE}/etc/bluetooth/
 
 	# Add alsa default configs
 	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/asound.state \
