@@ -234,10 +234,10 @@ protected_install pmount
 protected_install pm-utils
 
 # killall
-protected_install install psmisc
+protected_install psmisc
 
 # libgpiod
-protected_install install gpiod
+protected_install gpiod
 
 # remove pulseaudio
 apt-get -y remove pulseaudio
