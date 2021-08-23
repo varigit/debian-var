@@ -233,6 +233,12 @@ protected_install pmount
 # pm-utils
 protected_install pm-utils
 
+# killall
+protected_install install psmisc
+
+# libgpiod
+protected_install install gpiod
+
 apt-get -y autoremove
 #update iptables alternatives to legacy
 update-alternatives --set iptables /usr/sbin/iptables-legacy
