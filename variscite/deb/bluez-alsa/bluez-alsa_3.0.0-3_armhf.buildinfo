@@ -4,26 +4,27 @@ Binary: bluez-alsa-utils bluez-alsa-utils-dbgsym libasound2-plugin-bluez libasou
 Architecture: armhf
 Version: 3.0.0-3
 Checksums-Md5:
- f2d4424ce6c682e1f0d990871aac908b 182364 bluez-alsa-utils-dbgsym_3.0.0-3_armhf.deb
- 28b8a7e8580eccdece2df8775bde3360 65488 bluez-alsa-utils_3.0.0-3_armhf.deb
- 6f1ba85ba450ba13b26a99c6411610f0 66096 libasound2-plugin-bluez-dbgsym_3.0.0-3_armhf.deb
- 8d6915b6f79dbcd4cea3f90f61ddb5a8 25500 libasound2-plugin-bluez_3.0.0-3_armhf.deb
+ 7fcb93a30f8bc99fbfa1a211a49224aa 175544 bluez-alsa-utils-dbgsym_3.0.0-3_armhf.deb
+ b33d9aa548b832a7a48109f7c1cf4cdd 58672 bluez-alsa-utils_3.0.0-3_armhf.deb
+ a6d63cbf47176911f6deaa87cdeb3d38 64424 libasound2-plugin-bluez-dbgsym_3.0.0-3_armhf.deb
+ 3a85187cdf0c7fa201c5fda9c9bf204b 24304 libasound2-plugin-bluez_3.0.0-3_armhf.deb
 Checksums-Sha1:
- 85d87789b60b213e1f3e35c92eb3a2f2f3d5dca3 182364 bluez-alsa-utils-dbgsym_3.0.0-3_armhf.deb
- 5625de499c2348298737be07bba4d6799a3cbcd4 65488 bluez-alsa-utils_3.0.0-3_armhf.deb
- 7d38e3884683f4829f43e67df682719e9fc1e696 66096 libasound2-plugin-bluez-dbgsym_3.0.0-3_armhf.deb
- 0add691c3cbe723d9ae22e6bc67f0d0a6788b23d 25500 libasound2-plugin-bluez_3.0.0-3_armhf.deb
+ 0d49f44e3f6b5ce9fee46506bdbb3627a4cec07d 175544 bluez-alsa-utils-dbgsym_3.0.0-3_armhf.deb
+ 339a5e85d88f52a93e7c8caf78b3bc26d2c84101 58672 bluez-alsa-utils_3.0.0-3_armhf.deb
+ 61dcce86d3b110efe5a18131d073afe7a418ccb0 64424 libasound2-plugin-bluez-dbgsym_3.0.0-3_armhf.deb
+ 07b31b1d60c6f016a2a1a7f54176cbcf987d4b07 24304 libasound2-plugin-bluez_3.0.0-3_armhf.deb
 Checksums-Sha256:
- 3538606d02ba12725251f9c70965d40171b6348c1b17e6c780a972af438cb963 182364 bluez-alsa-utils-dbgsym_3.0.0-3_armhf.deb
- 7709d7942f99a219f2bd6ad8f98b8a15c7e93670fa160a8fdaa89244d1ffa23d 65488 bluez-alsa-utils_3.0.0-3_armhf.deb
- 5a0918b56bf56459bfb1a3fdb847ea5e194b693a4fbbf2cbf673c2fbaf210b2b 66096 libasound2-plugin-bluez-dbgsym_3.0.0-3_armhf.deb
- 91a7bd603774bfe252f5bae3195b0d14fd87797110e296f85299b2be942f1d22 25500 libasound2-plugin-bluez_3.0.0-3_armhf.deb
+ 09094ba73909a08429514c643ddb829b470165a81973db1de6f7035fb6cb49ad 175544 bluez-alsa-utils-dbgsym_3.0.0-3_armhf.deb
+ 13f70a791df0e730d01aac75d47e3efcefc44b12153298e81a369fdd1d389638 58672 bluez-alsa-utils_3.0.0-3_armhf.deb
+ 99facd7dda738cad5b3265127572d15ae5fe504e667693f9e83662f3bd4e0ab4 64424 libasound2-plugin-bluez-dbgsym_3.0.0-3_armhf.deb
+ 3661d068d57e61b735db6155133a91963c36dd9d3782c9508d0516637ec361d2 24304 libasound2-plugin-bluez_3.0.0-3_armhf.deb
 Build-Origin: Debian
 Build-Architecture: armhf
-Build-Date: Sat, 07 Aug 2021 07:56:37 +0000
+Build-Date: Thu, 02 Sep 2021 16:12:34 +0000
 Build-Tainted-By:
  merged-usr-via-aliased-dirs
  usr-local-has-includes
+ usr-local-has-programs
 Installed-Build-Depends:
  autoconf (= 2.69-14),
  automake (= 1:1.16.3-2),
@@ -31,7 +32,7 @@ Installed-Build-Depends:
  autotools-dev (= 20180224.1+nmu1),
  base-files (= 11.1),
  base-passwd (= 3.5.49),
- bash (= 5.1-2+b1),
+ bash (= 5.1-2+b2),
  binutils (= 2.35.2-2),
  binutils-arm-linux-gnueabihf (= 2.35.2-2),
  binutils-common (= 2.35.2-2),
@@ -91,7 +92,7 @@ Installed-Build-Depends:
  libc6-dev (= 2.31-12),
  libcap-ng0 (= 0.7.9-2.2+b1),
  libcc1-0 (= 10.2.1-6),
- libcom-err2 (= 1.46.2-1),
+ libcom-err2 (= 1.46.2-2),
  libcrypt-dev (= 1:4.4.18-4),
  libcrypt1 (= 1:4.4.18-4),
  libctf-nobfd0 (= 2.35.2-2),
@@ -121,16 +122,12 @@ Installed-Build-Depends:
  libgomp1 (= 10.2.1-6),
  libgpg-error0 (= 1.38-2),
  libgssapi-krb5-2 (= 1.18.3-5),
- libicu67 (= 67.1-6),
+ libicu67 (= 67.1-7),
  libisl23 (= 0.23-1),
  libk5crypto3 (= 1.18.3-5),
  libkeyutils1 (= 1.6.1-2),
  libkrb5-3 (= 1.18.3-5),
  libkrb5support0 (= 1.18.3-5),
- libldacbt-abr-dev (= 2.0.2.3+git20200429+ed310a0-4),
- libldacbt-abr2 (= 2.0.2.3+git20200429+ed310a0-4),
- libldacbt-enc-dev (= 2.0.2.3+git20200429+ed310a0-4),
- libldacbt-enc2 (= 2.0.2.3+git20200429+ed310a0-4),
  liblz4-1 (= 1.9.3-2),
  liblzma5 (= 5.2.5-2),
  libmagic-mgc (= 1:5.39-3),
@@ -244,4 +241,4 @@ Environment:
  LC_TELEPHONE="it_IT.UTF-8"
  LC_TIME="it_IT.UTF-8"
  MAKEFLAGS=" -j32"
- SOURCE_DATE_EPOCH="1628233200"
+ SOURCE_DATE_EPOCH="1630487484"
