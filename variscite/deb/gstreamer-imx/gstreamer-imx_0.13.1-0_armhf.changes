@@ -1,25 +1,25 @@
 Format: 1.8
-Date: Mon, 17 Aug 2021 10:32:18 +0200
+Date: Thu, 02 Sep 2021 19:58:57 +0200
 Source: gstreamer-imx
 Binary: gstreamer-imx
 Architecture: armhf
 Version: 0.13.1-0
-Distribution: dunfell
+Distribution: bullseye
 Urgency: medium
 Maintainer: Francesco Ferraro
 Changed-By: Francesco Ferraro <francesco.f@variscite.com>
 Description:
- gstreamer-imx - This is a set of GStreamer 1.0 plugins for NXP's i.MX platform, w
+ gstreamer-imx - This is a set of GStreamer 1.0 plugins for NXP's i.MX platform, f
 Changes:
- gstreamer-imx (0.13.1-0) dunfell; urgency=medium
+ gstreamer-imx (0.13.1-0) bullseye; urgency=medium
  .
-   * Variscite rebuild for dunfell
+   * Variscite rebuild for bullseye
 Checksums-Sha1:
- ad0c5894dae9a2e855941d6a3e65b32851040ccf 5297 gstreamer-imx_0.13.1-0_armhf.buildinfo
- c6db562992262e8ea363fb740823ce87d6177c6c 114612 gstreamer-imx_0.13.1-0_armhf.deb
+ 1f5d307af050fbcc6d296d75eaddc1aea6b993d1 18340 gstreamer-imx_0.13.1-0_armhf.buildinfo
+ a195aad48b3c443c808952d0cb849615dc7be0c8 114504 gstreamer-imx_0.13.1-0_armhf.deb
 Checksums-Sha256:
- c3971732cfb55811b92a10f9dd1406706dfd6ae13e591c94d1927b7b8df42c7a 5297 gstreamer-imx_0.13.1-0_armhf.buildinfo
- 0ea0bd193c98d542a377e438c603fbd3f16d81c437c70011370ee73bed72ea9b 114612 gstreamer-imx_0.13.1-0_armhf.deb
+ 6bd25ef968cfb93c319dee33eb78173abab90bf3e54fcb354787c6b62b393847 18340 gstreamer-imx_0.13.1-0_armhf.buildinfo
+ 417ee0b9d51cf22e245e20fefd255fc998bdbfe1f15d4832971796bec47b465d 114504 gstreamer-imx_0.13.1-0_armhf.deb
 Files:
- 23a7977b17110b63c58ed2d7d5fca2d1 5297 libs extra gstreamer-imx_0.13.1-0_armhf.buildinfo
- 191b771e710fd2b4dd468eaba6894c40 114612 libs extra gstreamer-imx_0.13.1-0_armhf.deb
+ 993a5244c32bb9af1003998666861721 18340 libs extra gstreamer-imx_0.13.1-0_armhf.buildinfo
+ 9d06b9d5147c697ba10a32aa6188ad8b 114504 libs extra gstreamer-imx_0.13.1-0_armhf.deb
