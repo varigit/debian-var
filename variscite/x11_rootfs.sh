@@ -239,6 +239,9 @@ protected_install install psmisc
 # libgpiod
 protected_install install gpiod
 
+# remove pulseaudio
+apt-get -y remove pulseaudio
+
 apt-get -y autoremove
 #update iptables alternatives to legacy
 update-alternatives --set iptables /usr/sbin/iptables-legacy
