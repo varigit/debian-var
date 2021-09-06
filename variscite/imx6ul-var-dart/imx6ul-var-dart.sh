@@ -16,7 +16,7 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"
-readonly G_LINUX_KERNEL_REV="601330bfa4d56345159cb571f90b0e19adebb1fd"
+readonly G_LINUX_KERNEL_REV="33049b971e64ab3b421c6c924c50a0499088ef67"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx_v7_var_defconfig'
 G_LINUX_DTB="imx6ull-var-dart-6ulcustomboard-emmc-sd-card.dtb
 	imx6ull-var-dart-6ulcustomboard-emmc-wifi.dtb
