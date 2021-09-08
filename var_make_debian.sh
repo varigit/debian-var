@@ -1063,12 +1063,8 @@ function cmd_make_rootfs()
 		# pack to ubi
 		make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} \
 				${G_UBI_FILE_NAME}
-		#cp -rp ${G_ROOTFS_DIR} ${G_TMP_DIR}
-		#rm ${G_TMP_DIR}/rootfs/usr/bin/qemu-arm-static
-		#make_ubi ${G_TMP_DIR}/${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} \
-		#		${G_UBI_FILE_NAME}
 		# pack console rootfs
-		make_tarball ${G_TMP_DIR}/rootfs ${G_CONSOLE_ROOTFS_TARBALL_PATH}
+		make_tarball ${UBIFS_ROOTFS_DIR} ${G_CONSOLE_ROOTFS_TARBALL_PATH}
 		rm -rf ${UBIFS_ROOTFS_DIR}
 	fi
 
