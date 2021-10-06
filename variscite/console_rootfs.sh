@@ -242,15 +242,10 @@ protected_install mtd-utils
 protected_install bluetooth
 protected_install bluez-obexd
 protected_install bluez-tools
-if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
-   [ "${MACHINE}" = "var-som-mx7" ]; then
-	# install bluez-alsa
-	protected_install bluez-alsa-utils
-else
-	# install pulseaudio
-	protected_install pulseaudio
-	protected_install pulseaudio-module-bluetooth
-fi
+
+# install pulseaudio
+protected_install pulseaudio
+protected_install pulseaudio-module-bluetooth
 
 # wifi support packages
 protected_install hostapd
@@ -331,24 +326,15 @@ EOF
 	ln -s /lib/systemd/system/obex.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
 
-	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
-	   [ "${MACHINE}" = "var-som-mx7" ]; then
-		# install bluez-alsa configuration
-		install -m 0644 ${G_VARISCITE_PATH}/bluez-alsa.service \
-			${ROOTFS_BASE}/lib/systemd/system
-		install -m 0755 ${G_VARISCITE_PATH}/bluez-alsa \
-			${ROOTFS_BASE}/etc/bluetooth/
-	else
-		# install pulse audio configuration
-		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio.service \
-			${ROOTFS_BASE}/lib/systemd/system
-		ln -s /lib/systemd/system/pulseaudio.service \
-			${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/pulseaudio.service
-		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio-bluetooth.conf \
-			${ROOTFS_BASE}/etc//dbus-1/system.d
-		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
-			${ROOTFS_BASE}/etc/pulse/
-	fi
+	# install pulse audio configuration
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio.service \
+		${ROOTFS_BASE}/lib/systemd/system
+	ln -s /lib/systemd/system/pulseaudio.service \
+		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/pulseaudio.service
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio-bluetooth.conf \
+		${ROOTFS_BASE}/etc//dbus-1/system.d
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
+		${ROOTFS_BASE}/etc/pulse/
 
 	# install blacklist.conf
 	install -d ${ROOTFS_BASE}/etc/modprobe.d/

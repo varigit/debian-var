@@ -71,9 +71,6 @@ protected_install gstreamer-imx
 #shared-mime-info
 protected_install shared-mime-info
 
-# remove pulseaudio
-apt-get -y remove pulseaudio
-
 apt-get -y autoremove
 
 apt-get install -y --reinstall libgdk-pixbuf2.0-0
