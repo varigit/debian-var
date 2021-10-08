@@ -26,6 +26,7 @@ readonly LOOP_MAJOR=7
 # default mirror
 readonly DEB_RELEASE="bullseye"
 readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
+readonly DEF_CONSOLE_ROOTFS_TARBALL_NAME="console_rootfs.tar.gz"
 
 # base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
@@ -136,6 +137,7 @@ elif [ "${ARCH_CPU}" = "32BIT" ]; then
 	G_CROSS_COMPILER_PREFIX=${G_CROSS_COMPILER_32BIT_PREFIX}
 	ARCH_ARGS="arm"
 	# Include x11 backend rootfs helper
+	source ${G_VARISCITE_PATH}/console_rootfs.sh
 	source ${G_VARISCITE_PATH}/x11_rootfs.sh
 else
 	echo " Error unknown CPU type"
@@ -211,6 +213,7 @@ echo
 
 ## declarate dynamic variables ##
 readonly G_ROOTFS_TARBALL_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBALL_NAME}"
+readonly G_CONSOLE_ROOTFS_TARBALL_PATH="${PARAM_OUTPUT_DIR}/${DEF_CONSOLE_ROOTFS_TARBALL_NAME}"
 
 ###### local functions ######
 
@@ -757,7 +760,21 @@ function make_ubi() {
 
 	rm -rf ${UBIFS_ROOTFS_DIR}
 	cp -a ${_rootfs} ${UBIFS_ROOTFS_DIR}
-	prepare_x11_ubifs_rootfs ${UBIFS_ROOTFS_DIR}
+
+## ubifs rootfs clenup command
+echo "#!/bin/bash
+apt-get clean
+rm -rf /tmp/*
+rm -f cleanup
+" > ${UBIFS_ROOTFS_DIR}/cleanup
+
+	# clean all packages
+	pr_info "ubifs rootfs: clean"
+	chmod +x ${UBIFS_ROOTFS_DIR}/cleanup
+	chroot ${UBIFS_ROOTFS_DIR} /cleanup
+	rm ${UBIFS_ROOTFS_DIR}/usr/bin/qemu-arm-static
+
+	prepare_ubifs_rootfs ${UBIFS_ROOTFS_DIR}
 	# gnerate ubifs file
 	pr_info "Generate ubi config file: ${UBI_CFG}"
 cat > ${UBI_CFG} << EOF
@@ -782,8 +799,6 @@ EOF
 	# delete unused file
 	rm -f ${UBIFS_IMG}
 	rm -f ${UBI_CFG}
-	rm -rf ${UBIFS_ROOTFS_DIR}
-
 	return 0;
 }
 
@@ -1025,9 +1040,9 @@ function cmd_make_rootfs()
 
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	   [ "${MACHINE}" = "var-som-mx7" ]; then
-		# make debian x11 backend rootfs
+		# make debian console rootfs
 		cd ${G_ROOTFS_DIR}
-		make_debian_x11_rootfs ${G_ROOTFS_DIR}
+		make_debian_console_rootfs ${G_ROOTFS_DIR}
 		# make imx sdma firmware
 		make_imx_sdma_fw ${G_IMX_SDMA_FW_SRC_DIR} ${G_ROOTFS_DIR}
 		cd -
@@ -1043,15 +1058,30 @@ function cmd_make_rootfs()
 		make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 	fi
 
-	# pack rootfs
-	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH}
-
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	   [ "${MACHINE}" = "var-som-mx7" ]; then
 		# pack to ubi
 		make_ubi ${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} \
 				${G_UBI_FILE_NAME}
+		#cp -rp ${G_ROOTFS_DIR} ${G_TMP_DIR}
+		#rm ${G_TMP_DIR}/rootfs/usr/bin/qemu-arm-static
+		#make_ubi ${G_TMP_DIR}/${G_ROOTFS_DIR} ${G_TMP_DIR} ${PARAM_OUTPUT_DIR} \
+		#		${G_UBI_FILE_NAME}
+		# pack console rootfs
+		make_tarball ${G_TMP_DIR}/rootfs ${G_CONSOLE_ROOTFS_TARBALL_PATH}
+		rm -rf ${UBIFS_ROOTFS_DIR}
 	fi
+
+	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
+	   [ "${MACHINE}" = "var-som-mx7" ]; then
+		# make debian x11 backend rootfs
+		cd ${G_ROOTFS_DIR}
+		make_debian_x11_rootfs ${G_ROOTFS_DIR}
+		cd -
+	fi
+
+	# pack full rootfs
+	make_tarball ${G_ROOTFS_DIR} ${G_ROOTFS_TARBALL_PATH}
 }
 
 function cmd_make_freertos_variscite()
