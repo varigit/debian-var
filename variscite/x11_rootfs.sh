@@ -247,6 +247,9 @@ apt-get -y autoremove
 update-alternatives --set iptables /usr/sbin/iptables-legacy
 update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
+#install usleep busybox applet
+ln -sf /bin/busybox /bin/usleep
+
 apt-get install -y --reinstall libgdk-pixbuf2.0-0
 
 # create users and set password
@@ -270,9 +273,7 @@ EOF
 	install -m 0755 ${G_VARISCITE_PATH}/x11_resources/brcm_patchram_plus \
 		${ROOTFS_BASE}/usr/bin
 	install -d ${ROOTFS_BASE}/etc/bluetooth
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt.conf \
-		${ROOTFS_BASE}/etc/bluetooth
-	install -m 0755 ${G_VARISCITE_PATH}/x11_resources/variscite-bt \
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/variscite-bt \
 		${ROOTFS_BASE}/etc/bluetooth
 	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/variscite-bt.service \
 		${ROOTFS_BASE}/lib/systemd/system
@@ -309,11 +310,7 @@ EOF
 	install -d ${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/blacklist.conf \
 		${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi.conf \
-		${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/variscite-wifi-common.sh \
-		${ROOTFS_BASE}/etc/wifi
-	install -m 0755 ${G_VARISCITE_PATH}/x11_resources/variscite-wifi \
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi \
 		${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${G_VARISCITE_PATH}/x11_resources/variscite-wifi.service \
 		${ROOTFS_BASE}/lib/systemd/system
@@ -324,8 +321,14 @@ EOF
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
-	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/01-bt.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
+	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh \
+		${ROOTFS_BASE}/etc/pm/sleep.d/
+	if [ -f ${G_VARISCITE_PATH}/${MACHINE}/03-eth.sh ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/03-eth.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+	fi
 
 	tar -xzf ${G_VARISCITE_PATH}/deb/shared-mime-info/mime_image_prebuilt.tar.gz -C \
 		${ROOTFS_BASE}/

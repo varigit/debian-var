@@ -1,0 +1,139 @@
+#!/bin/sh -e
+#
+# Activate Bluetooth on Variscite VAR-SOM-MX7
+#
+
+# GPIO pin to enable BT module
+BT_EN_GPIO=14
+
+# UART device connected to BT module
+BT_TTY_DEV=/dev/ttymxc2
+
+# Sterling LWB Bluetooth firmware
+BT_FIRMWARE_LWB=/lib/firmware/brcm/BCM43430A1.hcd
+
+# Sterling LWB5 Bluetooth firmware
+BT_FIRMWARE_LWB5=/lib/firmware/brcm/BCM4335C0.hcd
+
+# Sterling LWB5 WIFI SDIO ID
+WIFI_5G_SDIO_ID=0x4339
+
+# WIFI SDIO ID file
+WIFI_SDIO_ID_FILE=/sys/class/net/wlan0/device/device
+
+# Get maximum of N numbers
+max()
+{
+  printf "%s\n" "$@" | sort -g -r | head -n1
+}
+
+# Set BT MAC address
+bt_set_macaddr()
+{
+  eth0_addr=$(cat /sys/class/net/eth0/address | sed 's/\://g')
+  eth1_addr=$(cat /sys/class/net/eth1/address | sed 's/\://g')
+  bt_addr=$(max $eth0_addr $eth1_addr)
+  bt_addr=$((0x$bt_addr+1))
+  bt_addr=$(printf '%012X' $bt_addr)
+
+  BT_MACADDR=$(echo $bt_addr | sed 's/\(..\)/\1:/g;s/:$//')
+}
+
+# Set BT firmware based on WIFI SDIO ID
+bt_set_firmware()
+{
+	# Check if WIFI SDIO ID matches Sterling LWB5 SDIO ID
+	if [ "$(cat ${WIFI_SDIO_ID_FILE})" = "${WIFI_5G_SDIO_ID}" ]; then
+		BT_FIRMWARE=${BT_FIRMWARE_LWB5}
+	else
+		BT_FIRMWARE=${BT_FIRMWARE_LWB}
+	fi
+}
+
+# Check if WIFI+BT combo module is available
+bt_found()
+{
+	# Check that WIFI HW was initialized succesfully
+	for i in $(seq 1 5); do
+		if [ -f ${WIFI_SDIO_ID_FILE} ]; then
+			return 0
+		else
+			sleep 1
+		fi
+	done
+
+	return 1
+}
+
+# Enable BT via GPIO(s)
+bt_enable()
+{
+	# Configure BT_EN_GPIO
+	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
+		echo ${BT_EN_GPIO} >/sys/class/gpio/export
+		echo "out" > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
+	fi
+
+	# Power up BT module
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	sleep 1
+	echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+# Start BT hardware
+bt_start()
+{
+	# Exit if BT module is not available
+	bt_found || exit 0
+
+	# Enable BT hardware
+	bt_enable
+
+	# Set BT firmware file 
+	bt_set_firmware
+
+	# Set BT MAC addresss
+	bt_set_macaddr
+
+	# Start BT firmware loading service
+	kill -9 $(pidof brcm_patchram_plus) 2>/dev/null || true
+	brcm_patchram_plus \
+			--patchram ${BT_FIRMWARE} \
+			--enable_hci \
+			--bd_addr ${BT_MACADDR} \
+			--no2bytes \
+			--baudrate 3000000 \
+			--scopcm=1,0,0,0,0,0,0,0,0,0 \
+			--tosleep 1000 ${BT_TTY_DEV} &
+}
+
+# Stop BT hardware
+bt_stop()
+{
+	# Exit if BT interface is not available
+	[ -e /sys/class/bluetooth/hci0 ] || exit 0
+
+	# Stop BT interface
+	hciconfig hci0 down
+
+	# Stop BT firmware loading service
+	kill -9 $(pidof brcm_patchram_plus) 2>/dev/null || true
+
+  	# Power down BT module
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+###########################
+#  Execution starts here  #
+###########################
+case $1 in
+
+start)
+	bt_start
+	;;
+stop)
+	bt_stop
+	;;
+esac
+
+exit 0

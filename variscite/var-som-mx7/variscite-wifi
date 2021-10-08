@@ -1,0 +1,167 @@
+#!/bin/bash -e
+#
+# Activate WIFI on Variscite VAR-SOM-MX7
+#
+
+# GPIO pin to enable WIFI module
+WIFI_EN_GPIO=4
+
+# GPIO pin to enable BT module
+BT_EN_GPIO=14
+
+# WIFI MMC host controller
+WIFI_MMC_HOST=30b50000.usdhc
+
+# Return true if WIFI interface exists
+wifi_interface_exists()
+{
+	for i in $(seq 1 20); do
+		if [ -d /sys/class/net/wlan0 ]; then
+			return 0
+		else
+			sleep 1
+		fi
+	done
+
+	return 1
+}
+
+# Bind WIFI device to MMC controller
+wifi_mmc_bind()
+{
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/bind ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
+	fi
+}
+
+# Unbind WIFI device from MMC controller
+wifi_mmc_unbind()
+{
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+	fi
+}
+
+# Setup WIFI control GPIOs
+wifi_pre_up()
+{
+	# Configure WIFI_EN_GPIO
+	if [ ! -d /sys/class/gpio/gpio${WIFI_EN_GPIO} ]; then
+		echo ${WIFI_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction
+	fi
+
+	# Configure WIFI_EN_GPIO
+	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
+		echo ${BT_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
+	fi
+}
+
+# Return true if WIFI should be started
+wifi_should_not_be_started()
+{
+	# Do not start WIFI if it is already up
+	[ -d /sys/class/net/wlan0 ] && return 0
+
+	return 1
+}
+
+# Return true if WIFI should not be stopped
+wifi_should_not_be_stopped()
+{
+	# Always stop WIFI
+	return 1
+}
+
+# Power up WIFI chip
+wifi_up()
+{
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	# WLAN_EN up
+	echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+	# BT_EN up
+	echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+	# Wait 150ms at least
+	usleep 200000
+
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+	# Bind WIFI device to MMC controller
+	wifi_mmc_bind
+
+	# Load WIFI driver
+	modprobe brcmfmac
+}
+
+# Power down WIFI chip
+wifi_down()
+{
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	# WLAN_EN down
+	echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+	# BT_EN down
+	echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+}
+
+# Start WIFI hardware
+wifi_start()
+{
+	# Exit if WIFI should not be started
+	wifi_should_not_be_started && exit 0
+
+	# Setup WIFI control GPIOs
+	wifi_pre_up
+
+	# Try starting WIFI hardware
+	for i in $(seq 1 3); do
+		# Up WIFI
+		wifi_up
+
+		# Exit if WIFI interface exists
+		wifi_interface_exists && exit 0
+
+		# Down WIFI
+		wifi_down
+
+		# Wait enough time for discharge
+		sleep 5
+	done
+
+	exit 1
+}
+
+# Stop WIFI hardware
+wifi_stop()
+{
+	# Exit if WIFI should not be stopped
+	wifi_should_not_be_stopped && exit 0
+
+	# Down WIFI
+	wifi_down
+}
+
+###########################
+#  Execution starts here  #
+###########################
+case $1 in
+start)
+	wifi_start
+	;;
+stop)
+	wifi_stop
+	;;
+esac
+
+exit 0

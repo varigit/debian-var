@@ -1,0 +1,238 @@
+#!/bin/bash -e
+#
+# Activate WIFI on Variscite DART-6UL
+#
+
+# GPIO pin to enable WIFI module
+WIFI_EN_GPIO=134
+
+# GPIO pin to supply power to WIFI module on DART-6UL-5G
+WIFI_PWR_GPIO=130
+
+# GPIO pin to enable BT module
+BT_EN_GPIO=132
+
+# WIFI MMC host controller
+WIFI_MMC_HOST=2190000.usdhc
+
+# Check is SOM is DART-6UL-5G
+som_is_dart_6ul_5g()
+{
+	SOM_INFO=`i2cget -y 1 0x51 0xfd`
+	if [[ $(($(($SOM_INFO >> 3)) & 0x3)) == 1 ]] ; then
+		return 0
+	fi
+
+	return 1
+}
+
+# Return true if WIFI interface exists
+wifi_interface_exists()
+{
+	for i in $(seq 1 20); do
+		if [ -d /sys/class/net/wlan0 ]; then
+			return 0
+		else
+			sleep 1
+		fi
+	done
+
+	return 1
+}
+
+# Bind WIFI device to MMC controller
+wifi_mmc_bind()
+{
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/bind ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/bind
+	fi
+}
+
+# Unbind WIFI device from MMC controller
+wifi_mmc_unbind()
+{
+	if [ -e /sys/bus/platform/drivers/sdhci-esdhc-imx/${WIFI_MMC_HOST} ]; then
+		echo ${WIFI_MMC_HOST} > /sys/bus/platform/drivers/sdhci-esdhc-imx/unbind
+	fi
+}
+
+# Setup WIFI control GPIOs
+wifi_pre_up()
+{
+	# Configure WIFI_EN_GPIO
+	if [ ! -d /sys/class/gpio/gpio${WIFI_EN_GPIO} ]; then
+		echo ${WIFI_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${WIFI_EN_GPIO}/direction
+	fi
+
+	# Configure BT_EN_GPIO
+	if [ ! -d /sys/class/gpio/gpio${BT_EN_GPIO} ]; then
+		echo ${BT_EN_GPIO} > /sys/class/gpio/export
+		echo out > /sys/class/gpio/gpio${BT_EN_GPIO}/direction
+	fi
+
+	# Configure WIFI_PWR_GPIO on DART-6UL-5G
+	if som_is_dart_6ul_5g; then
+		if [ ! -d /sys/class/gpio/gpio${WIFI_PWR_GPIO} ]; then
+			echo ${WIFI_PWR_GPIO} > /sys/class/gpio/export
+			echo out > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/direction
+		fi
+	fi
+}
+
+# Power up WIFI chip
+wifi_up()
+{
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	if som_is_dart_6ul_5g; then
+		# WIFI power up
+		echo 1 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
+		usleep 10000
+
+		# WLAN_EN up
+		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN up
+		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+		# Wait 150ms at least
+		usleep 200000
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	else
+		# WLAN_EN up
+		echo 1 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN up
+		echo 1 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+
+		# Wait 150ms at least
+		usleep 200000
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	fi
+
+	# Bind WIFI device to MMC controller
+	wifi_mmc_bind
+
+	# Load WIFI driver
+	modprobe brcmfmac
+}
+
+# Power down WIFI chip
+wifi_down()
+{
+	# Unload WIFI driver
+	modprobe -r brcmfmac
+
+	# Unbind WIFI device from MMC controller
+	wifi_mmc_unbind
+
+	if som_is_dart_6ul_5g; then
+		# WLAN_EN down
+		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+		usleep 10000
+
+		# WIFI power down
+		echo 0 > /sys/class/gpio/gpio${WIFI_PWR_GPIO}/value
+	else
+		# WLAN_EN down
+		echo 0 > /sys/class/gpio/gpio${WIFI_EN_GPIO}/value
+
+		# BT_EN down
+		echo 0 > /sys/class/gpio/gpio${BT_EN_GPIO}/value
+	fi
+}
+
+# Return true if WIFI should be started
+wifi_should_not_be_started()
+{
+	# Do not enable WIFI if it is already up
+	[ -d /sys/class/net/wlan0 ] && return 0
+
+	# Do not enable WIFI if booting from SD
+	if grep -q mmcblk0 /proc/cmdline; then
+		return 0
+	fi
+
+	# Exit if booting from eMMC without WIFI
+	if ! grep -qi WIFI /sys/devices/soc0/machine; then
+		return 0
+	fi
+
+	return 1
+}
+
+# Return true if WIFI should not be stopped
+wifi_should_not_be_stopped()
+{
+	# Do not stop WIFI if booting from SD
+	if grep -q mmcblk0 /proc/cmdline; then
+		return 0
+	fi
+
+	# Do not stop WIFI if booting from eMMC without WIFI
+	if ! grep -qi WIFI /sys/devices/soc0/machine; then
+		return 0
+	fi
+
+	return 1
+}
+
+# Start WIFI hardware
+wifi_start()
+{
+	# Exit if WIFI should not be started
+	wifi_should_not_be_started && exit 0
+
+	# Setup WIFI control GPIOs
+	wifi_pre_up
+
+	# Try starting WIFI hardware
+	for i in $(seq 1 3); do
+		# Up WIFI
+		wifi_up
+
+		# Exit if WIFI interface exists
+		wifi_interface_exists && exit 0
+
+		# Down WIFI
+		wifi_down
+
+		# Wait enough time for discharge
+		sleep 5
+	done
+
+	exit 1
+}
+
+# Stop WIFI hardware
+wifi_stop()
+{
+	# Exit if WIFI should not be stopped
+	wifi_should_not_be_stopped && exit 0
+
+	# Down WIFI
+	wifi_down
+}
+
+###########################
+#  Execution starts here  #
+###########################
+case $1 in
+start)
+	wifi_start
+	;;
+stop)
+	wifi_stop
+	;;
+esac
+
+exit 0
