@@ -74,8 +74,8 @@ readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20210712T
 #freertos-variscite
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
 readonly G_FREERTOS_VAR_SRC_GIT="git://github.com/varigit/freertos-variscite.git"
-readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.9.x-var01"
-readonly G_FREERTOS_VAR_SRC_REV="a8b9a7ea089d791cd30c00cc691c2768f83cc307"
+readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.10.x-var01"
+readonly G_FREERTOS_VAR_SRC_REV="db2c47b339ab5ccaa923d4bc3de3a5222439fc15"
 readonly CM_BOARD="dart_mx8mp"
 readonly CM_DEMOS=" \
 	multicore_examples/rpmsg_lite_str_echo_rtos \
@@ -85,7 +85,7 @@ readonly CM_DEMOS=" \
 	multicore_examples/rpmsg_lite_pingpong_rtos/linux_remote \
 	demo_apps/hello_world \
 "
-readonly G_CM_GCC_NAME="gcc-arm-none-eabi-9-2020-q2-update"
+readonly G_CM_GCC_NAME="gcc-arm-none-eabi-10-2020-q4-major"
 #
 # To avoid scfw compilation errors the Cortex-M gcc toolchain is unpacked in specific folder (G_CM_GCC_OUT_DIR)
 # The below line in the scfw Makefile cause the problem selecting a not proper gcc toolchain version
@@ -94,8 +94,8 @@ readonly G_CM_GCC_NAME="gcc-arm-none-eabi-9-2020-q2-update"
 readonly G_CM_GCC_OUT_DIR="cm-${G_CM_GCC_NAME}"
 
 readonly G_CM_GCC_ARCHIVE="${G_CM_GCC_NAME}-x86_64-linux.tar.bz2"
-readonly G_CM_GCC_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/${G_CM_GCC_ARCHIVE}"
-readonly G_CM_GCC_SHA256SUM="5adc2ee03904571c2de79d5cfc0f7fe2a5c5f54f44da5b645c17ee57b217f11f"
+readonly G_CM_GCC_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/${G_CM_GCC_ARCHIVE}"
+readonly G_CM_GCC_SHA256SUM="21134caa478bbf5352e239fbc6e2da3038f8d2207e089efc96c3b55f1edcd618"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
