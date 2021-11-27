@@ -131,6 +131,13 @@ Pin: release n=${DEB_RELEASE}-backports
 Pin-Priority: 500
 " > etc/apt/preferences.d/backports
 
+touch  ${ROOTFS_BASE}/etc/apt/apt.conf.d/99verify-peer.conf
+echo "Acquire { https::Verify-Peer false }" > \
+	${ROOTFS_BASE}/etc/apt/apt.conf.d/99verify-peer.conf
+
+echo 'Acquire::Check-Valid-Until no;' > \
+	${ROOTFS_BASE}/etc/apt/apt.conf.d/99no-check-valid-until
+
 # maximize local repo priority
 echo "Package: *
 Pin: origin ""
