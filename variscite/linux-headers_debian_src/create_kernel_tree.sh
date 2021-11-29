@@ -154,7 +154,7 @@ function create_debian_kernel_headers_package()
 	tar -xjf ${3}/linux-headers_debian_src/kernel-arm64-template.tar.bz2 \
 		-C ${OUTPUT_DIR}/
 
-	echo "9" > ${OUTPUT_DIR}/debian/compat
+	echo "10" > ${OUTPUT_DIR}/debian/compat
 	cd ${ORIG_DIR}
 	rm -f ${OUTPUT_DIR}/kernel-src
 }

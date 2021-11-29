@@ -162,7 +162,7 @@ function create_debian_kernel_headers_package()
 		${OUTPUT_DIR}/debian/changelog
 
 
-	echo "9" > ${OUTPUT_DIR}/debian/compat
+	echo "10" > ${OUTPUT_DIR}/debian/compat
 	cd ${ORIG_DIR}
 	rm -f ${OUTPUT_DIR}/kernel-src
 }
