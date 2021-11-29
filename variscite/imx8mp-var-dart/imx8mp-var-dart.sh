@@ -16,10 +16,22 @@ readonly G_LINUX_KERNEL_REV="d68355beac499ef3f32e4fd913044ba0cee46e44"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 G_LINUX_DTB="freescale/imx8mp-var-dart-dt8mcustomboard.dtb
        freescale/imx8mp-var-dart-dt8mcustomboard-legacy.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isp0.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isi0.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isp0.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isi0.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isp0-m7.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isi0-m7.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isp0-m7.dtb
+       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isi0-m7.dtb
        freescale/imx8mp-var-som-symphony.dtb
        freescale/imx8mp-var-som-symphony-2nd-ov5640.dtb
+       freescale/imx8mp-var-som-symphony-basler-isp0.dtb
+       freescale/imx8mp-var-som-symphony-basler-isi0.dtb
        freescale/imx8mp-var-som-symphony-2nd-ov5640-m7.dtb
        freescale/imx8mp-var-som-symphony-m7.dtb
+       freescale/imx8mp-var-som-symphony-basler-isp0-m7.dtb
+       freescale/imx8mp-var-som-symphony-basler-isi0-m7.dtb
        freescale/imx8mp-var-dart-dt8mcustomboard-legacy-m7.dtb
        freescale/imx8mp-var-dart-dt8mcustomboard-m7.dtb
        "
