@@ -25,7 +25,7 @@ function protected_install() {
 
         echo ""
         echo "###########################"
-        echo "## Fix missing packeges ###"
+        echo "## Fix missing packages ###"
         echo "###########################"
         echo ""
 

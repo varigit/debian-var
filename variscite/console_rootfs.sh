@@ -336,7 +336,7 @@ EOF
 	ln -s /lib/systemd/system/pulseaudio.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/pulseaudio.service
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio-bluetooth.conf \
-		${ROOTFS_BASE}/etc//dbus-1/system.d
+		${ROOTFS_BASE}/etc/dbus-1/system.d
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
 		${ROOTFS_BASE}/etc/pulse/
 
