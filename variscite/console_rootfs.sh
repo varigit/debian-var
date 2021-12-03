@@ -495,13 +495,11 @@ EOF
 		cp ${PARAM_OUTPUT_DIR}/fw_printenv-mmc ${ROOTFS_BASE}/usr/bin
 		cp ${PARAM_OUTPUT_DIR}/fw_printenv-nand ${ROOTFS_BASE}/usr/bin
 		ln -sf fw_printenv-nand ${ROOTFS_BASE}/usr/bin/fw_printenv
-		ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	else
-		cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
 		cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
-		ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 
 	fi
+	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
 	cp ${G_VARISCITE_PATH}/automount.rules ${ROOTFS_BASE}/etc/udev/rules.d
 
