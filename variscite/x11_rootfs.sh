@@ -78,6 +78,7 @@ apt-get install -y --reinstall libgdk-pixbuf2.0-0
 # create users and set password
 useradd -m -G audio -s /bin/bash x_user
 usermod -a -G video x_user
+usermod -a -G pulse-access x_user
 passwd -d x_user
 
 # sado kill

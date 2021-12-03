@@ -340,6 +340,14 @@ EOF
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
 		${ROOTFS_BASE}/etc/pulse/
 
+	rm -f ${ROOTFS_BASE}/etc/systemd/user/sockets.target.wants/pulseaudio.socket
+	rm -f ${ROOTFS_BASE}/etc/systemd/user/default.target.wants/pulseaudio.service
+
+	sed -i 's/; default-server =/; default-server = \/var\/run\/pulse\/native/' ${ROOTFS_BASE}/etc/pulse/client.conf
+	sed -i 's/; autospawn = yes/; autospawn = no/' ${ROOTFS_BASE}/etc/pulse/client.conf
+
+	chmod -x ${ROOTFS_BASE}/usr/bin/start-pulseaudio-x11
+
 	# install blacklist.conf
 	install -d ${ROOTFS_BASE}/etc/modprobe.d/
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/blacklist.conf \
