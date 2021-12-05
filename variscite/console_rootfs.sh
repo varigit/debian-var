@@ -387,6 +387,9 @@ EOF
 			${ROOTFS_BASE}/etc/pm/sleep.d/
 	fi
 
+	# we don't want systemd to handle the power key
+	echo "HandlePowerKey=ignore" >> ${ROOTFS_BASE}/etc/systemd/logind.conf
+
 	#Build kernel headers on the target
 	pr_info "rootfs: Building kernel-headers"
 	cp -ar ${ROOTFS_BASE}/../output/kernel-headers ${ROOTFS_BASE}/tmp/
