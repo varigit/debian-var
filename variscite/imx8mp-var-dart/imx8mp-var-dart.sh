@@ -69,8 +69,8 @@ DEFAULT_BOOT_DTB="imx8mp-var-dart-dt8mcustomboard.dtb"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
-readonly G_IMXBOOT_BRACH="imx_5.4.70_2.3.0"
-readonly G_IMXBOOT_REV="8947fea369ab3932259630232cfb9f87b8f9dda1"
+readonly G_IMXBOOT_BRACH="lf-5.10.52_2.1.0"
+readonly G_IMXBOOT_REV="1112c88470f339dc631e2a7117087f416af6d6b5"
 HDMI=no
 TEE_LOAD_ADDR=0x56000000
 ATF_LOAD_ADDR=0x00970000
