@@ -1,18 +1,19 @@
-From 4f287e07d88ddc2cdbcab3918b456649370d3c53 Mon Sep 17 00:00:00 2001
-From: Felix Radensky <felix.r@variscite.com>
-Date: Sat, 17 Oct 2020 23:13:02 +0300
+From 77f23274974ce6a3a91a69dd168607543e4d0331 Mon Sep 17 00:00:00 2001
+From: FrancescoFerraro <francesco.f@variscite.com>
+Date: Tue, 9 Nov 2021 11:21:13 +0100
 Subject: [PATCH] imx-mkimage: imx8m: soc.mak: Add support for Variscite
  DART-MX8M-PLUS
 
+Signed-off-by: FrancescoFerraro <francesco.f@variscite.com>
 ---
  iMX8M/soc.mak | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/iMX8M/soc.mak b/iMX8M/soc.mak
-index b7b3986..abd7324 100644
+index 4bfdc37..9622f5a 100644
 --- a/iMX8M/soc.mak
 +++ b/iMX8M/soc.mak
-@@ -90,7 +90,7 @@ lpddr4_dmem_2d = lpddr4_pmu_train_2d_dmem$(LPDDR_FW_VERSION).bin
+@@ -93,7 +93,7 @@ lpddr4_dmem_2d = lpddr4_pmu_train_2d_dmem$(LPDDR_FW_VERSION).bin
  
  u-boot-spl-ddr.bin: u-boot-spl.bin $(lpddr4_imem_1d) $(lpddr4_dmem_1d) $(lpddr4_imem_2d) $(lpddr4_dmem_2d)
  	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(lpddr4_imem_1d) lpddr4_pmu_train_1d_imem_pad.bin
@@ -21,18 +22,18 @@ index b7b3986..abd7324 100644
  	@objcopy -I binary -O binary --pad-to 0x8000 --gap-fill=0x0 $(lpddr4_imem_2d) lpddr4_pmu_train_2d_imem_pad.bin
  	@cat lpddr4_pmu_train_1d_imem_pad.bin lpddr4_pmu_train_1d_dmem_pad.bin > lpddr4_pmu_train_1d_fw.bin
  	@cat lpddr4_pmu_train_2d_imem_pad.bin $(lpddr4_dmem_2d) > lpddr4_pmu_train_2d_fw.bin
-@@ -133,9 +133,9 @@ u-boot-atf-tee.bin: u-boot.bin bl31.bin tee.bin
+@@ -139,9 +139,9 @@ u-boot-atf-tee.bin: u-boot.bin bl31.bin tee.bin
  clean:
  	@rm -f $(MKIMG) u-boot-atf.bin u-boot-atf-tee.bin u-boot-spl-ddr.bin u-boot.itb u-boot.its u-boot-ddr3l.itb u-boot-ddr3l.its u-boot-spl-ddr3l.bin u-boot-ddr4.itb u-boot-ddr4.its u-boot-spl-ddr4.bin u-boot-ddr4-evk.itb u-boot-ivt.itb u-boot-ddr4-evk.its $(OUTIMG)
  
--dtbs = evk.dtb
-+dtbs = $(PLAT)-var-dart-dt8mcustomboard.dtb $(PLAT)-var-dart-dt8mcustomboard-legacy.dtb $(PLAT)-var-som-symphony.dtb
- $(dtbs):
--	./$(DTB_PREPROC) $(PLAT)-evk.dtb $(dtbs)
-+	./$(DTB_PREPROC) $(dtbs)
+-dtb = evk.dtb
++dtb = $(PLAT)-var-dart-dt8mcustomboard.dtb $(PLAT)-var-dart-dt8mcustomboard-legacy.dtb $(PLAT)-var-som-symphony.dtb
+ $(dtb):
+-	./$(DTB_PREPROC) $(PLAT)-evk.dtb $(dtb) $(dtbs)
++	./$(DTB_PREPROC) $(dtb) $(dtbs)
  
- u-boot.itb: $(dtbs)
+ u-boot.itb: $(dtb)
  	./$(PAD_IMAGE) tee.bin
 -- 
-2.17.1
+2.25.1
 
