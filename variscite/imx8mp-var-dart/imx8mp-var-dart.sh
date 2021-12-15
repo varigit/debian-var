@@ -81,7 +81,7 @@ IMXBOOT_TARGETS="flash_evk"
 IMX_BOOT_TOOL_BL_BIN="bl31-imx8mp.bin"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20211125T084445Z/"
+readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20211215T150219Z/"
 
 #freertos-variscite
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
