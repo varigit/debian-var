@@ -428,9 +428,11 @@ function make_freertos_variscite()
         find ${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/demo_apps/disable_cache/ -name '*hello_world*' -exec sh -c 'mv "$1" "$(echo "$1" | sed s/hello_world/disable_cache/)"' _ {} \;
     fi
 
-    # Build all demos in CM_DEMOS
-    for CM_DEMO in ${CM_DEMOS}; do
-        compile_fw "${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+    for cm_board in ${CM_BOARD}; do
+        # Build all demos in CM_DEMOS
+        for CM_DEMO in ${CM_DEMOS}; do
+            compile_fw "${G_FREERTOS_VAR_BUILD_DIR}/boards/${cm_board}/${CM_DEMO}/armgcc"
+        done
     done
 
     # Build firmware to reset cache

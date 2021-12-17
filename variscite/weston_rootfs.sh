@@ -791,19 +791,48 @@ EOF
 		    debug \
 		    ddr_debug \
 		"
-		# Install all demos in CM_DEMOS
-		for CM_DEMO in ${CM_DEMOS}; do
-		    DIR_GCC="${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
-		    # Install all build targets
-		    for CM_BUILD_TARGET in ${CM_BUILD_TARGETS}; do
-			# Install elf
-			FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
-			install -m 0644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
-			# Install bin
-			FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.bin)"
-			install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/boot/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
-		    done
-		done
+		if [ "${MACHINE}" = "imx8mp-var-dart" ]; then
+			# Build all boards in CM_BOARD
+			for cm_board in ${CM_BOARD}; do
+
+				case "$cm_board" in
+				dart_mx8mp) :
+				    CM_FW_SUFFIX="dart"
+				;;
+				som_mx8mp) :
+				    CM_FW_SUFFIX="som"
+				;;
+				esac
+
+				# Install all demos in CM_DEMOS
+				for CM_DEMO in ${CM_DEMOS}; do
+				    DIR_GCC="${G_FREERTOS_VAR_BUILD_DIR}/boards/${cm_board}/${CM_DEMO}/armgcc"
+				    # Install all build targets
+				    for CM_BUILD_TARGET in ${CM_BUILD_TARGETS}; do
+					# Install elf
+					FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
+					install -m 0644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}_${CM_FW_SUFFIX}
+					# Install bin
+					FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.bin)"
+					install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/boot/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}_${CM_FW_SUFFIX}
+				    done
+				done
+			done
+		else
+			# Install all demos in CM_DEMOS
+			for CM_DEMO in ${CM_DEMOS}; do
+			    DIR_GCC="${G_FREERTOS_VAR_BUILD_DIR}/boards/${CM_BOARD}/${CM_DEMO}/armgcc"
+			    # Install all build targets
+			    for CM_BUILD_TARGET in ${CM_BUILD_TARGETS}; do
+				# Install elf
+				FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
+				install -m 0644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
+				# Install bin
+				FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.bin)"
+				install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/boot/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
+			    done
+			done
+		fi
 
 		# Install disable_cache demos (all demos in CM_DEMOS_DISABLE_CACHE)
 		for CM_DEMO in ${CM_DEMOS_DISABLE_CACHE}; do
