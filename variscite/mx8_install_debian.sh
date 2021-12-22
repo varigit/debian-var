@@ -187,6 +187,8 @@ install_rootfs_to_emmc()
 		# Create DTB symlinks
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs ${DTB_PREFIX}-${DISPLAY}.dtb ${DTB_PREFIX}.dtb)
 		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs imx8qm-var-spear-${DISPLAY}.dtb imx8qm-var-spear.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs imx8qp-var-som-${DISPLAY}.dtb imx8qp-var-som.dtb)
+		(cd ${MOUNTDIR}/${BOOTDIR}; ln -fs imx8qp-var-spear-${DISPLAY}.dtb imx8qp-var-spear.dtb)
 	fi
 
 	# Adjust u-boot-fw-utils for eMMC on the installed rootfs
