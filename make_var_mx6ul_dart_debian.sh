@@ -60,7 +60,7 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
 ## ext-firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
-readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
+readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="master"
 
 ## ubi
