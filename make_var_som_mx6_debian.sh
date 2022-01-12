@@ -81,7 +81,7 @@ readonly G_WILINK8_FW_BT_GIT_SRCREV="0ee619b598d023fffc77679f099bc2a4815510e4"
 ## imx accelerations ##
 # much more standard replacement for Freescale's imx-gst1.0-plugin
 readonly G_IMX_GPU_DRV_SRC_DIR="${DEF_SRC_DIR}/imx/kernel-module-imx-gpu-viv"
-readonly G_IMX_GPU_DRV_GIT="git://github.com/Freescale/kernel-module-imx-gpu-viv.git"
+readonly G_IMX_GPU_DRV_GIT="https://github.com/Freescale/kernel-module-imx-gpu-viv.git"
 readonly G_IMX_GPU_DRV_GIT_BRANCH="master"
 readonly G_IMX_GPU_DRV_GIT_SRCREV="a05d9b23b9902f6ce87d23772de2fdb2ecfb37a7"
 # Freescale mirror
@@ -116,12 +116,12 @@ readonly G_IMX_XORG_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_XORG_PKG}.tar.gz"
 readonly G_IMX_XORG_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_XORG_PKG}.tar.gz"
 # replacement for Freescale's closed-development libfslvapwrapper library
 readonly G_IMX_VPU_API_SRC_DIR="${DEF_SRC_DIR}/imx/libimxvpuapi"
-readonly G_IMX_VPU_API_GIT="git://github.com/Freescale/libimxvpuapi.git"
+readonly G_IMX_VPU_API_GIT="https://github.com/Freescale/libimxvpuapi.git"
 readonly G_IMX_VPU_API_GIT_BRANCH="master"
 readonly G_IMX_VPU_API_GIT_SRCREV="4afb52f97e28c731c903a8538bf99e4a6d155b42"
 # much more standard replacement for Freescale's imx-gst1.0-plugin
 readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
-readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
+readonly G_IMX_GSTREAMER_GIT="https://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
 readonly G_IMX_GSTREAMER_GIT_SRCREV="eb03bfab6f1f3eb854df247af0da308d1d1e2090"
 
