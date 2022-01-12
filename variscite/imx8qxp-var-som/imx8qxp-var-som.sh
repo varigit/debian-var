@@ -44,7 +44,7 @@ readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
 
 #freertos-variscite
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
-readonly G_FREERTOS_VAR_SRC_GIT="git://github.com/varigit/freertos-variscite.git"
+readonly G_FREERTOS_VAR_SRC_GIT="https://github.com/varigit/freertos-variscite.git"
 readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.9.x-var01"
 readonly G_FREERTOS_VAR_SRC_REV="a8b9a7ea089d791cd30c00cc691c2768f83cc307"
 readonly CM_BOARD="som_mx8qx"
@@ -69,13 +69,13 @@ readonly G_CM_GCC_SHA256SUM="5adc2ee03904571c2de79d5cfc0f7fe2a5c5f54f44da5b645c1
 
 #imx-atf
 readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
-readonly G_IMX_ATF_GIT="git://github.com/varigit/imx-atf.git"
+readonly G_IMX_ATF_GIT="http://github.com/varigit/imx-atf.git"
 readonly G_IMX_ATF_BRANCH="imx_5.4.24_2.1.0_var01"
 readonly G_IMX_ATF_REV="7575633e03ff952a18c0a2c0aa543dee793fda5f"
 
 # imx-sc-firmware
 readonly G_IMX_SC_FW_SRC_DIR="${DEF_SRC_DIR}/imx-sc-firmware"
-readonly G_IMX_SC_FW_GIT="git://github.com/varigit/imx-sc-firmware.git"
+readonly G_IMX_SC_FW_GIT="https://github.com/varigit/imx-sc-firmware.git"
 readonly G_IMX_SC_FW_BRANCH="1.5.1"
 readonly G_IMX_SC_FW_REV="495e846a5e1ff5d4208c2fb6529397d80c40ebf7"
 readonly G_IMX_SC_FW_TOOLCHAIN_NAME="gcc-arm-none-eabi-8-2018-q4-major"
