@@ -63,13 +63,13 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
-readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
+readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="3.5.5.18"
 readonly G_BCM_FW_GIT_REV="423be46b06b5629e45a4943f98a3053c819091ce"
 
 ## Broadcom BT/WIFI driver ##
 readonly G_BCM_DRV_SRC_DIR="${DEF_SRC_DIR}/laird-linux-backports"
-readonly G_BCM_DRV_GIT="git://github.com/varigit/laird-linux-backports"
+readonly G_BCM_DRV_GIT="https://github.com/varigit/laird-linux-backports"
 readonly G_BCM_DRV_GIT_BRANCH="3.5.5.8"
 readonly G_BCM_DRV_GIT_REV="58a1896d37ec04bd16af8ab784145ae3c85d3c4b"
 
