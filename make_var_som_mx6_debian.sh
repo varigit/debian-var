@@ -67,7 +67,7 @@ readonly G_WILINK8_UTILS_SRC_DIR="${DEF_SRC_DIR}/wilink8/utils"
 readonly G_WILINK8_UTILS_GIT="${G_WILINK8_GIT}/18xx-ti-utils.git"
 readonly G_WILINK8_UTILS_GIT_BRANCH="master"
 readonly G_WILINK8_FW_WIFI_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_wifi"
-readonly G_WILINK8_FW_WIFI_GIT="git://github.com/varigit/ti-wl18xx-fw.git"
+readonly G_WILINK8_FW_WIFI_GIT="https://github.com/varigit/ti-wl18xx-fw.git"
 readonly G_WILINK8_FW_WIFI_GIT_BRANCH="master"
 readonly G_WILINK8_FW_WIFI_GIT_SRCREV="3bad7e76e820869f3a276bf02617c17096e28321"
 readonly G_WILINK8_FW_BT_SRC_DIR="${DEF_SRC_DIR}/wilink8/fw_bt"
@@ -78,7 +78,7 @@ readonly G_WILINK8_FW_BT_GIT_SRCREV="0ee619b598d023fffc77679f099bc2a4815510e4"
 ## imx accelerations ##
 # much more standard replacement for Freescale's imx-gst1.0-plugin
 readonly G_IMX_GPU_DRV_SRC_DIR="${DEF_SRC_DIR}/imx/kernel-module-imx-gpu-viv"
-readonly G_IMX_GPU_DRV_GIT="git://github.com/Freescale/kernel-module-imx-gpu-viv.git"
+readonly G_IMX_GPU_DRV_GIT="https://github.com/Freescale/kernel-module-imx-gpu-viv.git"
 readonly G_IMX_GPU_DRV_GIT_BRANCH="master"
 # Freescale mirror
 readonly G_FSL_MIRROR="http://www.freescale.com/lgfiles/NMG/MAD/YOCTO"
@@ -112,11 +112,11 @@ readonly G_IMX_XORG_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_XORG_PKG}.tar.gz"
 readonly G_IMX_XORG_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_XORG_PKG}.tar.gz"
 # replacement for Freescale's closed-development libfslvapwrapper library
 readonly G_IMX_VPU_API_SRC_DIR="${DEF_SRC_DIR}/imx/libimxvpuapi"
-readonly G_IMX_VPU_API_GIT="git://github.com/Freescale/libimxvpuapi.git"
+readonly G_IMX_VPU_API_GIT="https://github.com/Freescale/libimxvpuapi.git"
 readonly G_IMX_VPU_API_GIT_BRANCH="master"
 # much more standard replacement for Freescale's imx-gst1.0-plugin
 readonly G_IMX_GSTREAMER_SRC_DIR="${DEF_SRC_DIR}/imx/gstreamer-imx"
-readonly G_IMX_GSTREAMER_GIT="git://github.com/Freescale/gstreamer-imx.git"
+readonly G_IMX_GSTREAMER_GIT="https://github.com/Freescale/gstreamer-imx.git"
 readonly G_IMX_GSTREAMER_GIT_BRANCH="master"
 
 ## CROSS_COMPILER config and paths
