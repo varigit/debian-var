@@ -62,7 +62,7 @@ readonly G_UBOOT_NAME_FOR_NAND='u-boot.img.nand'
 
 ## Broadcom BT/WIFI firmware ##
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
-readonly G_BCM_FW_GIT="git://github.com/varigit/bcm_4343w_fw.git"
+readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
 readonly G_BCM_FW_GIT_BRANCH="imx-rel_imx_4.1.15_2.0.1_ga-var01"
 readonly G_BCM_FW_GIT_REV="a434c692b489b8a451a653fe5e3dd925eb3bc5e5"
 
