@@ -74,7 +74,7 @@ readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20211215T
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
 readonly G_FREERTOS_VAR_SRC_GIT="https://github.com/varigit/freertos-variscite.git"
 readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.10.x-var01"
-readonly G_FREERTOS_VAR_SRC_REV="db2c47b339ab5ccaa923d4bc3de3a5222439fc15"
+readonly G_FREERTOS_VAR_SRC_REV="5615d63676945fdc801eae18f2fbd771d5b6eb79"
 readonly CM_BOARD="som_mx8mn"
 readonly CM_DEMOS=" \
 	multicore_examples/rpmsg_lite_str_echo_rtos \
