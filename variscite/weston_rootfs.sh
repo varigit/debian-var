@@ -694,6 +694,7 @@ EOF
 	dpkg-buildpackage -b -j4 -us -uc
 	cp -ar /tmp/*.deb /srv/local-apt-repository/
 	dpkg-reconfigure local-apt-repository
+	cd -
 	rm -rf /var/cache/apt/*
 	rm -f header-stage
 	" > header-stage
