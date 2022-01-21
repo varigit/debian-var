@@ -35,7 +35,7 @@ readonly GST_MM_VERSION="MM_04.05.05_2005_L5.4.24"
 
 readonly G2D_PACKAGE_DIR="imx-gpu-g2d-6.4.0.p2.0"
 readonly IMX_FIRMWARE_VERSION="8.8"
-readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d"
+readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d/weston-8"
 
 G2DPACKAGE="imx-gpu-g2d"
 
