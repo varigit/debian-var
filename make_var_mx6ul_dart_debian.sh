@@ -86,7 +86,7 @@ readonly G_SPL_NAME_FOR_NAND='SPL.nand'
 ## imx-sdma-imx6q firmware ##
 readonly G_IMX_SDMA_FW_SRC_DIR="${DEF_SRC_DIR}/linux-firmware"
 readonly G_IMX_SDMA_FW_GIT="git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git"
-readonly G_IMX_SDMA_FW_GIT_BRANCH="master"
+readonly G_IMX_SDMA_FW_GIT_BRANCH="main"
 readonly G_IMX_SDMA_FW_GIT_REV="710963fe53ee3f227556d36839df3858daf6e232"
 
 ## Broadcom BT/WIFI firmware ##
