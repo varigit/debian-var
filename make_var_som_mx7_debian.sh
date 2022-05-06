@@ -44,7 +44,7 @@ readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-2.6-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="imx-rel_imx_4.1.15_2.0.0_ga-var02"
-readonly G_LINUX_KERNEL_REV="76bd3bfa41dfae7674ece94e30993e06f6d620a6"
+readonly G_LINUX_KERNEL_REV="4f4880f7a0bf1254bfafbdd012726e18c843196f"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx7-var-som_defconfig'
 readonly G_LINUX_DTB='imx7d-var-som-emmc.dtb imx7d-var-som-emmc-m4.dtb imx7d-var-som-nand.dtb imx7d-var-som-nand-m4.dtb'
 
