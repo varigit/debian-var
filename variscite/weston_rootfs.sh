@@ -467,6 +467,10 @@ EOF
 		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/wifi.sh \
 			${ROOTFS_BASE}/etc/pm/sleep.d/
 	fi
+	if [ -f ${G_VARISCITE_PATH}/${MACHINE}/03-eth.sh ]; then
+		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/03-eth.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
+	fi
 
 	#Build kernel headers on the target
 	pr_info "rootfs: Building kernel-headers"
