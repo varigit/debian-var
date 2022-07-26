@@ -363,6 +363,13 @@ usermod -a -G video user
 echo "user:user" | chpasswd
 echo "root:root" | chpasswd
 
+# add users to pulse-access group
+usermod -a -G pulse-access root
+usermod -a -G pulse-access user
+
+# update pulse home directory
+usermod -d /var/run/pulse pulse
+
 # sudo kill rootfs-stage-base
 rm -f rootfs-stage-base
 EOF
@@ -624,6 +631,13 @@ EOF
 		${ROOTFS_BASE}/etc//dbus-1/system.d
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/system.pa \
 		${ROOTFS_BASE}/etc/pulse/
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/client.conf \
+		${ROOTFS_BASE}/etc/pulse/
+
+	rm -rf ${ROOTFS_BASE}/etc/systemd/user/sockets.target.wants/pulseaudio.socket
+	rm -rf ${ROOTFS_BASE}/etc/systemd/user/default.target.wants/pulseaudio.service
+	
+	rm -f ${ROOTFS_BASE}/etc/xdg/autostart/pulseaudio.desktop
 
 	# install blacklist.conf
 	install -d ${ROOTFS_BASE}/etc/modprobe.d/
