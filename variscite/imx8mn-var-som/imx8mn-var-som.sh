@@ -52,7 +52,7 @@ BOOT_DTB="imx8mn-var-som.dtb"
 DEFAULT_BOOT_DTB="imx8mn-var-som.dtb"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
-readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
+readonly G_IMXBOOT_GIT="https://github.com/nxp-imx/imx-mkimage.git"
 readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
 readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
 
