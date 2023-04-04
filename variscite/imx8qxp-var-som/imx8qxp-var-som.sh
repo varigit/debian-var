@@ -32,7 +32,7 @@ IMXGSTPLG="imx-gst1.0-plugin-mx8x"
 G2DPACKAGE="imx-dpu-g2d"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
-readonly G_IMXBOOT_GIT="https://source.codeaurora.org/external/imx/imx-mkimage.git"
+readonly G_IMXBOOT_GIT="https://github.com/nxp-imx/imx-mkimage.git"
 readonly G_IMXBOOT_BRACH="imx_4.14.98_2.0.0_ga"
 readonly G_IMXBOOT_REV="dd0234001713623c79be92b60fa88bc07b07f24f"
 

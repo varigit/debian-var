@@ -80,7 +80,7 @@ BOOT_DTB2="fsl-imx8mq-var-dart-cb12.dtb"
 DEFAULT_BOOT_DTB2="fsl-imx8mq-var-dart-sd-lvds-cb12.dtb"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
-readonly G_IMXBOOT_GIT="git://source.codeaurora.org/external/imx/imx-mkimage.git"
+readonly G_IMXBOOT_GIT="https://github.com/nxp-imx/imx-mkimage.git"
 readonly G_IMXBOOT_BRACH="imx_4.19.35_1.1.0"
 readonly G_IMXBOOT_REV="1c2277b95ce59f5d0265f26fec522e2ac2581e59"
 
