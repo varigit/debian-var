@@ -105,7 +105,7 @@ readonly G_IMX_GPU_VIV_LOCAL_PATH="${DEF_SRC_DIR}/imx/${G_IMX_GPU_VIV_PKG}.bin"
 readonly G_IMX_GPU_VIV_REMOTE_LINK="${G_FSL_MIRROR}/${G_IMX_GPU_VIV_PKG}.bin"
 # i.MX X.org Video Driver for i.MX Graphics 2D acceleration
 readonly G_IMX_XORG_DRV_SRC_DIR="${DEF_SRC_DIR}/imx/xf86-video-imx-vivante"
-readonly G_IMX_XORG_DRV_GIT="https://source.codeaurora.org/external/imx/xf86-video-imx-vivante.git"
+readonly G_IMX_XORG_DRV_GIT="https://github.com/nxp-imx/xf86-video-imx-vivante.git"
 readonly G_IMX_XORG_DRV_GIT_BRANCH="nxp/imx_4.9.11_1.0.0_ga"
 readonly G_IMX_XORG_DRV_GIT_SRCREV="07ef065dfe09f1c05a1a188c371577faa3677a17"
 # replacement for Freescale's closed-development libfslvapwrapper library
