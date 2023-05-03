@@ -1,5 +1,10 @@
 readonly ARCH_CPU="32BIT"
 
+# SOC
+readonly SOC="mx7"
+readonly SOC_SERIES="imx7"
+readonly SOC_FAMILY="imx7"
+
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"

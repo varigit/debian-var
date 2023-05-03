@@ -1,5 +1,10 @@
 readonly ARCH_CPU="64BIT"
 
+# SOC
+readonly SOC="mx8mp"
+readonly SOC_SERIES="imx8"
+readonly SOC_FAMILY="imx8m"
+
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
