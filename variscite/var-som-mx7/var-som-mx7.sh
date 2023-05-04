@@ -5,6 +5,15 @@ readonly SOC="mx7"
 readonly SOC_SERIES="imx7"
 readonly SOC_FAMILY="imx7"
 
+# GIT repositories to fetch
+git_repos=(
+	"G_UBOOT"
+	"G_LINUX_KERNEL"
+	"G_IMX_SDMA_FW"
+	"G_BCM_FW"
+	"G_IMXBOOT"
+)
+
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
@@ -41,8 +50,8 @@ readonly G_IMX_SDMA_FW_GIT_REV="d79c26779d459063b8052b7fe0a48bce4e08d0d9"
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
-readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
+readonly G_BCM_FW_BRANCH="8.2.0.16"
+readonly G_BCM_FW_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
 # ubi
 readonly G_UBI_FILE_NAME='rootfs.ubi.img'

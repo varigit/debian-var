@@ -5,6 +5,17 @@ readonly SOC="mx8qxp"
 readonly SOC_SERIES="imx8"
 readonly SOC_FAMILY="imx8"
 
+# GIT repositories to fetch
+git_repos=(
+	"G_UBOOT"
+	"G_LINUX_KERNEL"
+	"G_IMX_ATF"
+	"G_BCM_FW"
+	"G_IMXBOOT"
+	"G_IMX_SC_FW"
+	"G_FREERTOS_VAR"
+)
+
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
@@ -27,8 +38,8 @@ G_LINUX_DTB="freescale/imx8qxp-var-som-symphony-sd.dtb
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
-readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
+readonly G_BCM_FW_BRANCH="8.2.0.16"
+readonly G_BCM_FW_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
 readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p2.4"
 readonly G_GPU_IMX_VIV_SDK_PACKAGE_DIR="imx-gpu-sdk-6.4.0.p2.0"
@@ -44,14 +55,14 @@ readonly G_IMX_PARSER_DIR="imxparser-4.5.5"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="https://github.com/nxp-imx/imx-mkimage.git"
-readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
+readonly G_IMXBOOT_BRANCH="imx_5.4.24_2.1.0"
 readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
 
 #freertos-variscite
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
-readonly G_FREERTOS_VAR_SRC_GIT="https://github.com/varigit/freertos-variscite.git"
-readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.9.x-var01"
-readonly G_FREERTOS_VAR_SRC_REV="a8b9a7ea089d791cd30c00cc691c2768f83cc307"
+readonly G_FREERTOS_VAR_GIT="https://github.com/varigit/freertos-variscite.git"
+readonly G_FREERTOS_VAR_BRANCH="mcuxpresso_sdk_2.9.x-var01"
+readonly G_FREERTOS_VAR_REV="a8b9a7ea089d791cd30c00cc691c2768f83cc307"
 readonly CM_BOARD="som_mx8qx"
 readonly DISABLE_CACHE_PATCH="disable_cache_2.9.x.patch"
 readonly CM_DEMOS_DISABLE_CACHE="demo_apps/disable_cache"

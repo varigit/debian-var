@@ -5,6 +5,16 @@ readonly SOC="mx8mq"
 readonly SOC_SERIES="imx8"
 readonly SOC_FAMILY="imx8m"
 
+# GIT repositories to fetch
+git_repos=(
+	"G_UBOOT"
+	"G_LINUX_KERNEL"
+	"G_IMX_ATF"
+	"G_BCM_FW"
+	"G_IMXBOOT"
+	"G_FREERTOS_VAR"
+)
+
 # U-Boot
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/uboot-imx.git"
@@ -56,8 +66,8 @@ G_LINUX_DTB="freescale/imx8mq-var-dart-dt8mcustomboard-legacy-m4-sd-dp.dtb
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
-readonly G_BCM_FW_GIT_BRANCH="8.2.0.16"
-readonly G_BCM_FW_GIT_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
+readonly G_BCM_FW_BRANCH="8.2.0.16"
+readonly G_BCM_FW_REV="8081cd2bddb1569abe91eb50bd687a2066a33342"
 
 readonly G_GPU_IMX_VIV_PACKAGE_DIR="imx-gpu-viv-6.4.0.p2.4"
 readonly G_GPU_IMX_VIV_GBM_DIR="libgbm1"
@@ -91,14 +101,15 @@ DEFAULT_BOOT_DTB2="imx8mq-var-dart-dt8mcustomboard-legacy-sd-lvds.dtb"
 
 readonly G_IMXBOOT_SRC_DIR="${DEF_SRC_DIR}/imx-mkimage"
 readonly G_IMXBOOT_GIT="https://github.com/nxp-imx/imx-mkimage.git"
-readonly G_IMXBOOT_BRACH="imx_5.4.24_2.1.0"
+readonly G_IMXBOOT_BRANCH="imx_5.4.24_2.1.0"
 readonly G_IMXBOOT_REV="6745ccdcf15384891639b7ced3aa6ce938682365"
+readonly G_IMXBOOT_PATCHES="${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-dart-mx8m-support.patch"
 
 #freertos-variscite
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
-readonly G_FREERTOS_VAR_SRC_GIT="https://github.com/varigit/freertos-variscite.git"
-readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.11.x-var01"
-readonly G_FREERTOS_VAR_SRC_REV="400b111535768f7aad0b25d29b09b8a9b352cd5f"
+readonly G_FREERTOS_VAR_GIT="https://github.com/varigit/freertos-variscite.git"
+readonly G_FREERTOS_VAR_BRANCH="mcuxpresso_sdk_2.11.x-var01"
+readonly G_FREERTOS_VAR_REV="400b111535768f7aad0b25d29b09b8a9b352cd5f"
 readonly CM_BOARD="dart_mx8mq"
 readonly CM_DEMOS=" \
     multicore_examples/rpmsg_lite_str_echo_rtos/ \

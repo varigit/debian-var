@@ -260,18 +260,54 @@ function pr_debug() {
 }
 
 ### work functions ###
+# get_var_required - retrieves the value of a required variable constructed from a prefix and suffix
+# Arguments:
+#   $1 - The prefix of the variable name
+#   $2 - The suffix of the variable name
+# Returns:
+#   The value of the variable, or exits with an error message if the variable is empty or does not exist
+get_var_required() {
+	local prefix="$1"
+	local suffix="$2"
+	local var_name="${prefix}${suffix}"
+	if [ -z "${!var_name}" ]; then
+		echo "Error: Variable ${var_name} does not exist or is empty" >&2
+		exit 1
+	fi
+	echo "${!var_name}"
+}
+
+# get_var_required - retrieves the value of a optional variable constructed from a prefix and suffix
+# Arguments:
+#   $1 - The prefix of the variable name
+#   $2 - The suffix of the variable name
+# Returns:
+#   The value of the variable
+get_var_optional() {
+	local prefix="$1"
+	local suffix="$2"
+	local var_name="${prefix}${suffix}"
+	echo "${!var_name}"
+}
 
 # get sources from git repository
 # $1 - git repository
 # $2 - branch name
 # $3 - output dir
 # $4 - commit id
+# $5 - optional list of local patches
 function get_git_src()
 {
 	# clone src code
 	git clone ${1} -b ${2} ${3}
 	cd ${3}
 	git reset --hard ${4}
+	if [ -n "${5}" ]; then
+		for patch in ${5}; do
+			echo "Applying ${patch}"
+			patch -p1 < ${patch}
+		done
+	fi
 	cd -
 }
 
@@ -949,95 +985,36 @@ function cmd_make_deploy()
 			tar -xf ${DEF_SRC_DIR}/${G_IMX_SC_FW_TOOLCHAIN_ARCHIVE} \
 				-C ${G_TOOLS_PATH}/
 		};
-
-		# get scfw src
-		(( `ls ${G_IMX_SC_FW_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
-			pr_info "Get scfw repository";
-			get_git_src ${G_IMX_SC_FW_GIT} ${G_IMX_SC_FW_BRANCH} \
-				${G_IMX_SC_FW_SRC_DIR} ${G_IMX_SC_FW_REV}
-		};
-
 	fi
 
-	# get U-Boot repository
-	(( `ls ${G_UBOOT_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
-		pr_info "Get U-Boot repository";
-		get_git_src ${G_UBOOT_GIT} ${G_UBOOT_BRANCH} \
-			${G_UBOOT_SRC_DIR} ${G_UBOOT_REV}
-	};
+	# Fetch git sources added to git_repos
+	#   Assign a default number of git repositories to fetch at once
+	#   PARALLEL_FETCH can be overriden by the command line
+	PARALLEL_FETCH=${PARALLEL_FETCH:-4}
+	pr_info "Fetching from git using ${PARALLEL_FETCH} threads"
+	for repo in "${git_repos[@]}"; do
+		repo_src_dir=$(get_var_required "$repo" "_SRC_DIR")
+		repo_git=$(get_var_required "$repo" "_GIT")
+		repo_branch=$(get_var_required "$repo" "_BRANCH")
+		repo_rev=$(get_var_required "$repo" "_REV")
+		repo_patches=$(get_var_optional "$repo" "_PATCHES")
 
-	# get kernel repository
-	(( `ls ${G_LINUX_KERNEL_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
-		pr_info "Get kernel repository";
-		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} \
-			${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
-	};
-	if [ ! -z "${G_BCM_FW_GIT}" ]; then
-		# get bcm firmware repository
-		(( `ls ${G_BCM_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
-			pr_info "Get bcmhd firmware repository";
-			get_git_src ${G_BCM_FW_GIT} ${G_BCM_FW_GIT_BRANCH} \
-			${G_BCM_FW_SRC_DIR} ${G_BCM_FW_GIT_REV}
-		};
-	fi
-	if [ ! -z "${G_IMXBOOT_GIT}" ]; then
-		# get IMXBoot Source repository
-		(( `ls ${G_IMXBOOT_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
-			pr_info "Get imx-boot";
-			get_git_src ${G_IMXBOOT_GIT} \
-			${G_IMXBOOT_BRACH} ${G_IMXBOOT_SRC_DIR} ${G_IMXBOOT_REV}
-		# patch IMX boot
-		if [ "${MACHINE}" = "imx8mn-var-som" ]; then
-			cd ${G_IMXBOOT_SRC_DIR}
-			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-var-som-imx8m-nano-support.patch
-			cd -
-		fi
-		# patch IMX boot for imx8mm-var-dart
-		if [ "${MACHINE}" = "imx8mm-var-dart" ]; then
-			cd ${G_IMXBOOT_SRC_DIR}
-			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-variscite-imx8mm-suppo.patch
-			cd -
-		fi
-		# patch IMX boot for imx8mq-var-dart
-		if [ "${MACHINE}" = "imx8mq-var-dart" ]; then
-			cd ${G_IMXBOOT_SRC_DIR}
-			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-dart-mx8m-support.patch
-			cd -
-		fi
-		# patch IMX boot for imx8mp-var-dart
-		if [ "${MACHINE}" = "imx8mp-var-dart" ]; then
-			cd ${G_IMXBOOT_SRC_DIR}
-			patch -p1 < ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/imx-boot/imx-mkimage-imx8m-soc.mak-add-dart-imx8mp-support.patch
-			cd -
-		fi
-		};
-	fi
+		(( `ls ${repo_src_dir} 2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Fetching ${repo_branch}@${repo_rev:0:8} from ${repo_git}"
+			# Fetch the source in the background
+			get_git_src "${repo_git}" "${repo_branch}" "${repo_src_dir}" "${repo_rev}" "${repo_patches}" &
+			# Limit the number of parallel processes
+			while (( $(jobs -r -p | wc -l) >= ${PARALLEL_FETCH} )); do sleep 1; done
+		}
+	done
 
-	# get imx-atf repository
-	if [ ! -z "${G_IMX_ATF_GIT}" ]; then
-		(( `ls ${G_IMX_ATF_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
-			pr_info "Get IMX ATF repository";
-			get_git_src ${G_IMX_ATF_GIT} ${G_IMX_ATF_BRANCH} \
-			${G_IMX_ATF_SRC_DIR} ${G_IMX_ATF_REV}
-		};
-	fi
-
-	# SDMA firmware
-	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
-	   [ "${MACHINE}" = "var-som-mx7" ]; then
-		# get linux-frimwrae source repository
-		(( `ls ${G_IMX_SDMA_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
-			pr_info "Get Linux-Firmware";
-			get_git_src ${G_IMX_SDMA_FW_GIT} \
-				${G_IMX_SDMA_FW_GIT_BRANCH} ${G_IMX_SDMA_FW_SRC_DIR} \
-				${G_IMX_SDMA_FW_GIT_REV}
-		};
-	fi
+	# Wait for all background fetch processes to finish
+	wait
 
 	# get freertos-variscite dependencies
 	if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
 		# get Cortex-M toolchain
-		readonly G_CM_GCC_PATH="${G_TOOLS_PATH}/${G_CM_GCC_NAME}"
+		readonly G_CM_GCC_PATH="${G_TOOLS_PATH}/${G_CM_GCC_OUT_DIR}"
 		(( `ls ${G_CM_GCC_PATH} 2>/dev/null | wc -l` == 0 )) && {
 			pr_info "Get and unpack Cortex-M cross compiler";
 			get_remote_file ${G_CM_GCC_LINK} \
@@ -1046,14 +1023,6 @@ function cmd_make_deploy()
 			mkdir -p ${G_TOOLS_PATH}/${G_CM_GCC_OUT_DIR}
 			tar -xf ${DEF_SRC_DIR}/${G_CM_GCC_ARCHIVE} --strip-components=1 \
 				-C ${G_TOOLS_PATH}/${G_CM_GCC_OUT_DIR}/
-		};
-
-		# get freertos-variscite repository
-		(( `ls ${G_FREERTOS_VAR_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
-			pr_info "Get freertos-variscite source repository";
-			get_git_src ${G_FREERTOS_VAR_SRC_GIT} \
-				${G_FREERTOS_VAR_SRC_BRANCH} ${G_FREERTOS_VAR_SRC_DIR} \
-				${G_FREERTOS_VAR_SRC_REV}
 		};
 	fi
 
