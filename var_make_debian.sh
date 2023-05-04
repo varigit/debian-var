@@ -127,7 +127,7 @@ case "${SOC_FAMILY}" in
 	;;
 esac
 
-readonly G_CROSS_COMPILER_JOPTION="-j 4"
+readonly G_CROSS_COMPILER_JOPTION="-j $(nproc)"
 
 # Setup cross compiler path, name, kernel dtb path, kernel image type, helper scripts
 if [ "${ARCH_CPU}" = "64BIT" ]; then
