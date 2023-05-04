@@ -36,20 +36,6 @@ readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
 
-#64 bit CROSS_COMPILER config and paths
-readonly G_CROSS_COMPILER_64BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
-readonly G_CROSS_COMPILER_ARCHIVE_64BIT="${G_CROSS_COMPILER_64BIT_NAME}.tar.xz"
-readonly G_EXT_CROSS_64BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/${G_CROSS_COMPILER_ARCHIVE_64BIT}"
-readonly G_CROSS_COMPILER_64BIT_PREFIX="aarch64-linux-gnu-"
-
-#32 bit CROSS_COMPILER config and paths
-readonly G_CROSS_COMPILER_32BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
-readonly G_CROSS_COMPILER_ARCHIVE_32BIT="${G_CROSS_COMPILER_32BIT_NAME}.tar.xz"
-readonly G_EXT_CROSS_32BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/${G_CROSS_COMPILER_ARCHIVE_32BIT}"
-readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-linux-gnueabihf-"
-
-readonly G_CROSS_COMPILER_JOPTION="-j 4"
-
 #### user rootfs packages ####
 readonly G_USER_PACKAGES=""
 
@@ -116,6 +102,32 @@ source ${G_VARISCITE_PATH}/${MACHINE}/${MACHINE}.sh
 if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
 	readonly G_FREERTOS_VAR_BUILD_DIR="${G_FREERTOS_VAR_SRC_DIR}.build"
 fi
+
+# Toolchain globals
+case "${SOC_FAMILY}" in
+	imx6*|imx7*)
+		#32 bit CROSS_COMPILER config and paths
+		readonly G_CROSS_COMPILER_32BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
+		readonly G_CROSS_COMPILER_ARCHIVE_32BIT="${G_CROSS_COMPILER_32BIT_NAME}.tar.xz"
+		readonly G_EXT_CROSS_32BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/${G_CROSS_COMPILER_ARCHIVE_32BIT}"
+		readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-linux-gnueabihf-"
+		readonly G_CROSS_COMPILER_32BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_32BIT_NAME}/bin"
+		;;
+	imx8*)
+		#64 bit CROSS_COMPILER config and paths
+		readonly G_CROSS_COMPILER_64BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
+		readonly G_CROSS_COMPILER_ARCHIVE_64BIT="${G_CROSS_COMPILER_64BIT_NAME}.tar.xz"
+		readonly G_EXT_CROSS_64BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/${G_CROSS_COMPILER_ARCHIVE_64BIT}"
+		readonly G_CROSS_COMPILER_64BIT_PREFIX="aarch64-linux-gnu-"
+		readonly G_CROSS_COMPILER_64BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_64BIT_NAME}/bin"
+		;;
+	*)
+		echo "E: Unknown toolchain for SOC_FAMILY '${SOC_FAMILY}'"
+		exit 1;
+	;;
+esac
+
+readonly G_CROSS_COMPILER_JOPTION="-j 4"
 
 # Setup cross compiler path, name, kernel dtb path, kernel image type, helper scripts
 if [ "${ARCH_CPU}" = "64BIT" ]; then
@@ -903,14 +915,27 @@ function make_bcm_fw()
 
 function cmd_make_deploy()
 {
-	# get linaro toolchain
-	(( `ls ${G_CROSS_COMPILER_PATH} 2>/dev/null | wc -l` == 0 )) && {
-		pr_info "Get and unpack cross compiler";
-		get_remote_file ${G_EXT_CROSS_COMPILER_LINK} \
-			${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE}
-		tar -xJf ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE} \
-			-C ${G_TOOLS_PATH}/
-	};
+	# get 32 bit toolchain
+	if [ -n "$G_CROSS_COMPILER_32BIT_PATH" ]; then
+		(( `ls ${G_CROSS_COMPILER_32BIT_PATH} 2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get and unpack cross compiler";
+			get_remote_file ${G_EXT_CROSS_32BIT_COMPILER_LINK} \
+				${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE_32BIT}
+			tar -xJf ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE_32BIT} \
+				-C ${G_TOOLS_PATH}/
+		};
+	fi
+
+	# get 64 bit toolchain
+	if [ -n "$G_CROSS_COMPILER_64BIT_PATH" ]; then
+		(( `ls ${G_CROSS_COMPILER_64BIT_PATH} 2>/dev/null | wc -l` == 0 )) && {
+			pr_info "Get and unpack cross compiler";
+			get_remote_file ${G_EXT_CROSS_64BIT_COMPILER_LINK} \
+				${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE_64BIT}
+			tar -xJf ${DEF_SRC_DIR}/${G_CROSS_COMPILER_ARCHIVE_64BIT} \
+				-C ${G_TOOLS_PATH}/
+		};
+	fi
 
 	# get scfw dependencies
 	if [ -n ${G_IMX_SC_FW_REV} ]; then
