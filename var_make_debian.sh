@@ -105,6 +105,21 @@ fi
 
 # Toolchain globals
 case "${SOC_FAMILY}" in
+	am6)
+		#32 bit CROSS_COMPILER config and paths
+		readonly G_CROSS_COMPILER_32BIT_NAME="gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf"
+		readonly G_CROSS_COMPILER_ARCHIVE_32BIT="${G_CROSS_COMPILER_32BIT_NAME}.tar.xz"
+		readonly G_EXT_CROSS_32BIT_COMPILER_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/${G_CROSS_COMPILER_ARCHIVE_32BIT}"
+		readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-none-linux-gnueabihf-"
+		readonly G_CROSS_COMPILER_32BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_32BIT_NAME}/bin"
+
+		#64 bit CROSS_COMPILER config and paths
+		readonly G_CROSS_COMPILER_64BIT_NAME="gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu"
+		readonly G_CROSS_COMPILER_ARCHIVE_64BIT="${G_CROSS_COMPILER_64BIT_NAME}.tar.xz"
+		readonly G_EXT_CROSS_64BIT_COMPILER_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/${G_CROSS_COMPILER_ARCHIVE_64BIT}"
+		readonly G_CROSS_COMPILER_64BIT_PREFIX="aarch64-none-linux-gnu-"
+		readonly G_CROSS_COMPILER_64BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_64BIT_NAME}/bin"
+		;;
 	imx6*|imx7*)
 		#32 bit CROSS_COMPILER config and paths
 		readonly G_CROSS_COMPILER_32BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
