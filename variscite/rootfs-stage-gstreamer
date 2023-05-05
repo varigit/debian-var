@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# rootfs packages multimedia stage
+
+# apply debconfig options
+debconf-set-selections /debconf.set
+rm -f /debconf.set
+
+function protected_install()
+{
+	local _name=${1}
+	local repeated_cnt=5;
+	local RET_CODE=1;
+
+	echo Installing ${_name}
+	for (( c=0; c<${repeated_cnt}; c++ ))
+	do
+		apt install -y ${_name} && {
+			RET_CODE=0;
+			break;
+		};
+
+		echo
+		echo "##########################"
+		echo "## Fix missing packages ##"
+		echo "##########################"
+		echo
+
+		sleep 2;
+
+		apt --fix-broken install -y && {
+			RET_CODE=0;
+			break;
+		};
+	done
+
+	return ${RET_CODE}
+}
+
+# update packages and install base
+apt-get update || apt-get upgrade
+
+# gstreamer
+protected_install gstreamer1.0-plugins-bad
+protected_install gstreamer1.0-plugins-base
+protected_install gstreamer1.0-plugins-base-apps
+protected_install gstreamer1.0-plugins-good
+protected_install gstreamer1.0-tools
+protected_install ${IMXGSTPLG}
+
+# install SW encoders/decoders for socs that lacks HW based
+# encoders/decoders
+if [ ! -z "${G_GST_EXTRA_PLUGINS}" ]
+then
+	protected_install ${G_GST_EXTRA_PLUGINS}
+fi
+
+if [ ! -z "${G_SW_ENCODER_DECODERS}" ]
+then
+	protected_install ${G_SW_ENCODER_DECODERS}
+fi
+
+# sudo kill rootfs-stage-gstreamer
+rm -f rootfs-stage-gstreamer

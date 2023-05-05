@@ -1,3 +1,12 @@
+function run_rootfs_stage() {
+	STAGE="${1}"
+	DESCRIPTION="${2}"
+	pr_info "${DESCRIPTION}"
+	cp ${G_VARISCITE_PATH}/${STAGE} ${ROOTFS_BASE}
+	chmod +x ${ROOTFS_BASE}/${STAGE}
+	chroot ${ROOTFS_BASE} /${STAGE}
+}
+
 # Must be called after make_prepare in main script
 # generate weston rootfs in input dir
 # $1 - rootfs base dir
@@ -100,384 +109,25 @@ cat > ${ROOTFS_BASE}/usr/sbin/policy-rc.d << EOF
 exit 101
 EOF
 
-chmod +x ${ROOTFS_BASE}/usr/sbin/policy-rc.d
+	chmod +x ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
-# rootfs packages console only stage
-cat > rootfs-stage-base << EOF
-#!/bin/bash
-# apply debconfig options
-debconf-set-selections /debconf.set
-rm -f /debconf.set
-
-function protected_install()
-{
-	local _name=\${1}
-	local repeated_cnt=5;
-	local RET_CODE=1;
-
-	echo Installing \${_name}
-	for (( c=0; c<\${repeated_cnt}; c++ ))
-	do
-		apt install -y \${_name} && {
-			RET_CODE=0;
-			break;
-		};
-
-		echo
-		echo "##########################"
-		echo "## Fix missing packages ##"
-		echo "##########################"
-		echo
-
-		sleep 2;
-
-		apt --fix-broken install -y && {
-			RET_CODE=0;
-			break;
-		};
-	done
-
-	return \${RET_CODE}
-}
-
-# update packages and install base
-apt-get update || apt-get upgrade
-
-# local-apt-repository support
-protected_install local-apt-repository
-
-# update packages and install base
-apt-get update || apt-get upgrade
-
-# update packages and install base
-apt-get update
-
-protected_install libc6-dev
-protected_install locales
-protected_install ntp
-protected_install openssh-sftp-server
-protected_install openssh-server
-protected_install nfs-common
-
-# packages required when flashing emmc
-protected_install dosfstools
-
-# fix config for sshd (permit root login)
-sed -i -e 's/#PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
-
-# net-tools (ifconfig, etc.)
-protected_install net-tools
-protected_install network-manager
-
-# sdma package
-protected_install imx-firmware-sdma
-
-# VPU package
-protected_install imx-firmware-vpu
-
-# epdc package
-protected_install imx-firmware-epdc
-
-# hdmi firmware package
-if [ ! -z "${HDMI_FIRMWARE_PACKAGE}" ]
-then
-	protected_install ${HDMI_FIRMWARE_PACKAGE}
-fi
-
-
-# alsa
-protected_install alsa-utils
-
-# i2c tools
-protected_install i2c-tools
-
-# usb tools
-protected_install usbutils
-
-# libgpiod
-protected_install gpiod
-protected_install libgpiod2
-protected_install python3-libgpiod
-
-# net tools
-protected_install iperf3
-
-protected_install rng-tools
-
-# mtd
-protected_install mtd-utils
-
-# bluetooth
-protected_install bluetooth
-protected_install bluez-obexd
-protected_install bluez-tools
-protected_install pulseaudio
-protected_install pulseaudio-module-bluetooth
-
-# wifi support packages
-protected_install hostapd
-protected_install udhcpd
-
-# disable the hostapd service by default
-systemctl disable hostapd.service
-
-# can support
-protected_install can-utils
-
-# pmount
-protected_install pmount
-
-# pm-utils
-protected_install pm-utils
-
-# install dpkg-dev for dpkg-buildpackage
-protected_install debhelper
-protected_install dh-python
-protected_install apt-src
-if [ "${G_NO_EXECSTACK}" != "y" ]; then
-	protected_install execstack
-fi
-
-apt-get -y autoremove
-
-#update iptables alternatives to legacy
-update-alternatives --set iptables /usr/sbin/iptables-legacy
-update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
-
-#install usleep busybox applet
-ln -sf /bin/busybox /bin/usleep
-
-# create users and set password
-useradd -m -G audio -s /bin/bash user
-usermod -a -G video user
-echo "user:user" | chpasswd
-echo "root:root" | chpasswd
-
-# add users to pulse-access group
-usermod -a -G pulse-access root
-usermod -a -G pulse-access user
-
-# update pulse home directory
-usermod -d /var/run/pulse pulse
-
-# sudo kill rootfs-stage-base
-rm -f rootfs-stage-base
-EOF
-
-# rootfs packages graphics stage
-cat > rootfs-stage-graphics << EOF
-#!/bin/bash
-# apply debconfig options
-debconf-set-selections /debconf.set
-rm -f /debconf.set
-
-function protected_install()
-{
-	local _name=\${1}
-	local repeated_cnt=5;
-	local RET_CODE=1;
-
-	echo Installing \${_name}
-	for (( c=0; c<\${repeated_cnt}; c++ ))
-	do
-		apt install -y \${_name} && {
-			RET_CODE=0;
-			break;
-		};
-
-		echo
-		echo "##########################"
-		echo "## Fix missing packages ##"
-		echo "##########################"
-		echo
-
-		sleep 2;
-
-		apt --fix-broken install -y && {
-			RET_CODE=0;
-			break;
-		};
-	done
-
-	return \${RET_CODE}
-}
-
-# update packages and install base
-apt-get update || apt-get upgrade
-# graphical packages
-protected_install libdrm-vivante1
-protected_install libgbm1
-protected_install imx-gpu-viv-core
-protected_install dpkg-dev
-if [ ! -z "${IMX_GPU_VIV_DEFAULT_WL_PACKAGE}" ]
-then
-	echo "Default Vivante WL package is imx-gpu-viv-core"
-else
-	protected_install imx-gpu-viv-wl
-fi
-
-
-if [ ! -z "${G2DPACKAGE}" ]
-then
-	protected_install ${G2DPACKAGE}
-fi
-protected_install weston
-
-
-# GPU SDK
-if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
-then
-       protected_install libdevil-dev
-       protected_install libwayland-egl-backend-dev
-       protected_install glslang-tools
-       protected_install libassimp-dev
-       protected_install imx-gpu-sdk-console
-       protected_install imx-gpu-sdk-gles2
-       protected_install imx-gpu-sdk-gles3
-       protected_install imx-gpu-sdk-opencl
-       protected_install imx-gpu-sdk-window
-fi
-#sudo kill rootfs-stage-graphics
-rm -f rootfs-stage-graphics
-EOF
-
-# rootfs packages multimedia stage
-cat > rootfs-stage-gstreamer << EOF
-#!/bin/bash
-# apply debconfig options
-debconf-set-selections /debconf.set
-rm -f /debconf.set
-
-function protected_install()
-{
-	local _name=\${1}
-	local repeated_cnt=5;
-	local RET_CODE=1;
-
-	echo Installing \${_name}
-	for (( c=0; c<\${repeated_cnt}; c++ ))
-	do
-		apt install -y \${_name} && {
-			RET_CODE=0;
-			break;
-		};
-
-		echo
-		echo "##########################"
-		echo "## Fix missing packages ##"
-		echo "##########################"
-		echo
-
-		sleep 2;
-
-		apt --fix-broken install -y && {
-			RET_CODE=0;
-			break;
-		};
-	done
-
-	return \${RET_CODE}
-}
-
-# update packages and install base
-apt-get update || apt-get upgrade
-
-# gstreamer
-protected_install gstreamer1.0-plugins-bad
-protected_install gstreamer1.0-plugins-base
-protected_install gstreamer1.0-plugins-base-apps
-protected_install gstreamer1.0-plugins-good
-protected_install gstreamer1.0-tools
-protected_install ${IMXGSTPLG}
-
-# install SW encoders/decoders for socs that lacks HW based
-# encoders/decoders
-if [ ! -z "${G_GST_EXTRA_PLUGINS}" ]
-then
-	protected_install ${G_GST_EXTRA_PLUGINS}
-fi
-
-if [ ! -z "${G_SW_ENCODER_DECODERS}" ]
-then
-	protected_install ${G_SW_ENCODER_DECODERS}
-fi
-
-# sudo kill rootfs-stage-gstreamer
-rm -f rootfs-stage-gstreamer
-EOF
-
-# rootfs packages machine learning stage
-cat > rootfs-stage-ml << EOF
-#!/bin/bash
-# apply debconfig options
-debconf-set-selections /debconf.set
-rm -f /debconf.set
-
-function protected_install()
-{
-	local _name=\${1}
-	local repeated_cnt=5;
-	local RET_CODE=1;
-
-	echo Installing \${_name}
-	for (( c=0; c<\${repeated_cnt}; c++ ))
-	do
-		apt install -y \${_name} && {
-			RET_CODE=0;
-			break;
-		};
-
-		echo
-		echo "##########################"
-		echo "## Fix missing packages ##"
-		echo "##########################"
-		echo
-
-		sleep 2;
-
-		apt --fix-broken install -y && {
-			RET_CODE=0;
-			break;
-		};
-	done
-
-	return \${RET_CODE}
-}
-
-# update packages and install base
-apt-get update || apt-get upgrade
-
-# machine learning packages
-protected_install imx-nn
-
-# sudo kill rootfs-stage-ml
-rm -f rootfs-stage-ml
-EOF
-
-	pr_info "rootfs: install selected Debian packages (console-only-stage)"
-	chmod +x rootfs-stage-base
-	chroot ${ROOTFS_BASE} /rootfs-stage-base
+	run_rootfs_stage "rootfs-stage-base" "rootfs: install selected Debian packages (console-only-stage)"
+	exit 0
 
 	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
-		pr_info "rootfs: install selected Debian packages (Graphics - GPU/Weston)"
-		chmod +x rootfs-stage-graphics
-		chroot ${ROOTFS_BASE} /rootfs-stage-graphics
+		run_rootfs_stage "rootfs-stage-graphics" "rootfs: install selected Debian packages (Graphics - GPU/Weston)"
 	else
 		rm -f ${ROOTFS_BASE}/rootfs-stage-graphics
 	fi
 
 	if [ "${G_DEBIAN_DISTRO_FEATURE_MM}" = "y" ]; then
-		pr_info "rootfs: install selected Debian packages (MM Gstreamer)"
-		chmod +x rootfs-stage-gstreamer
-		chroot ${ROOTFS_BASE} /rootfs-stage-gstreamer
+		run_rootfs_stage "rootfs-stage-gstreamer" "rootfs: install selected Debian packages (MM Gstreamer)"
 	else
 		rm -f ${ROOTFS_BASE}/rootfs-stage-gstreamer
 	fi
 
 	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
-		pr_info "rootfs: install selected Debian packages (Machine Learning)"
-		chmod +x rootfs-stage-ml
-		chroot ${ROOTFS_BASE} /rootfs-stage-ml
+		run_rootfs_stage "rootfs-stage-ml" "rootfs: install selected Debian packages (Machine Learning)"
 	else
 		rm -f ${ROOTFS_BASE}/rootfs-stage-ml
 	fi
@@ -589,41 +239,13 @@ EOF
 	echo "HandlePowerKey=ignore" >> ${ROOTFS_BASE}/etc/systemd/logind.conf
 
 	#Build kernel headers on the target
-	pr_info "rootfs: Building kernel-headers"
 	cp -ar ${PARAM_OUTPUT_DIR}/kernel-headers ${ROOTFS_BASE}/tmp/
-
-	echo "#!/bin/bash
-	# update packages
-	cd /tmp/kernel-headers
-	dpkg-buildpackage -b -j4 -us -uc
-	cp -ar /tmp/*.deb /srv/local-apt-repository/
-	dpkg-reconfigure local-apt-repository
-	cd -
-	rm -rf /var/cache/apt/*
-	rm -f header-stage
-	" > header-stage
-
-	chmod +x header-stage
-	chroot ${ROOTFS_BASE} /header-stage
+	run_rootfs_stage "rootfs-stage-header" "rootfs: Building kernel-headers"
 
 	#Install user pacakges if any
 	if [ "${G_USER_PACKAGES}" != "" ] ; then
 		pr_info "rootfs: install user defined packages (user-stage)"
-		pr_info "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\" "
-
-		echo "#!/bin/bash
-		# update packages
-		apt-get update
-		apt-get upgrade
-
-		# install all user packages
-		apt-get -y install ${G_USER_PACKAGES}
-
-		rm -f user-stage
-		" > user-stage
-
-		chmod +x user-stage
-		chroot ${ROOTFS_BASE} /user-stage
+		run_rootfs_stage "rootfs-stage-user" "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\""
 	fi
 
 	# binaries rootfs patching

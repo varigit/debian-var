@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# rootfs packages graphics stage
+
+# apply debconfig options
+debconf-set-selections /debconf.set
+rm -f /debconf.set
+
+function protected_install()
+{
+	local _name=${1}
+	local repeated_cnt=5;
+	local RET_CODE=1;
+
+	echo Installing ${_name}
+	for (( c=0; c<${repeated_cnt}; c++ ))
+	do
+		apt install -y ${_name} && {
+			RET_CODE=0;
+			break;
+		};
+
+		echo
+		echo "##########################"
+		echo "## Fix missing packages ##"
+		echo "##########################"
+		echo
+
+		sleep 2;
+
+		apt --fix-broken install -y && {
+			RET_CODE=0;
+			break;
+		};
+	done
+
+	return ${RET_CODE}
+}
+
+# update packages and install base
+apt-get update || apt-get upgrade
+# graphical packages
+protected_install libdrm-vivante1
+protected_install libgbm1
+protected_install imx-gpu-viv-core
+protected_install dpkg-dev
+if [ ! -z "${IMX_GPU_VIV_DEFAULT_WL_PACKAGE}" ]
+then
+	echo "Default Vivante WL package is imx-gpu-viv-core"
+else
+	protected_install imx-gpu-viv-wl
+fi
+
+
+if [ ! -z "${G2DPACKAGE}" ]
+then
+	protected_install ${G2DPACKAGE}
+fi
+protected_install weston
+
+
+# GPU SDK
+if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]
+then
+       protected_install libdevil-dev
+       protected_install libwayland-egl-backend-dev
+       protected_install glslang-tools
+       protected_install libassimp-dev
+       protected_install imx-gpu-sdk-console
+       protected_install imx-gpu-sdk-gles2
+       protected_install imx-gpu-sdk-gles3
+       protected_install imx-gpu-sdk-opencl
+       protected_install imx-gpu-sdk-window
+fi
+#sudo kill rootfs-stage-graphics
+rm -f rootfs-stage-graphics
