@@ -68,7 +68,7 @@ G_LINUX_DTB="imx6ull-var-dart-6ulcustomboard-emmc-sd-card.dtb
 	imx6ulz-var-som-symphony-board-nand-sd-card.dtb
 	imx6ulz-var-som-symphony-board-nand-wifi.dtb"
 
-BUILD_IMAGE_TYPE="zImage"
+KERNEL_IMAGE_TYPE="zImage"
 KERNEL_BOOT_IMAGE_SRC="arch/arm/boot/"
 KERNEL_DTB_IMAGE_PATH="arch/arm/boot/dts/"
 

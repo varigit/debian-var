@@ -187,8 +187,8 @@ function make_x11_sdcard() {
 	{
 		pr_info "Flashing \"BOOT-VARSOM\" partition"
 		cp ${LPARAM_OUTPUT_DIR}/*.dtb	${P1_MOUNT_DIR}/
-		cp ${LPARAM_OUTPUT_DIR}/${BUILD_IMAGE_TYPE} \
-			${P1_MOUNT_DIR}/${BUILD_IMAGE_TYPE}
+		cp ${LPARAM_OUTPUT_DIR}/${KERNEL_IMAGE_TYPE} \
+			${P1_MOUNT_DIR}/${KERNEL_IMAGE_TYPE}
 		sync
 
 		pr_info "Flashing \"rootfs\" partition"
@@ -201,7 +201,7 @@ function make_x11_sdcard() {
 		mkdir -p ${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}
 
 		pr_info "Copying Debian images to /${DEBIAN_IMAGES_TO_ROOTFS_POINT}"
-		cp ${LPARAM_OUTPUT_DIR}/${BUILD_IMAGE_TYPE} \
+		cp ${LPARAM_OUTPUT_DIR}/${KERNEL_IMAGE_TYPE} \
 		${P2_MOUNT_DIR}/${DEBIAN_IMAGES_TO_ROOTFS_POINT}/
 		if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 		   [ "${MACHINE}" = "var-som-mx7" ]; then

@@ -24,6 +24,9 @@ G_UBOOT_DEF_CONFIG_MMC="imx8mn_var_som_defconfig"
 readonly G_UBOOT_NAME_FOR_EMMC='imx-boot-sd.bin'
 
 # Linux kernel
+readonly KERNEL_IMAGE_TYPE="Image.gz"
+readonly KERNEL_BOOT_IMAGE_SRC="arch/arm64/boot/"
+readonly KERNEL_DTB_IMAGE_PATH="arch/arm64/boot/dts/freescale/"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="5.4-2.1.x-imx_var01"

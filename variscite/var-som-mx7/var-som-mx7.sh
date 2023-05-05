@@ -37,7 +37,7 @@ G_LINUX_DTB="imx7d-var-som-emmc.dtb
 	imx7d-var-som-emmc-m4.dtb
 	imx7d-var-som-nand-m4.dtb"
 
-BUILD_IMAGE_TYPE="zImage"
+KERNEL_IMAGE_TYPE="zImage"
 KERNEL_BOOT_IMAGE_SRC="arch/arm/boot/"
 KERNEL_DTB_IMAGE_PATH="arch/arm/boot/dts/"
 

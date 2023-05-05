@@ -165,9 +165,6 @@ if [ "${ARCH_CPU}" = "64BIT" ]; then
 	G_CROSS_COMPILER_ARCHIVE=${G_CROSS_COMPILER_ARCHIVE_64BIT}
 	G_CROSS_COMPILER_PREFIX=${G_CROSS_COMPILER_64BIT_PREFIX}
 	ARCH_ARGS="arm64"
-	BUILD_IMAGE_TYPE="Image.gz"
-	KERNEL_BOOT_IMAGE_SRC="arch/arm64/boot/"
-	KERNEL_DTB_IMAGE_PATH="arch/arm64/boot/dts/freescale/"
 	# Include weston backend rootfs helper
 	source ${G_VARISCITE_PATH}/weston_rootfs.sh
 	source ${G_VARISCITE_PATH}/linux-headers_debian_src/create_kernel_tree.sh
@@ -414,13 +411,13 @@ function make_kernel()
 		IMAGE_EXTRA_ARGS="LOADADDR=${UIMAGE_LOADADDR}"
 	fi
 	make CROSS_COMPILE=${1} ARCH=${ARCH_ARGS} ${G_CROSS_COMPILER_JOPTION} ${IMAGE_EXTRA_ARGS}\
-			-C ${4}/ ${BUILD_IMAGE_TYPE}
+			-C ${4}/ ${KERNEL_IMAGE_TYPE}
 
 	pr_info "make ${3}"
 	make CROSS_COMPILE=${1} ARCH=${ARCH_ARGS} ${G_CROSS_COMPILER_JOPTION} -C ${4} ${3}
 
 	pr_info "Copy kernel and dtb files to output dir: ${5}"
-	cp ${4}/${KERNEL_BOOT_IMAGE_SRC}/${BUILD_IMAGE_TYPE} ${5}/;
+	cp ${4}/${KERNEL_BOOT_IMAGE_SRC}/${KERNEL_IMAGE_TYPE} ${5}/;
 	cp ${4}/${KERNEL_DTB_IMAGE_PATH}*.dtb ${5}/;
 }
 
