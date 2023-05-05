@@ -146,6 +146,9 @@ readonly G_CROSS_COMPILER_JOPTION="-j $(nproc)"
 
 # Setup helper scripts according to SOC_FAMILY
 case "${SOC_FAMILY}" in
+	am6)
+		source ${G_VARISCITE_PATH}/u-boot-am6.sh
+		;;
 	imx*)
 		source ${G_VARISCITE_PATH}/u-boot-imx.sh
 		;;
