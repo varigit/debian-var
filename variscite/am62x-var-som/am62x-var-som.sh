@@ -12,6 +12,7 @@ git_repos=(
 	"G_ATF"
 	"G_OPTEE"
 	"G_UBOOT"
+	"G_LINUX_KERNEL"
 )
 
 # core-secdev-k3 Security Dev Tool
@@ -51,3 +52,14 @@ readonly G_UBOOT_BRANCH="ti-u-boot-2021.01_var01"
 readonly G_UBOOT_REV="277c2dd356d8ec77d7a776c420cf9d87f4e65ff1"
 readonly G_UBOOT_DEF_CONFIG_R="am62x_var_som_r5_defconfig"
 readonly G_UBOOT_DEF_CONFIG_A="am62x_var_som_a53_defconfig"
+
+# Linux kernel
+readonly KERNEL_IMAGE_TYPE="Image"
+readonly KERNEL_BOOT_IMAGE_SRC="arch/arm64/boot/"
+readonly KERNEL_DTB_IMAGE_PATH="arch/arm64/boot/dts/ti/"
+readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
+readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/ti-linux-kernel.git"
+readonly G_LINUX_KERNEL_BRANCH="ti-linux-5.10.y_var01"
+readonly G_LINUX_KERNEL_REV="2d58bcd882abfb558eb5269de1c54245525c590f"
+readonly G_LINUX_KERNEL_DEF_CONFIG='am62x_var_defconfig'
+readonly G_LINUX_DTB="ti/k3-am625-var-som-symphony.dtb"
