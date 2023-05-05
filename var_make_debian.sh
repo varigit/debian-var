@@ -152,6 +152,7 @@ case "${SOC_FAMILY}" in
 		;;
 	imx*)
 		source ${G_VARISCITE_PATH}/u-boot-imx.sh
+		source ${G_VARISCITE_PATH}/weston_rootfs_imx.sh
 		;;
 	*)
 		echo "E: Unknown SOC_FAMILY \"${SOC_FAMILY}\" when setting up helper scripts";

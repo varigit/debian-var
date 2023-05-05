@@ -37,132 +37,22 @@ function make_debian_weston_rootfs()
 	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
 	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
 
-	# imx-firmware
-	cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	# copy common packages
+	[[ $(type -t copy_common_packages) == function ]] && copy_common_packages
 
 	# copy display and gpu packages only if distro feature enabled
 	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
-		# cairo
-		cp -r ${G_VARISCITE_PATH}/deb/cairo/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# libdrm
-		cp -r ${G_VARISCITE_PATH}/deb/libdrm/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# waylandprotocols
-		cp -r ${G_VARISCITE_PATH}/deb/waylandprotocols/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# weston
-		cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# G2D_Packages
-		if [ ! -z "${G2D_PACKAGE_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G2D_PACKAGE_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# Vivante GPU libgbm1 libraries
-		if [ ! -z "${G_GPU_IMX_VIV_GBM_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_GBM_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# Vivante GPU libraries
-		if [ ! -z "${G_GPU_IMX_VIV_PACKAGE_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_PACKAGE_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-		# Vivante GPU SDK Binaries
-		if [ ! -z "${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_GPU_IMX_VIV_SDK_PACKAGE_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
+		[[ $(type -t copy_packages_display) == function ]] && copy_packages_display
 	fi
 
 	# copy gstreamer and multimedia packages only if distro feature enabled
 	if [ "${G_DEBIAN_DISTRO_FEATURE_MM}" = "y" ]; then
-		# imxcodec
-		if [ ! -z "${G_IMX_CODEC_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_CODEC_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# imxparser
-		if [ ! -z "${G_IMX_PARSER_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_PARSER_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# imxvpuhantro
-		if [ ! -z "${G_IMX_VPU_HANTRO_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_HANTRO_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# imxvpuhantro-vc
-		if [ ! -z "${G_IMX_VPU_HANTRO_VC_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_HANTRO_VC_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# imx-vpuwrap
-		if [ ! -z "${G_IMX_VPU_WRAPPER_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_VPU_WRAPPER_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# gstreamer-libav for SW codecs
-		if [ ! -z "${G_SW_GST_CODEC_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_SW_GST_CODEC_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# use gstpluginsbad dir if available
-		if [ ! -z "${G_GST_PLUGINS_BAD_DIR}" ]; then
-			# gstpluginsbad
-			cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${G_GST_PLUGINS_BAD_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		else
-			# gstpluginsbad
-			cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
-
-		# gstpluginsbase
-		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# gstpluginsgood
-		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# gstreamer
-		cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# imxgstplugin
-		cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-
-		# opencv
-		if [ ! -z "${G_OPENCV_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_OPENCV_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
+		[[ $(type -t copy_packages_mm) == function ]] && copy_packages_mm
 	fi
 
 	# copy machine lerning packages only if distro feature enabled
 	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
-
-		# imx-nn
-		if [ ! -z "${G_IMX_NN_DIR}" ]; then
-			cp -r ${G_VARISCITE_PATH}/deb/${G_IMX_NN_DIR}/* \
-				${ROOTFS_BASE}/srv/local-apt-repository
-		fi
+		[[ $(type -t copy_packages_ml) == function ]] && copy_packages_ml
 	fi
 
 # add mirror to source list
