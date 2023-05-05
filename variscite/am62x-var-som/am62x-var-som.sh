@@ -13,6 +13,7 @@ git_repos=(
 	"G_OPTEE"
 	"G_UBOOT"
 	"G_LINUX_KERNEL"
+	"G_TI_IMG_ROGUE_DRV"
 )
 
 # core-secdev-k3 Security Dev Tool
@@ -63,3 +64,9 @@ readonly G_LINUX_KERNEL_BRANCH="ti-linux-5.10.y_var01"
 readonly G_LINUX_KERNEL_REV="2d58bcd882abfb558eb5269de1c54245525c590f"
 readonly G_LINUX_KERNEL_DEF_CONFIG='am62x_var_defconfig'
 readonly G_LINUX_DTB="ti/k3-am625-var-som-symphony.dtb"
+
+# PowerVR Rogue GPU
+readonly G_TI_IMG_ROGUE_DRV_SRC_DIR="${DEF_SRC_DIR}/ti-img-rogue-driver"
+readonly G_TI_IMG_ROGUE_DRV_GIT="https://git.ti.com/git/graphics/ti-img-rogue-driver "
+readonly G_TI_IMG_ROGUE_DRV_BRANCH="linuxws/dunfell/k5.10/1.15.6133109_unified_fw_pagesize"
+readonly G_TI_IMG_ROGUE_DRV_REV="1dd6291a5cad4f2b909fc2a14bd717a3bc5f0bb2"

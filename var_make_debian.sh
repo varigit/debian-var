@@ -148,6 +148,7 @@ readonly G_CROSS_COMPILER_JOPTION="-j $(nproc)"
 case "${SOC_FAMILY}" in
 	am6)
 		source ${G_VARISCITE_PATH}/u-boot-am6.sh
+		source ${G_VARISCITE_PATH}/kernel-am6.sh
 		;;
 	imx*)
 		source ${G_VARISCITE_PATH}/u-boot-imx.sh
@@ -428,6 +429,11 @@ function clean_kernel()
 	pr_info "Clean the Linux kernel"
 
 	make ARCH=${ARCH_ARGS} -C ${1}/ mrproper
+
+	pr_info "Clean the external Linux kernel modules"
+	if [[ $(type -t clean_kernel_modules_ext) == function ]]; then
+		clean_kernel_modules_ext ${1}
+	fi
 }
 
 # make Linux kernel modules
@@ -442,6 +448,11 @@ function make_kernel_modules()
 
 	pr_info "Compiling kernel modules"
 	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} modules
+
+	pr_info "Compiling external kernel modules"
+	if [[ $(type -t make_kernel_modules_ext) == function ]]; then
+		make_kernel_modules_ext ${1} ${2} ${3} ${4}
+	fi
 }
 
 # make Linux kernel headers package
@@ -473,6 +484,11 @@ function install_kernel_modules()
 	pr_info "Installing kernel modules to ${4}"
 	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} \
 		INSTALL_MOD_PATH=${4} modules_install
+
+	pr_info "Installing external kernel modules to ${4}"
+	if [[ $(type -t make_kernel_modules_ext) == function ]]; then
+		install_kernel_modules_ext ${1} ${2} ${3} ${4}
+	fi
 }
 
 compile_fw() {
