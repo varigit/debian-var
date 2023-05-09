@@ -7,45 +7,7 @@ function run_rootfs_stage() {
 	chroot ${ROOTFS_BASE} /${STAGE}
 }
 
-# Must be called after make_prepare in main script
-# generate weston rootfs in input dir
-# $1 - rootfs base dir
-function make_debian_weston_rootfs()
-{
-	local ROOTFS_BASE=$1
-
-	pr_info "Make Debian (${DEB_RELEASE}) rootfs start..."
-
-	# umount previus mounts (if fail)
-	cleanup_mounts
-
-	# clear rootfs dir
-	rm -rf ${ROOTFS_BASE}/*
-
-	pr_info "rootfs: debootstrap"
-	sudo mkdir -p ${ROOTFS_BASE}
-	sudo chown -R root:root ${ROOTFS_BASE}
-	debootstrap --verbose --no-check-gpg --foreign --arch arm64 ${DEB_RELEASE} \
-		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
-
-	# prepare qemu
-	pr_info "rootfs: debootstrap in rootfs (second-stage)"
-	cp ${G_VARISCITE_PATH}/qemu_64bit/qemu-aarch64-static ${ROOTFS_BASE}/usr/bin/qemu-aarch64-static
-	mount -o bind /proc ${ROOTFS_BASE}/proc
-	mount -o bind /dev ${ROOTFS_BASE}/dev
-	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
-	mount -o bind /sys ${ROOTFS_BASE}/sys
-	chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage --verbose
-
-	# delete unused folder
-	chroot $ROOTFS_BASE rm -rf ${ROOTFS_BASE}/debootstrap
-
-	pr_info "rootfs: generate default configs"
-	mkdir -p ${ROOTFS_BASE}/etc/sudoers.d/
-	echo "user ALL=(root) /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/vi, /sbin/reboot" > ${ROOTFS_BASE}/etc/sudoers.d/user
-	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
-	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
-
+function rootfs_copy_packages() {
 	# copy common packages
 	[[ $(type -t copy_common_packages) == function ]] && copy_common_packages
 
@@ -63,7 +25,9 @@ function make_debian_weston_rootfs()
 	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
 		[[ $(type -t copy_packages_ml) == function ]] && copy_packages_ml
 	fi
+}
 
+function rootfs_configure() {
 # add mirror to source list
 echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
 deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
@@ -110,28 +74,43 @@ exit 101
 EOF
 
 	chmod +x ${ROOTFS_BASE}/usr/sbin/policy-rc.d
+}
 
-	run_rootfs_stage "rootfs-stage-base" "rootfs: install selected Debian packages (console-only-stage)"
-	exit 0
+function rootfs_install_kernel() {
+	# install kernel image in rootfs
+	cp ${PARAM_OUTPUT_DIR}/Image.gz ${ROOTFS_BASE}/boot
 
-	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
-		run_rootfs_stage "rootfs-stage-graphics" "rootfs: install selected Debian packages (Graphics - GPU/Weston)"
-	else
-		rm -f ${ROOTFS_BASE}/rootfs-stage-graphics
+	# install kernel dtbs
+	cp ${PARAM_OUTPUT_DIR}/*.dtb ${ROOTFS_BASE}/boot
+	if [ "$DEFAULT_BOOT_DTB" != "$BOOT_DTB" ]; then
+		ln -sf ${DEFAULT_BOOT_DTB} ${ROOTFS_BASE}/boot/${BOOT_DTB}
+		if [ ! -z "${BOOT_DTB2}" ]; then
+			ln -sf ${DEFAULT_BOOT_DTB2} \
+				${ROOTFS_BASE}/boot/${BOOT_DTB2}
+		fi
+		if [ "${MACHINE}" = "imx8qm-var-som" ]; then
+			ln -sf ${DEFAULT_BOOT_SPEAR8_DTB} ${ROOTFS_BASE}/boot/${BOOT_SPEAR8_DTB}
+			# i.MX8QP SoC Default DTBs
+			ln -sf ${DEFAULT_BOOT_DTB/imx8qm/imx8qp} ${ROOTFS_BASE}/boot/${BOOT_DTB/imx8qm/imx8qp}
+			ln -sf ${DEFAULT_BOOT_SPEAR8_DTB/imx8qm/imx8qp} ${ROOTFS_BASE}/boot/${BOOT_SPEAR8_DTB/imx8qm/imx8qp}
+		fi
 	fi
 
-	if [ "${G_DEBIAN_DISTRO_FEATURE_MM}" = "y" ]; then
-		run_rootfs_stage "rootfs-stage-gstreamer" "rootfs: install selected Debian packages (MM Gstreamer)"
-	else
-		rm -f ${ROOTFS_BASE}/rootfs-stage-gstreamer
-	fi
+	# install kernel modules in rootfs
+	install_kernel_modules \
+		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
+		${ROOTFS_BASE}
 
-	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
-		run_rootfs_stage "rootfs-stage-ml" "rootfs: install selected Debian packages (Machine Learning)"
-	else
-		rm -f ${ROOTFS_BASE}/rootfs-stage-ml
-	fi
+	# copy all kernel headers for development
+	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
+	cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* \
+	${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
+	cp -r ${G_LINUX_KERNEL_SRC_DIR}/include \
+		${ROOTFS_BASE}/usr/local/src/linux-imx/
+}
 
+function rootfs_install_var_bt {
 	# install variscite-bt service
 	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus \
 		${ROOTFS_BASE}/usr/bin
@@ -146,7 +125,24 @@ EOF
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/variscite-bt.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
+}
 
+function rootfs_install_var_wifi() {
+	# install variscite-wifi service
+	install -d ${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi.conf \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi-common.sh \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${G_VARISCITE_PATH}/variscite-wifi.service \
+		${ROOTFS_BASE}/lib/systemd/system
+	ln -s /lib/systemd/system/variscite-wifi.service \
+		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
+}
+
+function rootfs_install_config_bt() {
 	# install BT audio and main config
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/audio.conf \
 		${ROOTFS_BASE}/etc/bluetooth/
@@ -161,7 +157,9 @@ EOF
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/obex.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
+}
 
+function rootfs_install_config_pulseaudio() {
 	# install pulse audio configuration
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio.service \
 		${ROOTFS_BASE}/lib/systemd/system
@@ -178,29 +176,22 @@ EOF
 	rm -rf ${ROOTFS_BASE}/etc/systemd/user/default.target.wants/pulseaudio.service
 	
 	rm -f ${ROOTFS_BASE}/etc/xdg/autostart/pulseaudio.desktop
+}
 
+function rootfs_install_config_blacklist() {
 	# install blacklist.conf
 	install -d ${ROOTFS_BASE}/etc/modprobe.d/
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/blacklist.conf \
 		${ROOTFS_BASE}/etc/modprobe.d/
+}
 
-	# install variscite-wifi service
-	install -d ${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi.conf \
-		${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/variscite-wifi-common.sh \
-		${ROOTFS_BASE}/etc/wifi
-	install -m 0755 ${G_VARISCITE_PATH}/variscite-wifi \
-		${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${G_VARISCITE_PATH}/variscite-wifi.service \
-		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/variscite-wifi.service \
-		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
-
+function rootfs_install_config_securetty() {
 	#install securetty
 	install -m 0644 ${G_VARISCITE_PATH}/securetty \
 		${ROOTFS_BASE}/etc/securetty
+}
 
+function rootfs_install_config_weston_service() {
 	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
 		# install weston service
 		install -d ${ROOTFS_BASE}/etc/xdg/weston
@@ -217,7 +208,9 @@ EOF
 		ln -s /lib/systemd/system/weston.service \
 			${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/weston.service
 	fi
+}
 
+function rootfs_install_config_pm_utils() {
 	# remove pm-utils default scripts and install wifi / bt pm-utils script
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
@@ -234,78 +227,35 @@ EOF
 		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/04-usb.sh \
 			${ROOTFS_BASE}/etc/pm/sleep.d/
 	fi
+}
 
+function rootfs_install_config_logind() {
 	# we don't want systemd to handle the power key
 	echo "HandlePowerKey=ignore" >> ${ROOTFS_BASE}/etc/systemd/logind.conf
+}
 
+function rootfs_build_kernel_headers() {
 	#Build kernel headers on the target
 	cp -ar ${PARAM_OUTPUT_DIR}/kernel-headers ${ROOTFS_BASE}/tmp/
 	run_rootfs_stage "rootfs-stage-header" "rootfs: Building kernel-headers"
+}
 
+function rootfs_install_user_packages() {
 	#Install user pacakges if any
 	if [ "${G_USER_PACKAGES}" != "" ] ; then
 		pr_info "rootfs: install user defined packages (user-stage)"
 		run_rootfs_stage "rootfs-stage-user" "rootfs: G_USER_PACKAGES \"${G_USER_PACKAGES}\""
 	fi
+}
 
-	# binaries rootfs patching
-	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
-	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
-	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
-	install -d ${ROOTFS_BASE}/boot/
-	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
-	cp ${PARAM_OUTPUT_DIR}/Image.gz ${ROOTFS_BASE}/boot
-	cp ${PARAM_OUTPUT_DIR}/*.dtb ${ROOTFS_BASE}/boot
-	if [ "$DEFAULT_BOOT_DTB" != "$BOOT_DTB" ]; then
-		ln -sf ${DEFAULT_BOOT_DTB} ${ROOTFS_BASE}/boot/${BOOT_DTB}
-		if [ ! -z "${BOOT_DTB2}" ]; then
-			ln -sf ${DEFAULT_BOOT_DTB2} \
-				${ROOTFS_BASE}/boot/${BOOT_DTB2}
-		fi
-		if [ "${MACHINE}" = "imx8qm-var-som" ]; then
-			ln -sf ${DEFAULT_BOOT_SPEAR8_DTB} ${ROOTFS_BASE}/boot/${BOOT_SPEAR8_DTB}
-			# i.MX8QP SoC Default DTBs
-			ln -sf ${DEFAULT_BOOT_DTB/imx8qm/imx8qp} ${ROOTFS_BASE}/boot/${BOOT_DTB/imx8qm/imx8qp}
-			ln -sf ${DEFAULT_BOOT_SPEAR8_DTB/imx8qm/imx8qp} ${ROOTFS_BASE}/boot/${BOOT_SPEAR8_DTB/imx8qm/imx8qp}
-		fi
-	fi
-
-	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
-	install -m 0644 ${G_VARISCITE_PATH}/wallpaper_hd.png \
-		${ROOTFS_BASE}/usr/share/images/desktop-base/default
-
+function rootfs_install_config_alsa() {
 	# Add alsa default configs
 	install -m 0644 ${G_VARISCITE_PATH}/asound.state \
 		${ROOTFS_BASE}/var/lib/alsa/
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
+}
 
-	# Revert regular booting
-	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
-
-	# install kernel modules in rootfs
-	install_kernel_modules \
-		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
-		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
-		${ROOTFS_BASE}
-
-	# copy all kernel headers for development
-	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
-	cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* \
-	${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
-	cp -r ${G_LINUX_KERNEL_SRC_DIR}/include \
-		${ROOTFS_BASE}/usr/local/src/linux-imx/
-
-	# copy custom files
-	cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
-	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
-	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
-	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
-	cp ${G_VARISCITE_PATH}/automount.rules ${ROOTFS_BASE}/etc/udev/rules.d
-
-	if [ "${MACHINE}" = "imx8m-var-dart" ]; then
-		cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
-	fi
-
+function rootfs_install_freertos_variscite() {
 	# install freertos-variscite
 	if [ ! -z "${G_FREERTOS_VAR_BUILD_DIR}" ]; then
 
@@ -373,6 +323,112 @@ EOF
 		    FILE_CM_FW="$(basename ${DIR_GCC}/${CM_BUILD_TARGET}/*.elf)"
 		    install -m 644 ${DIR_GCC}/${CM_BUILD_TARGET}/${FILE_CM_FW} ${ROOTFS_BASE}/lib/firmware/cm_${FILE_CM_FW}.${CM_BUILD_TARGET}
 		done
+	fi
+}
+
+# function configure_apt() {
+# }
+
+# Must be called after make_prepare in main script
+# generate weston rootfs in input dir
+# $1 - rootfs base dir
+function make_debian_weston_rootfs()
+{
+	local ROOTFS_BASE=$1
+
+	pr_info "Make Debian (${DEB_RELEASE}) rootfs start..."
+
+	# umount previus mounts (if fail)
+	cleanup_mounts
+
+	pr_info "rootfs: debootstrap"
+	sudo mkdir -p ${ROOTFS_BASE}
+	sudo chown -R root:root ${ROOTFS_BASE}
+	check_step "debootstrap first-stage" || debootstrap --verbose --no-check-gpg --foreign --arch arm64 ${DEB_RELEASE} \
+		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
+	save_step "debootstrap first-stage"
+
+	# prepare qemu
+	pr_info "rootfs: debootstrap in rootfs (second-stage)"
+	cp ${G_VARISCITE_PATH}/qemu_64bit/qemu-aarch64-static ${ROOTFS_BASE}/usr/bin/qemu-aarch64-static
+	mount -o bind /proc ${ROOTFS_BASE}/proc
+	mount -o bind /dev ${ROOTFS_BASE}/dev
+	mount -o bind /dev/pts ${ROOTFS_BASE}/dev/pts
+	mount -o bind /sys ${ROOTFS_BASE}/sys
+	check_step "debootstrap second-stage" || chroot $ROOTFS_BASE /debootstrap/debootstrap --second-stage --verbose
+	save_step "debootstrap second-stage"
+
+	# delete unused folder
+	chroot $ROOTFS_BASE rm -rf ${ROOTFS_BASE}/debootstrap
+
+	pr_info "rootfs: generate default configs"
+	mkdir -p ${ROOTFS_BASE}/etc/sudoers.d/
+	echo "user ALL=(root) /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/vi, /sbin/reboot" > ${ROOTFS_BASE}/etc/sudoers.d/user
+	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
+	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
+
+	run_step "rootfs_copy_packages"
+
+	run_step "rootfs_configure"
+
+	run_step "run_rootfs_stage" "rootfs-stage-base" "rootfs: install selected Debian packages (console-only-stage)"
+
+	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
+		run_step "run_rootfs_stage" "rootfs-stage-graphics" "rootfs: install selected Debian packages (Graphics - GPU/Weston)"
+	else
+		rm -f ${ROOTFS_BASE}/rootfs-stage-graphics
+	fi
+
+	if [ "${G_DEBIAN_DISTRO_FEATURE_MM}" = "y" ]; then
+		run_step "run_rootfs_stage" "rootfs-stage-gstreamer" "rootfs: install selected Debian packages (MM Gstreamer)"
+	else
+		rm -f ${ROOTFS_BASE}/rootfs-stage-gstreamer
+	fi
+
+	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
+		run_step "run_rootfs_stage" "rootfs-stage-ml" "rootfs: install selected Debian packages (Machine Learning)"
+	else
+		rm -f ${ROOTFS_BASE}/rootfs-stage-ml
+	fi
+
+	run_step "rootfs_install_var_bt"
+	run_step "rootfs_install_var_wifi"
+	run_step "rootfs_install_config_bt"
+	run_step "rootfs_install_config_pulseaudio"
+	run_step "rootfs_install_config_blacklist"
+	run_step "rootfs_install_config_securetty"
+	run_step "rootfs_install_config_weston_service"
+	run_step "rootfs_install_config_pm_utils"
+	run_step "rootfs_install_config_logind"
+	run_step "rootfs_build_kernel_headers"
+	run_step "rootfs_install_kernel"
+	run_step "rootfs_install_user_packages"
+	run_step "rootfs_install_config_alsa"
+	run_step "rootfs_install_freertos_variscite"
+
+	# binaries rootfs patching
+	install -m 0644 ${G_VARISCITE_PATH}/issue ${ROOTFS_BASE}/etc/
+	install -m 0644 ${G_VARISCITE_PATH}/issue.net ${ROOTFS_BASE}/etc/
+	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
+	install -d ${ROOTFS_BASE}/boot/
+	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
+
+	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
+	install -m 0644 ${G_VARISCITE_PATH}/wallpaper_hd.png \
+		${ROOTFS_BASE}/usr/share/images/desktop-base/default
+
+	# Revert regular booting
+	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
+
+	# copy custom files
+	cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
+	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
+	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
+	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
+	cp ${G_VARISCITE_PATH}/automount.rules ${ROOTFS_BASE}/etc/udev/rules.d
+
+	if [ "${MACHINE}" = "imx8m-var-dart" ]; then
+		cp ${G_VARISCITE_PATH}/${MACHINE}/*.rules ${ROOTFS_BASE}/etc/udev/rules.d
 	fi
 
 	#clenup command

@@ -302,6 +302,40 @@ function pr_debug() {
 	echo "D: $1"
 }
 
+readonly STEP_FILE=${ABSOLUTE_DIRECTORY}/.build_steps
+# Save step to ${STEP_FILE}
+# $1 - step
+save_step() {
+	if ! [ -f "$STEP_FILE" ] || ! grep -q "$1" "$STEP_FILE"; then
+		echo "$(date) $1" >> "${STEP_FILE}"
+	fi
+}
+
+# Check if step exists in ${STEP_FILE}
+# $1 - step
+check_step() {
+	if [ -f "$STEP_FILE" ] && grep -q "$1" "$STEP_FILE"; then
+		pr_info "skip: $1"
+		return 0 # state found
+	else
+		return 1 # state not found
+	fi
+}
+
+# Run a function if it hasn't already finished
+# $1 - function to run
+run_step() {
+	local function_name="$1"
+	shift
+	# Save step name and trim white space
+	local step_name="${function_name} $@"
+	step_name="${step_name%"${step_name##*[![:space:]]}"}"
+
+	# Call function_name if the step is new
+	check_step "${step_name}" || "${function_name}" "$@"
+	save_step "${step_name}"
+}
+
 ### work functions ###
 # get_var_required - retrieves the value of a required variable constructed from a prefix and suffix
 # Arguments:
@@ -954,6 +988,9 @@ function cmd_make_clean()
 
 	pr_info "Delete rootfs dir ${G_ROOTFS_DIR}"
 	rm -rf ${G_ROOTFS_DIR}
+
+	# Delete state file
+	rm -rf ${STEP_FILE}
 }
 
 ################ main function ################
