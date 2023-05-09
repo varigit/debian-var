@@ -8,7 +8,7 @@ function make_debian_console_rootfs()
 	pr_info "Make Debian (${DEB_RELEASE}) console rootfs start..."
 
 	# umount previus mounts (if fail)
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
+	cleanup_mounts
 
 	# clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/*

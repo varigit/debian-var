@@ -117,7 +117,7 @@ rm -f cleanup
 	pr_info "rootfs: clean"
 	chmod +x cleanup
 	chroot ${ROOTFS_BASE} /cleanup
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
+	cleanup_mounts
 
 	# kill latest dbus-daemon instance due to qemu-arm-static
 	QEMU_PROC_ID=$(ps axf | grep dbus-daemon | grep qemu-arm-static | awk '{print $1}')

@@ -85,6 +85,21 @@ function usage()
 	echo
 }
 
+# umount previus mounts
+function cleanup_mounts() {
+	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
+}
+
+# Run any cleanup before exiting
+function cleanup {
+    pr_info "Cleaning up..."
+
+	cleanup_mounts
+}
+
+# Set up the trap command to run the cleanup function
+trap 'cleanup EXIT' EXIT
+
 if [ "${MACHINE}" = "imx8qxpb0-var-som" ]; then
 	MACHINE="imx8qxp-var-som"
 	IS_QXP_B0=true

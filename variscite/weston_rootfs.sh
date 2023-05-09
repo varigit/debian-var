@@ -17,7 +17,7 @@ function make_debian_weston_rootfs()
 	pr_info "Make Debian (${DEB_RELEASE}) rootfs start..."
 
 	# umount previus mounts (if fail)
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
+	cleanup_mounts
 
 	# clear rootfs dir
 	rm -rf ${ROOTFS_BASE}/*
@@ -386,7 +386,7 @@ EOF
 	pr_info "rootfs: clean"
 	chmod +x cleanup
 	chroot ${ROOTFS_BASE} /cleanup
-	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
+	cleanup_mounts
 
 	# kill latest dbus-daemon instance due to qemu-aarch64-static
 	QEMU_PROC_ID=$(ps axf | grep dbus-daemon | grep qemu-aarch64-static | awk '{print $1}')
