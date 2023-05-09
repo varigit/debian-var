@@ -24,7 +24,7 @@ readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
 # default mirror
-readonly DEB_RELEASE="bullseye"
+readonly DEB_RELEASE="bookworm"
 readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
 readonly DEF_CONSOLE_ROOTFS_TARBALL_NAME="console_rootfs.tar.gz"
 
