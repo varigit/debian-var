@@ -757,23 +757,31 @@ function make_imx_sdma_fw() {
 }
 
 # make firmware for wl bcm module
-# $1 -- bcm git directory
+# $1 -- brcm output directory
 # $2 -- rootfs output dir
-function make_bcm_fw()
+function make_brcm_fw()
 {
-	pr_info "Make and install bcm configs and firmware"
+	pr_info "Make and install brcm configs and firmware"
 
-	install -d ${2}/lib/firmware/bcm
 	install -d ${2}/lib/firmware/brcm
-	install -m 0644 ${1}/brcm/* ${2}/lib/firmware/brcm/
-	if [ "${MACHINE}" != "imx8mn-var-som" ] &&
-	   [ "${MACHINE}" != "imx8mq-var-dart" ] &&
-	   [ "${MACHINE}" != "imx8mp-var-dart" ]; then
-		install -m 0644 ${1}/brcm/*.hcd ${2}/lib/firmware/bcm/
-		install -m 0644 ${1}/LICENSE ${2}/lib/firmware/bcm/
-	fi
-	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/brcm/
+	install -m 0644 ${1}/lib/firmware/brcm/* ${2}/lib/firmware/brcm/
+	install -m 0644 ${1}/LICENSE ${2}/lib/firmware/LICENCE.broadcom_bcm43xx
+
+	for model in ${MODEL_LIST}; do
+		# Add model symbolic links to brcmfmac4339
+		ln -sf brcmfmac4339-sdio.txt \
+			${2}/lib/firmware/brcm/brcmfmac4339-sdio.variscite,${model}.txt
+		ln -sf brcmfmac4339-sdio.bin \
+			${2}/lib/firmware/brcm/brcmfmac4339-sdio.variscite,${model}.bin
+
+		# Add model symbolic links to brcmfmac43430
+		ln -sf brcmfmac43430-sdio.txt \
+			${2}/lib/firmware/brcm/brcmfmac43430-sdio.variscite,${model}.txt
+		ln -sf brcmfmac43430-sdio.bin \
+			${2}/lib/firmware/brcm/brcmfmac43430-sdio.variscite,${model}.bin
+	done
 }
+
 
 ################ commands ################
 
@@ -854,6 +862,29 @@ function cmd_make_deploy()
 		};
 	fi
 
+	# get brcm lwb/lbw5 firmware archive
+	if [ ! -z ${G_BRCM_FW_SRC_DIR} ]; then
+		# get brcm lwb firmware archive
+		(( `ls ${G_BRCM_FW_SRC_DIR} 2>/dev/null | wc -l` == 0 )) && {
+			# Cleanup
+			mkdir -p ${G_BRCM_FW_SRC_DIR}
+
+			pr_info "Get and unpack brcm lwb firmware archive";
+			get_remote_file ${G_BRCM_LWB_FW_LINK} \
+				${G_BRCM_FW_SRC_DIR}/${G_BRCM_LWB_FW_ARCHIVE} \
+				${G_BRCM_LWB_FW_SHA256SUM}
+			tar -xf ${G_BRCM_FW_SRC_DIR}/${G_BRCM_LWB_FW_ARCHIVE} \
+				-C ${G_BRCM_FW_SRC_DIR}
+
+			pr_info "Get and unpack brcm lwb5 firmware archive";
+			get_remote_file ${G_BRCM_LWB5_FW_LINK} \
+				${G_BRCM_FW_SRC_DIR}/${G_BRCM_LWB5_FW_ARCHIVE} \
+				${G_BRCM_LWB5_FW_SHA256SUM}
+			tar -xf ${G_BRCM_FW_SRC_DIR}/${G_BRCM_LWB5_FW_ARCHIVE} \
+				-C ${G_BRCM_FW_SRC_DIR}
+		};
+	fi
+
 	return 0
 }
 
@@ -877,8 +908,8 @@ function cmd_make_rootfs()
 	fi
 
 	# make bcm firmwares
-	if [ ! -z "${G_BCM_FW_GIT}" ]; then
-		make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
+	if [ -d "${G_BRCM_FW_SRC_DIR}" ]; then
+		make_brcm_fw ${G_BRCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 	fi
 
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
@@ -965,9 +996,11 @@ function cmd_make_sdcard()
 	fi
 }
 
-function cmd_make_bcmfw()
+function cmd_make_brcmfw()
 {
-	make_bcm_fw ${G_BCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
+	if [ -d "${G_BRCM_FW_SRC_DIR}" ]; then
+		make_brcm_fw ${G_BRCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
+	fi
 }
 
 function cmd_make_firmware() {
@@ -1026,8 +1059,8 @@ case $PARAM_CMD in
 	kernelheaders )
 		cmd_make_kernel_header_deb
 		;;
-	bcmfw )
-		cmd_make_bcmfw
+	brcmfw )
+		cmd_make_brcmfw
 		;;
 	firmware )
 		cmd_make_firmware
