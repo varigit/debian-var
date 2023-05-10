@@ -66,14 +66,17 @@ sed -i -e 's/#PermitRootLogin.*/PermitRootLogin\tyes/g' /etc/ssh/sshd_config
 protected_install net-tools
 protected_install network-manager
 
-# sdma package
-protected_install imx-firmware-sdma
+if [ ! -z "${IMX_FIRMWARE_VERSION}" ]
+then
+	# sdma package
+	protected_install imx-firmware-sdma
 
-# VPU package
-protected_install imx-firmware-vpu
+	# VPU package
+	protected_install imx-firmware-vpu
 
-# epdc package
-protected_install imx-firmware-epdc
+	# epdc package
+	protected_install imx-firmware-epdc
+fi
 
 # hdmi firmware package
 if [ ! -z "${HDMI_FIRMWARE_PACKAGE}" ]

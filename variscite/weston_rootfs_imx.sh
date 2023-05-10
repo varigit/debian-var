@@ -1,8 +1,10 @@
 # copy common packages
 function copy_common_packages() {
 	# imx-firmware
-	cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${IMX_FIRMWARE_VERSION}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 }
 
 # copy display and gpu packages
