@@ -26,7 +26,7 @@ readonly SCRIPT_START_DATE=`date +%Y%m%d`
 readonly LOOP_MAJOR=7
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
+readonly DEF_DEBIAN_MIRROR="http://archive.debian.org/debian"
 readonly DEB_RELEASE="stretch"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.gz"
 
