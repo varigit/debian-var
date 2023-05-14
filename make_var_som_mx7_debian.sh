@@ -26,7 +26,7 @@ readonly SCRIPT_POINT=${ABSOLUTE_DIRECTORY}
 readonly SCRIPT_START_DATE=`date +%Y%m%d`
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="http://httpredir.debian.org/debian"
+readonly DEF_DEBIAN_MIRROR="http://archive.debian.org/debian"
 readonly DEB_RELEASE="jessie"
 readonly DEF_ROOTFS_TARBAR_NAME="rootfs.tar.bz2"
 
