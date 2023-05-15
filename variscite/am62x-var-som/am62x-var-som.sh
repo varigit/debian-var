@@ -14,6 +14,7 @@ git_repos=(
 	"G_UBOOT"
 	"G_LINUX_KERNEL"
 	"G_TI_IMG_ROGUE_DRV"
+	"G_META_VARISCITE_BSP"
 )
 
 # core-secdev-k3 Security Dev Tool
@@ -70,3 +71,12 @@ readonly G_TI_IMG_ROGUE_DRV_SRC_DIR="${DEF_SRC_DIR}/ti-img-rogue-driver"
 readonly G_TI_IMG_ROGUE_DRV_GIT="https://git.ti.com/git/graphics/ti-img-rogue-driver "
 readonly G_TI_IMG_ROGUE_DRV_BRANCH="linuxws/dunfell/k5.10/1.15.6133109_unified_fw_pagesize"
 readonly G_TI_IMG_ROGUE_DRV_REV="1dd6291a5cad4f2b909fc2a14bd717a3bc5f0bb2"
+
+# meta-variscite-bsp-ti
+readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-ti-bsp"
+readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-ti"
+readonly G_META_VARISCITE_BSP_BRANCH="dunfell_var01"
+readonly G_META_VARISCITE_BSP_REV="a9b9e8057609ceb1bf5de0e8c41783873f15c60e"
+
+# BRCM Utils
+readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils"
