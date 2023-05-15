@@ -46,7 +46,10 @@ protected_install gstreamer1.0-plugins-base
 protected_install gstreamer1.0-plugins-base-apps
 protected_install gstreamer1.0-plugins-good
 protected_install gstreamer1.0-tools
-protected_install ${IMXGSTPLG}
+if [ ! -z "${IMXGSTPLG}" ]
+then
+	protected_install ${IMXGSTPLG}
+fi
 
 # install SW encoders/decoders for socs that lacks HW based
 # encoders/decoders
