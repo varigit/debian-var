@@ -130,6 +130,9 @@ protected_install pmount
 # pm-utils
 protected_install pm-utils
 
+# killall
+protected_install psmisc
+
 # install dpkg-dev for dpkg-buildpackage
 protected_install debhelper
 protected_install dh-python
