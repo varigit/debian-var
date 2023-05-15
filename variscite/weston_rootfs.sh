@@ -136,16 +136,16 @@ function rootfs_install_var_wifi() {
 
 function rootfs_install_config_bt() {
 	# install BT audio and main config
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/audio.conf \
+	install -m 0644 ${BLUEZ5_DIR}/audio.conf \
 		${ROOTFS_BASE}/etc/bluetooth/
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/main.conf \
+	install -m 0644 ${BLUEZ5_DIR}/main.conf \
 		${ROOTFS_BASE}/etc/bluetooth/
 
 	# install obexd configuration
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/obexd.conf \
+	install -m 0644 ${BLUEZ5_DIR}/obexd.conf \
 		${ROOTFS_BASE}/etc/dbus-1/system.d
 
-	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/obex.service \
+	install -m 0644 ${BLUEZ5_DIR}/obex.service \
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -s /lib/systemd/system/obex.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
