@@ -29,8 +29,8 @@ function rootfs_copy_packages() {
 
 function rootfs_configure() {
 # add mirror to source list
-echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
-deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free
+echo "deb ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free-firmware
+deb-src ${DEF_DEBIAN_MIRROR} ${DEB_RELEASE} main contrib non-free-firmware
 " > etc/apt/sources.list
 
 # maximize local repo priority
