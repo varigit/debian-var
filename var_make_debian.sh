@@ -770,6 +770,14 @@ function make_imx_sdma_fw() {
 	install -m 0644 ${1}/LICENSE.sdma_firmware ${2}/lib/firmware/
 }
 
+# make ethos-u-firmware
+# $1 -- ethos-u-firmware git directory
+# $2 -- rootfs output dir
+function make_ethosu_fw() {
+	pr_info "Install ethos-u-firmware"
+	install -m 0644 ${1}/ethosu_firmware ${2}/lib/firmware/
+}
+
 # make firmware for wl bcm module
 # $1 -- brcm source directory
 # $2 -- rootfs output dir
@@ -924,6 +932,11 @@ function cmd_make_rootfs()
 	# make bcm firmwares
 	if [ -d "${G_BRCM_FW_SRC_DIR}" ]; then
 		make_brcm_fw ${G_BRCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
+	fi
+
+	# make ethos-u-firmware
+	if [ -d "${G_ETHOSU_FIRMWARE_SRC_DIR}" ]; then
+		make_ethosu_fw ${G_ETHOSU_FIRMWARE_SRC_DIR} ${G_ROOTFS_DIR}
 	fi
 
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
