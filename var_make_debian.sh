@@ -757,7 +757,7 @@ function make_imx_sdma_fw() {
 }
 
 # make firmware for wl bcm module
-# $1 -- brcm output directory
+# $1 -- brcm source directory
 # $2 -- rootfs output dir
 function make_brcm_fw()
 {
