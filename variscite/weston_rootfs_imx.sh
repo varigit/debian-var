@@ -10,20 +10,28 @@ function copy_common_packages() {
 # copy display and gpu packages
 function copy_packages_display() {
 	# cairo
-	cp -r ${G_VARISCITE_PATH}/deb/cairo/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${CAIRO_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${CAIRO_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# libdrm
-	cp -r ${G_VARISCITE_PATH}/deb/libdrm/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${LIBDRM_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${LIBDRM_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# waylandprotocols
-	cp -r ${G_VARISCITE_PATH}/deb/waylandprotocols/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${WAYLAND_PROTOCOL_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/${WAYLAND_PROTOCOL_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# weston
-	cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${WESTON_PACKAGE_DIR}" ]; then
+		cp -r ${G_VARISCITE_PATH}/deb/weston/${WESTON_PACKAGE_DIR}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# G2D_Packages
 	if [ ! -z "${G2D_PACKAGE_DIR}" ]; then
@@ -94,25 +102,29 @@ function copy_packages_mm() {
 			${ROOTFS_BASE}/srv/local-apt-repository
 	else
 		# gstpluginsbad
-		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
+		if [ ! -z "${GST_MM_VERSION}" ]; then
+			cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbad/${GST_MM_VERSION}/* \
+				${ROOTFS_BASE}/srv/local-apt-repository
+		fi
 	fi
 
-	# gstpluginsbase
-	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+	if [ ! -z "${GST_MM_VERSION}" ]; then
+		# gstpluginsbase
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsbase/${GST_MM_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
 
-	# gstpluginsgood
-	cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+		# gstpluginsgood
+		cp -r ${G_VARISCITE_PATH}/deb/gstpluginsgood/${GST_MM_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
 
-	# gstreamer
-	cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+		# gstreamer
+		cp -r ${G_VARISCITE_PATH}/deb/gstreamer/${GST_MM_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
 
-	# imxgstplugin
-	cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
-		${ROOTFS_BASE}/srv/local-apt-repository
+		# imxgstplugin
+		cp -r ${G_VARISCITE_PATH}/deb/imxgstplugin/${GST_MM_VERSION}/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+	fi
 
 	# opencv
 	if [ ! -z "${G_OPENCV_DIR}" ]; then
