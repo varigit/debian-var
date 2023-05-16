@@ -207,16 +207,16 @@ function rootfs_install_config_pm_utils() {
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
 	rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
-	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/01-bt.sh \
+	install -m 0755 ${PM_UTILS_DIR}/01-bt.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
-	install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/02-wifi.sh \
+	install -m 0755 ${PM_UTILS_DIR}/02-wifi.sh \
 		${ROOTFS_BASE}/etc/pm/sleep.d/
-	if [ -f ${G_VARISCITE_PATH}/${MACHINE}/03-eth.sh ]; then
-		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/03-eth.sh \
+	if [ -f ${PM_UTILS_DIR}/03-eth.sh ]; then
+		install -m 0755 ${PM_UTILS_DIR}/03-eth.sh \
 			${ROOTFS_BASE}/etc/pm/sleep.d/
 	fi
-	if [ -f ${G_VARISCITE_PATH}/${MACHINE}/04-usb.sh ]; then
-		install -m 0755 ${G_VARISCITE_PATH}/${MACHINE}/04-usb.sh \
+	if [ -f ${PM_UTILS_DIR}/04-usb.sh ]; then
+		install -m 0755 ${PM_UTILS_DIR}/04-usb.sh \
 			${ROOTFS_BASE}/etc/pm/sleep.d/
 	fi
 }
