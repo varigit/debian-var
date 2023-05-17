@@ -416,7 +416,7 @@ function make_debian_weston_rootfs()
 	rm -f ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 
 	# copy custom files
-	cp ${G_VARISCITE_PATH}/${MACHINE}/fw_env.config ${ROOTFS_BASE}/etc
+	cp ${UBOOT_FW_UTILS_DIR}/fw_env.config ${ROOTFS_BASE}/etc
 	cp ${PARAM_OUTPUT_DIR}/fw_printenv ${ROOTFS_BASE}/usr/bin
 	ln -sf fw_printenv ${ROOTFS_BASE}/usr/bin/fw_setenv
 	cp ${G_VARISCITE_PATH}/10-imx.rules ${ROOTFS_BASE}/etc/udev/rules.d
