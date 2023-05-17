@@ -5,6 +5,20 @@ readonly SOC="am62"
 readonly SOC_SERIES="am6"
 readonly SOC_FAMILY="am6"
 
+#32 bit CROSS_COMPILER config and paths
+readonly G_CROSS_COMPILER_32BIT_NAME="gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf"
+readonly G_CROSS_COMPILER_ARCHIVE_32BIT="${G_CROSS_COMPILER_32BIT_NAME}.tar.xz"
+readonly G_EXT_CROSS_32BIT_COMPILER_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/${G_CROSS_COMPILER_ARCHIVE_32BIT}"
+readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-none-linux-gnueabihf-"
+readonly G_CROSS_COMPILER_32BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_32BIT_NAME}/bin"
+
+#64 bit CROSS_COMPILER config and paths
+readonly G_CROSS_COMPILER_64BIT_NAME="gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu"
+readonly G_CROSS_COMPILER_ARCHIVE_64BIT="${G_CROSS_COMPILER_64BIT_NAME}.tar.xz"
+readonly G_EXT_CROSS_64BIT_COMPILER_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/${G_CROSS_COMPILER_ARCHIVE_64BIT}"
+readonly G_CROSS_COMPILER_64BIT_PREFIX="aarch64-none-linux-gnu-"
+readonly G_CROSS_COMPILER_64BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_64BIT_NAME}/bin"
+
 git_repos=(
 	"G_CORE_SECDEV_K3"
 	"G_CORE_K3_IMAGE_GEN"
