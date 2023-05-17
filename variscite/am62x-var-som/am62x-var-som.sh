@@ -31,6 +31,12 @@ git_repos=(
 	"G_META_VARISCITE_BSP"
 )
 
+# meta-variscite-bsp-ti
+readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-ti-bsp"
+readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-ti"
+readonly G_META_VARISCITE_BSP_BRANCH="dunfell_var01"
+readonly G_META_VARISCITE_BSP_REV="a9b9e8057609ceb1bf5de0e8c41783873f15c60e"
+
 # core-secdev-k3 Security Dev Tool
 readonly G_CORE_SECDEV_K3_SRC_DIR="${DEF_SRC_DIR}/core-secdev-k3"
 readonly G_CORE_SECDEV_K3_GIT="https://git.ti.com/git/security-development-tools/core-secdev-k3"
@@ -68,6 +74,7 @@ readonly G_UBOOT_BRANCH="ti-u-boot-2021.01_var01"
 readonly G_UBOOT_REV="277c2dd356d8ec77d7a776c420cf9d87f4e65ff1"
 readonly G_UBOOT_DEF_CONFIG_R="am62x_var_som_r5_defconfig"
 readonly G_UBOOT_DEF_CONFIG_A="am62x_var_som_a53_defconfig"
+readonly UBOOT_FW_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-bsp/u-boot/u-boot-variscite/${MACHINE}/"
 
 # Linux kernel
 readonly KERNEL_IMAGE_TYPE="Image"
@@ -85,12 +92,6 @@ readonly G_TI_IMG_ROGUE_DRV_SRC_DIR="${DEF_SRC_DIR}/ti-img-rogue-driver"
 readonly G_TI_IMG_ROGUE_DRV_GIT="https://git.ti.com/git/graphics/ti-img-rogue-driver "
 readonly G_TI_IMG_ROGUE_DRV_BRANCH="linuxws/dunfell/k5.10/1.15.6133109_unified_fw_pagesize"
 readonly G_TI_IMG_ROGUE_DRV_REV="1dd6291a5cad4f2b909fc2a14bd717a3bc5f0bb2"
-
-# meta-variscite-bsp-ti
-readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-ti-bsp"
-readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-ti"
-readonly G_META_VARISCITE_BSP_BRANCH="dunfell_var01"
-readonly G_META_VARISCITE_BSP_REV="a9b9e8057609ceb1bf5de0e8c41783873f15c60e"
 
 # BRCM Utils
 readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils"
