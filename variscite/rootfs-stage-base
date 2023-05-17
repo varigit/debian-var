@@ -134,6 +134,9 @@ protected_install pm-utils
 # killall
 protected_install psmisc
 
+# systemd-timesyncd
+protected_install systemd-timesyncd
+
 # install dpkg-dev for dpkg-buildpackage
 protected_install debhelper
 protected_install dh-python
