@@ -226,6 +226,32 @@ function make_uboot()
 			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 		cp ${1}/tools/env/fw_printenv ${2}
+	elif [ "${MACHINE}" = "imx93-var-som" ]; then
+		cd ${DEF_SRC_DIR}/imx-atf
+		LDFLAGS="" make CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+				PLAT=imx93 bl31
+		cd -
+		cp ${DEF_SRC_DIR}/imx-atf/build/imx93/release/bl31.bin \
+			${DEF_SRC_DIR}/imx-mkimage/iMX9/bl31.bin
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_imem_1d_v202201.bin \
+			src/imx-mkimage/iMX9/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_dmem_1d_v202201.bin \
+			src/imx-mkimage/iMX9/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_imem_2d_v202201.bin \
+			src/imx-mkimage/iMX9/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/lpddr4_dmem_2d_v202201.bin \
+			src/imx-mkimage/iMX9/
+		cp ${G_VARISCITE_PATH}/${MACHINE}/imx-boot-tools/mx93a0-ahab-container.img \
+			src/imx-mkimage/iMX9/
+		cp ${1}/u-boot.bin ${DEF_SRC_DIR}/imx-mkimage/iMX9/
+		cp ${1}/spl/u-boot-spl.bin ${DEF_SRC_DIR}/imx-mkimage/iMX9/
+		cp ${1}/arch/arm/dts/${UBOOT_DTB} ${DEF_SRC_DIR}/imx-mkimage/iMX9/
+		cp ${1}/tools/mkimage ${DEF_SRC_DIR}/imx-mkimage/iMX9/mkimage_uboot
+		cd ${DEF_SRC_DIR}/imx-mkimage
+		make SOC=iMX9 dtbs="${UBOOT_DTB}" ${IMXBOOT_TARGETS}
+		cp ${DEF_SRC_DIR}/imx-mkimage/iMX9/flash.bin \
+			${DEF_SRC_DIR}/imx-mkimage/${G_UBOOT_NAME_FOR_EMMC}
+		cp ${G_UBOOT_NAME_FOR_EMMC} ${2}/${G_UBOOT_NAME_FOR_EMMC}
 	elif [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	     [ "${MACHINE}" = "var-som-mx7" ]; then
 		mv ${2}/fw_printenv ${2}/fw_printenv-mmc
