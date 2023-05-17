@@ -118,44 +118,41 @@ if [ ! -z "${G_FREERTOS_VAR_SRC_DIR}" ]; then
 	readonly G_FREERTOS_VAR_BUILD_DIR="${G_FREERTOS_VAR_SRC_DIR}.build"
 fi
 
-# Toolchain globals
-case "${SOC_FAMILY}" in
-	am6)
-		#32 bit CROSS_COMPILER config and paths
-		readonly G_CROSS_COMPILER_32BIT_NAME="gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf"
-		readonly G_CROSS_COMPILER_ARCHIVE_32BIT="${G_CROSS_COMPILER_32BIT_NAME}.tar.xz"
-		readonly G_EXT_CROSS_32BIT_COMPILER_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/${G_CROSS_COMPILER_ARCHIVE_32BIT}"
-		readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-none-linux-gnueabihf-"
-		readonly G_CROSS_COMPILER_32BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_32BIT_NAME}/bin"
+# check for toolchain
+function check_toolchain() {
+	# Toolchain globals
+	case "${SOC_FAMILY}" in
+		am6)
+			#32 and 64 bit CROSS_COMPILERs
+			if [ -z "${G_CROSS_COMPILER_32BIT_NAME}" ] || [ -z "${G_CROSS_COMPILER_64BIT_NAME}" ]; then
+				return 0
+			fi
+			;;
+		imx6*|imx7*)
+			#32 bit CROSS_COMPILER
+			if [ -z "${G_CROSS_COMPILER_32BIT_NAME}" ]; then
+				return 0
+			fi
+			;;
+		imx8*|imx9*)
+			#64 bit CROSS_COMPILER
+			if [ -z "${G_CROSS_COMPILER_64BIT_NAME}" ]; then
+				return 0
+			fi
+			;;
 
-		#64 bit CROSS_COMPILER config and paths
-		readonly G_CROSS_COMPILER_64BIT_NAME="gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu"
-		readonly G_CROSS_COMPILER_ARCHIVE_64BIT="${G_CROSS_COMPILER_64BIT_NAME}.tar.xz"
-		readonly G_EXT_CROSS_64BIT_COMPILER_LINK="https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/${G_CROSS_COMPILER_ARCHIVE_64BIT}"
-		readonly G_CROSS_COMPILER_64BIT_PREFIX="aarch64-none-linux-gnu-"
-		readonly G_CROSS_COMPILER_64BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_64BIT_NAME}/bin"
+		*)
+			return 0
 		;;
-	imx6*|imx7*)
-		#32 bit CROSS_COMPILER config and paths
-		readonly G_CROSS_COMPILER_32BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf"
-		readonly G_CROSS_COMPILER_ARCHIVE_32BIT="${G_CROSS_COMPILER_32BIT_NAME}.tar.xz"
-		readonly G_EXT_CROSS_32BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/arm-linux-gnueabihf/${G_CROSS_COMPILER_ARCHIVE_32BIT}"
-		readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-linux-gnueabihf-"
-		readonly G_CROSS_COMPILER_32BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_32BIT_NAME}/bin"
-		;;
-	imx8*)
-		#64 bit CROSS_COMPILER config and paths
-		readonly G_CROSS_COMPILER_64BIT_NAME="gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu"
-		readonly G_CROSS_COMPILER_ARCHIVE_64BIT="${G_CROSS_COMPILER_64BIT_NAME}.tar.xz"
-		readonly G_EXT_CROSS_64BIT_COMPILER_LINK="http://releases.linaro.org/components/toolchain/binaries/6.3-2017.05/aarch64-linux-gnu/${G_CROSS_COMPILER_ARCHIVE_64BIT}"
-		readonly G_CROSS_COMPILER_64BIT_PREFIX="aarch64-linux-gnu-"
-		readonly G_CROSS_COMPILER_64BIT_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_64BIT_NAME}/bin"
-		;;
-	*)
-		echo "E: Unknown toolchain for SOC_FAMILY '${SOC_FAMILY}'"
-		exit 1;
-	;;
-esac
+	esac
+
+	return 1
+}
+
+if check_toolchain; then
+	echo "E: Unknown toolchain for SOC_FAMILY '${SOC_FAMILY}'"
+	exit 1;
+fi
 
 readonly G_CROSS_COMPILER_JOPTION="-j $(nproc)"
 
