@@ -49,6 +49,7 @@ apt-get update || apt-get upgrade
 # update packages and install base
 apt-get update
 
+protected_install iptables
 protected_install libc6-dev
 protected_install locales
 protected_install ntp
