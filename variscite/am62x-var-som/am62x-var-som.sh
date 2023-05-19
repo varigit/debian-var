@@ -32,7 +32,7 @@ git_repos=(
 )
 
 # meta-variscite-bsp-ti
-readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-ti-bsp"
+readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_BRANCH="dunfell_var01"
 readonly G_META_VARISCITE_BSP_REV="a9b9e8057609ceb1bf5de0e8c41783873f15c60e"
