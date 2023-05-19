@@ -68,9 +68,10 @@ function make_uboot()
 		DM=${G_CORE_LINUX_FIRMWARE_SRC_DIR}/ti-dm/am62xx/ipc_echo_testb_mcu1_0_release_strip.xer5f
 
 	# Deploy files
-	pr_info "Deploying to ${2}"
+	pr_info "Deploying to ${2}/boot"
+	mkdir -p ${2}/boot
 	cp ${G_CORE_K3_IMAGE_GEN_SRC_DIR}/tiboot3.bin \
 		${G_UBOOT_SRC_DIR}/out/a53/tispl.bin \
 		${G_UBOOT_SRC_DIR}/out/a53/u-boot.img \
-		${1}
+		${2}/boot
 }
