@@ -1004,9 +1004,9 @@ function cmd_make_sdcard()
 {
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	   [ "${MACHINE}" = "var-som-mx7" ]; then
-		make_x11_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR}
+		make_x11_sdcard "${PARAM_BLOCK_DEVICE}" "${PARAM_OUTPUT_DIR}"
 	else
-		make_weston_sdcard ${PARAM_BLOCK_DEVICE} ${PARAM_OUTPUT_DIR}
+		make_weston_sdcard "${PARAM_BLOCK_DEVICE}" "${PARAM_OUTPUT_DIR}"
 	fi
 }
 
