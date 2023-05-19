@@ -49,6 +49,35 @@ PARAM_BLOCK_DEVICE="na"
 
 IS_QXP_B0=false
 
+### printing functions ###
+
+# print error message
+# $1 - printing string
+function pr_error()
+{
+	echo "E: $1"
+}
+
+# print warning message
+# $1 - printing string
+function pr_warning()
+{
+	echo "W: $1"
+}
+
+# print info message
+# $1 - printing string
+function pr_info()
+{
+	echo "I: $1"
+}
+
+# print debug message
+# $1 - printing string
+function pr_debug() {
+	echo "D: $1"
+}
+
 ### usage ###
 function usage()
 {
@@ -269,35 +298,6 @@ readonly G_ROOTFS_TARBALL_PATH="${PARAM_OUTPUT_DIR}/${DEF_ROOTFS_TARBALL_NAME}"
 readonly G_CONSOLE_ROOTFS_TARBALL_PATH="${PARAM_OUTPUT_DIR}/${DEF_CONSOLE_ROOTFS_TARBALL_NAME}"
 
 ###### local functions ######
-
-### printing functions ###
-
-# print error message
-# $1 - printing string
-function pr_error()
-{
-	echo "E: $1"
-}
-
-# print warning message
-# $1 - printing string
-function pr_warning()
-{
-	echo "W: $1"
-}
-
-# print info message
-# $1 - printing string
-function pr_info()
-{
-	echo "I: $1"
-}
-
-# print debug message
-# $1 - printing string
-function pr_debug() {
-	echo "D: $1"
-}
 
 readonly STEP_FILE=${ABSOLUTE_DIRECTORY}/.build_steps
 # Save step to ${STEP_FILE}
