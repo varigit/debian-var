@@ -29,6 +29,7 @@ git_repos=(
 	"G_LINUX_KERNEL"
 	"G_TI_IMG_ROGUE_DRV"
 	"G_META_VARISCITE_BSP"
+	"G_META_VARISCITE_SDK"
 )
 
 # meta-variscite-bsp-ti
@@ -36,6 +37,12 @@ readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_BRANCH="dunfell_var01"
 readonly G_META_VARISCITE_BSP_REV="a9b9e8057609ceb1bf5de0e8c41783873f15c60e"
+
+# meta-variscite-sdk-ti
+readonly G_META_VARISCITE_SDK_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-sdk-ti"
+readonly G_META_VARISCITE_SDK_GIT="https://github.com/varigit/meta-variscite-sdk-ti"
+readonly G_META_VARISCITE_SDK_BRANCH="dunfell_var01"
+readonly G_META_VARISCITE_SDK_REV="dd29a7ed1948c3fdec9194c068fc1b526fcc9614"
 
 # core-secdev-k3 Security Dev Tool
 readonly G_CORE_SECDEV_K3_SRC_DIR="${DEF_SRC_DIR}/core-secdev-k3"
