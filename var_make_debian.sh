@@ -25,8 +25,8 @@ readonly LOOP_MAJOR=7
 
 # default mirror
 readonly DEB_RELEASE="bookworm"
-readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.gz"
-readonly DEF_CONSOLE_ROOTFS_TARBALL_NAME="console_rootfs.tar.gz"
+readonly DEF_ROOTFS_TARBALL_NAME="rootfs.tar.zst"
+readonly DEF_CONSOLE_ROOTFS_TARBALL_NAME="console_rootfs.tar.zst"
 
 # base paths
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
@@ -68,10 +68,10 @@ function usage()
 	echo "       kernel      -- build or rebuild the Linux kernel"
 	echo "       kernelheaders -- build or rebuild Linux kernel headers"
 	echo "       modules     -- build or rebuild the Linux kernel modules & headers and install them in the rootfs dir"
-	echo "       rootfs      -- build or rebuild the Debian root filesystem and create rootfs.tar.gz"
+	echo "       rootfs      -- build or rebuild the Debian root filesystem and create rootfs.tar.zst"
 	echo "                       (including: make & install Debian packages, firmware and kernel modules & headers)"
 	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
-	echo "       rtar        -- generate or regenerate rootfs.tar.gz image from the rootfs folder"
+	echo "       rtar        -- generate or regenerate rootfs.tar.zst image from the rootfs folder"
 	echo "       clean       -- clean all build artifacts (without deleting sources code or resulted images)"
 	echo "       sdcard      -- create a bootable SD card"
 	echo "  -o|--output -- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
@@ -434,10 +434,11 @@ function make_tarball()
 	pr_info "Create $2"
 
 	RETVAL=0
-	tar czf $2 . || {
+	tar -cf - . | zstd -T0 -8 -o $2 || {
 		RETVAL=1
 		rm -f $2
 	};
+	chmod +r $2
 
 	cd -
 	return $RETVAL

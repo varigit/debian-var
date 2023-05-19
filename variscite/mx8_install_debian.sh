@@ -18,7 +18,7 @@ red_bold_echo()
 IMGS_PATH=/opt/images/Debian
 UBOOT_IMAGE=imx-boot-sd.bin
 UBOOT_IMAGE_MX8MQ_DP=imx-boot-sd-dp.bin
-ROOTFS_IMAGE=rootfs.tar.gz
+ROOTFS_IMAGE=rootfs.tar.zst
 BOOTLOADER_RESERVED_SIZE=8
 BOOTLOADER_OFFSET=33
 DISPLAY=lvds

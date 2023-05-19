@@ -383,7 +383,7 @@ if [[ $STORAGE_DEV == "nand" ]] ; then
 	fi
 elif [[ $STORAGE_DEV == "emmc" ]] ; then
 	STR="eMMC"
-	ROOTFS_IMAGE=rootfs.tar.gz
+	ROOTFS_IMAGE=rootfs.tar.zst
 else
 	usage
 	exit 1
