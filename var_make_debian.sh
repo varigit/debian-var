@@ -49,6 +49,8 @@ PARAM_BLOCK_DEVICE="na"
 
 IS_QXP_B0=false
 
+LOOP_DEV=""
+
 ### printing functions ###
 
 # print error message
@@ -119,11 +121,21 @@ function cleanup_mounts() {
 	umount ${ROOTFS_BASE}/{sys,proc,dev/pts,dev} 2>/dev/null || true
 }
 
+# detach loop device(s)
+function cleanup_losetup() {
+	if [ ! -z "${LOOP_DEV}" ]; then
+		pr_info "Detaching ${LOOP_DEV}"
+		losetup -d ${LOOP_DEV}
+		LOOP_DEV=""
+	fi
+}
+
 # Run any cleanup before exiting
 function cleanup {
     pr_info "Cleaning up..."
 
 	cleanup_mounts
+	cleanup_losetup
 }
 
 # Set up the trap command to run the cleanup function
@@ -230,8 +242,8 @@ PARAM_DEB_LOCAL_MIRROR="${DEF_DEBIAN_MIRROR}"
 G_CROSS_COMPILER_PATH="${G_TOOLS_PATH}/${G_CROSS_COMPILER_NAME}/bin"
 
 ## parse input arguments ##
-readonly SHORTOPTS="c:o:d:h"
-readonly LONGOPTS="cmd:,output:,dev:,help,debug"
+readonly SHORTOPTS="c:o:d:i:h"
+readonly LONGOPTS="cmd:,output:,dev:,imagename:,help,debug"
 
 ARGS=$(getopt -s bash --options ${SHORTOPTS}  \
   --longoptions ${LONGOPTS} --name ${SCRIPT_NAME} -- "$@" )
@@ -253,6 +265,10 @@ while true; do
 			[ -e ${1} ] && {
 				PARAM_BLOCK_DEVICE=${1};
 			};
+			;;
+		-i|--imagename) # SD card image name
+			shift
+			PARAM_IMAGE_NAME=${1};
 			;;
 		--debug ) # enable debug
 			PARAM_DEBUG=1;
@@ -994,6 +1010,47 @@ function cmd_make_sdcard()
 	fi
 }
 
+function cmd_make_sdcard_image()
+{
+	readonly SDIMAGE_SIZE=3720
+	readonly IMAGE_PATH="${PARAM_OUTPUT_DIR}/${PARAM_IMAGE_NAME}.img"
+
+	if [ -z "${PARAM_IMAGE_NAME}" ]; then
+		pr_error "Variable PARAM_IMAGE_NAME is empty."
+		exit 1
+	fi
+
+	if [ -f "${IMAGE_PATH}.zst" ]; then
+		pr_error "${IMAGE_PATH}.zst already exist."
+		exit 1
+	fi
+
+	# Create the image file
+	pr_info "Creating ${IMAGE_PATH} (${SDIMAGE_SIZE} MiB)"
+	rm -rf ${IMAGE_PATH} ${IMAGE_PATH}.zst
+	dd if=/dev/zero of="${IMAGE_PATH}" bs=1M count="${SDIMAGE_SIZE}" > /dev/null 2>&1
+
+	# Attach loopback device to ${IMAGE_PATH}
+	pr_info "Attaching ${IMAGE_PATH}"
+	losetup -Pf ${IMAGE_PATH}
+	LOOP_DEV=$(sudo losetup -a | grep ${PARAM_IMAGE_NAME} | grep : | egrep -o '^[^:]+')
+
+	# Create recovery sd card image on ${LOOP_DEV}
+	pr_info "Create recovery SD card image on loop device ${LOOP_DEV}"
+	PARAM_BLOCK_DEVICE=${LOOP_DEV}
+	cmd_make_sdcard
+
+	# Detach ${LOOP_DEV}
+	cleanup_losetup
+
+	# Compress the image
+	pr_info "Compressing ${PARAM_IMAGE_NAME}.img to ${PARAM_IMAGE_NAME}.img.zst"
+	cd ${PARAM_OUTPUT_DIR}
+	zstd -T0 -8 ${PARAM_IMAGE_NAME}.img -o ${PARAM_IMAGE_NAME}.img.zst > /dev/null 2>&1
+
+	cd -  > /dev/null 2>&1
+}
+
 function cmd_make_brcmfw()
 {
 	if [ -d "${G_BRCM_FW_SRC_DIR}" ]; then
@@ -1066,6 +1123,9 @@ case $PARAM_CMD in
 
 	sdcard )
 		cmd_make_sdcard
+		;;
+	sdimage )
+		cmd_make_sdcard_image
 		;;
 	rubi )
 		cmd_make_rfs_ubi
