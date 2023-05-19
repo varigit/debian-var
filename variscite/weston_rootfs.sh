@@ -452,7 +452,7 @@ function make_debian_weston_rootfs()
 # make SD card for device
 # $1 -- block device
 # $2 -- output images dir
-function make_weston_sdcard()
+function make_weston_sdcard_imx()
 {
 	readonly local LPARAM_BLOCK_DEVICE=${1}
 	readonly local LPARAM_OUTPUT_DIR=${2}
@@ -606,4 +606,32 @@ EOF
 	rm -rf ${P1_MOUNT_DIR}
 
 	pr_info "The SD card is ready"
+}
+
+# make SD card for device
+# $1 -- block device
+# $2 -- output images dir
+function make_weston_sdcard_am6() {
+	EMMC_BLOCK=$(basename "$1")
+	IMGS_PATH="$2"
+	. ${G_META_VARISCITE_SDK_SRC_DIR}/scripts/variscite/am6_install_yocto.sh
+}
+
+# make SD card for device
+# $1 -- block device
+# $2 -- output images dir
+function make_weston_sdcard() {
+	# Make SD card according to SOC_FAMILY
+	case "${SOC_FAMILY}" in
+		am6)
+			make_weston_sdcard_am6  "$1" "$2"
+			;;
+		imx*)
+			make_weston_sdcard_imx "$1" "$2"
+			;;
+		*)
+			echo "E: make_weston_sdcard: Unknown SOC_FAMILY \"${SOC_FAMILY}\"";
+			exit 1
+			;;
+	esac
 }
