@@ -103,9 +103,12 @@ function rootfs_install_kernel() {
 		${ROOTFS_BASE}
 
 	# copy all kernel headers for development
-	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
-	cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* \
-	${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
+	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx
+	if [ ! -z "${UAPI_PATH}" ]; then
+		mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/${UAPI_PATH}
+		cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* \
+		${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
+	fi
 	cp -r ${G_LINUX_KERNEL_SRC_DIR}/include \
 		${ROOTFS_BASE}/usr/local/src/linux-imx/
 }
