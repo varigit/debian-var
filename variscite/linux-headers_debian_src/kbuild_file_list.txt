@@ -24,7 +24,6 @@ kernel-src/scripts/checkversion.pl
 kernel-src/scripts/depmod.sh
 kernel-src/scripts/extract-cert
 kernel-src/scripts/gcc-goto.sh
-kernel-src/scripts/gcc-plugin.sh
 kernel-src/scripts/gcc-version.sh
 kernel-src/scripts/gcc-x86_32-has-stack-protector.sh
 kernel-src/scripts/gcc-x86_64-has-stack-protector.sh
