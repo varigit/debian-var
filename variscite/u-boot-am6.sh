@@ -57,6 +57,17 @@ function make_uboot()
 		${G_UBOOT_DEF_CONFIG_A}
 
 
+	# make fw_printenv
+	make envtools -C ${G_UBOOT_SRC_DIR} ${G_CROSS_COMPILER_JOPTION} ARCH=arm O=${G_UBOOT_SRC_DIR}/out/a53 \
+		PATH=${G_CROSS_COMPILER_32BIT_PATH}:$PATH \
+		PATH=${G_CROSS_COMPILER_64BIT_PATH}:$PATH \
+		CROSS_COMPILE=${G_CROSS_COMPILER_64BIT_PREFIX} \
+		ATF=${G_ATF_SRC_DIR}/build/k3/lite/release/bl31.bin \
+		TEE=${G_OPTEE_SRC_DIR}/out/arm-plat-k3/core/tee-pager_v2.bin \
+		DM=${G_CORE_LINUX_FIRMWARE_SRC_DIR}/ti-dm/am62xx/ipc_echo_testb_mcu1_0_release_strip.xer5f
+
+	cp ${G_UBOOT_SRC_DIR}/out/a53/tools/env/fw_printenv ${2}
+
 	# Build tispl.bin and u-boot.img. Saved in $G_UBOOT_SRC_DIR/out/a53
 	# Requires bl31.bin, tee-pager_v2.bin, and ipc_echo_testb_mcu1_0_release_strip.xer5f
 	make -C ${G_UBOOT_SRC_DIR} ${G_CROSS_COMPILER_JOPTION} ARCH=arm O=${G_UBOOT_SRC_DIR}/out/a53 \
