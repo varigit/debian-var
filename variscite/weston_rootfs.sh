@@ -78,7 +78,7 @@ EOF
 
 function rootfs_install_kernel() {
 	# install kernel image in rootfs
-	cp ${PARAM_OUTPUT_DIR}/Image.gz ${ROOTFS_BASE}/boot
+	cp ${PARAM_OUTPUT_DIR}/${KERNEL_IMAGE_TYPE} ${ROOTFS_BASE}/boot
 
 	# install kernel dtbs
 	cp ${PARAM_OUTPUT_DIR}/*.dtb ${ROOTFS_BASE}/boot
