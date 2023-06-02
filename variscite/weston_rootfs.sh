@@ -340,8 +340,10 @@ function make_debian_weston_rootfs()
 	cleanup_mounts
 
 	pr_info "rootfs: debootstrap"
-	sudo mkdir -p ${ROOTFS_BASE}
-	sudo chown -R root:root ${ROOTFS_BASE}
+	if [ ! -d "${ROOTFS_BASE}" ]; then
+		sudo mkdir -p ${ROOTFS_BASE}
+		sudo chown -R root:root ${ROOTFS_BASE}
+	fi
 	check_step "debootstrap first-stage" || debootstrap --verbose --no-check-gpg --foreign --arch arm64 ${DEB_RELEASE} \
 		${ROOTFS_BASE}/ ${PARAM_DEB_LOCAL_MIRROR}
 	save_step "debootstrap first-stage"

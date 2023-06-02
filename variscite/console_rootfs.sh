@@ -14,8 +14,10 @@ function make_debian_console_rootfs()
 	rm -rf ${ROOTFS_BASE}/*
 
 	pr_info "rootfs: debootstrap"
-	sudo mkdir -p ${ROOTFS_BASE}
-	sudo chown -R root:root ${ROOTFS_BASE}
+	if [ ! -d "${ROOTFS_BASE}" ]; then
+		sudo mkdir -p ${ROOTFS_BASE}
+		sudo chown -R root:root ${ROOTFS_BASE}
+	fi
 
 	pr_info "rootfs: debootstrap in rootfs (second-stage)"
 	if [ "${MACHINE}" = "var-som-mx6" ] ||
