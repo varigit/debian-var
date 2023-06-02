@@ -101,7 +101,7 @@ protected_install libgpiod2
 protected_install python3-libgpiod
 
 # net tools
-protected_install iperf3
+DEBIAN_FRONTEND=noninteractive apt-get install -y iperf3
 
 protected_install rng-tools
 
