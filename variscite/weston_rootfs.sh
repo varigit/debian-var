@@ -122,7 +122,7 @@ function rootfs_install_var_bt {
 		${ROOTFS_BASE}/etc/bluetooth
 	install -m 0644 ${BRCM_UTILS_DIR}/variscite-bt.service \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/variscite-bt.service \
+	ln -sf /lib/systemd/system/variscite-bt.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
 }
 
@@ -133,7 +133,7 @@ function rootfs_install_var_wifi() {
 		${ROOTFS_BASE}/etc/wifi
 	install -m 0644 ${BRCM_UTILS_DIR}/variscite-wifi.service \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/variscite-wifi.service \
+	ln -sf /lib/systemd/system/variscite-wifi.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
 }
 
@@ -150,7 +150,7 @@ function rootfs_install_config_bt() {
 
 	install -m 0644 ${BLUEZ5_DIR}/obex.service \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/obex.service \
+	ln -sf /lib/systemd/system/obex.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
 }
 
@@ -158,7 +158,7 @@ function rootfs_install_config_pulseaudio() {
 	# install pulse audio configuration
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio.service \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/pulseaudio.service \
+	ln -sf /lib/systemd/system/pulseaudio.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/pulseaudio.service
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio-bluetooth.conf \
 		${ROOTFS_BASE}/etc//dbus-1/system.d
@@ -200,7 +200,7 @@ function rootfs_install_config_weston_service() {
 			${ROOTFS_BASE}/etc/profile.d/weston.sh
 		install -m 0644 ${G_VARISCITE_PATH}/weston.service \
 			${ROOTFS_BASE}/lib/systemd/system
-		ln -s /lib/systemd/system/weston.service \
+		ln -sf /lib/systemd/system/weston.service \
 			${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/weston.service
 	fi
 }
