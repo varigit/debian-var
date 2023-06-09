@@ -314,7 +314,7 @@ EOF
 		install -m 0644 ${G_VARISCITE_PATH}/variscite-bt.service \
 			${ROOTFS_BASE}/lib/systemd/system
 	fi
-	ln -s /lib/systemd/system/variscite-bt.service \
+	ln -sf /lib/systemd/system/variscite-bt.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
 
 	# install BT audio and main config
@@ -329,13 +329,13 @@ EOF
 
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/bluez5/files/obex.service \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/obex.service \
+	ln -sf /lib/systemd/system/obex.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/obex.service
 
 	# install pulse audio configuration
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio.service \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -s /lib/systemd/system/pulseaudio.service \
+	ln -sf /lib/systemd/system/pulseaudio.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/pulseaudio.service
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/pulseaudio-bluetooth.conf \
 		${ROOTFS_BASE}/etc/dbus-1/system.d
@@ -373,7 +373,7 @@ EOF
 		install -m 0644 ${G_VARISCITE_PATH}/variscite-wifi.service \
 			${ROOTFS_BASE}/lib/systemd/system
 	fi
-	ln -s /lib/systemd/system/variscite-wifi.service \
+	ln -sf /lib/systemd/system/variscite-wifi.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
 	
 	#install securetty
