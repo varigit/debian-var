@@ -73,6 +73,11 @@ check_board()
 			red_bold_echo "ERROR: invalid display, should be lvds, hdmi or dp"
 			exit 1
 		fi
+	elif grep -q "i.MX93" /sys/devices/soc0/soc_id; then
+		BOARD=imx93-var-som
+		DTB_PREFIX=imx93-var-som-symphony
+		BOOTLOADER_OFFSET=32
+		BLOCK=mmcblk0
 	else
 		red_bold_echo "ERROR: Unsupported board"
 		exit 1
