@@ -412,6 +412,7 @@ function make_debian_weston_rootfs()
 	install -m 0755 ${G_VARISCITE_PATH}/rc.local ${ROOTFS_BASE}/etc/
 	install -d ${ROOTFS_BASE}/boot/
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
+	echo "kernelargs=net.ifnames=0" >> ${ROOTFS_BASE}/boot/uEnv.txt
 
 	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
 	install -m 0644 ${G_VARISCITE_PATH}/wallpaper_hd.png \
