@@ -137,6 +137,9 @@ protected_install psmisc
 # systemd-timesyncd
 protected_install systemd-timesyncd
 
+# zstd
+protected_install zstd
+
 # install dpkg-dev for dpkg-buildpackage
 protected_install debhelper
 protected_install dh-python
