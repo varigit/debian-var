@@ -4,7 +4,12 @@ function run_rootfs_stage() {
 	pr_info "${DESCRIPTION}"
 	cp ${G_VARISCITE_PATH}/${STAGE} ${ROOTFS_BASE}
 	chmod +x ${ROOTFS_BASE}/${STAGE}
-	chroot ${ROOTFS_BASE} /${STAGE}
+
+	# Save all variables starting with G_ so they can be passed to the chroot
+	G_VARS=$(declare -r | grep -v ' declare -[a-z]*r' | cut -d ' ' -f 3- | grep "G_")
+
+	# Run ${STAGE} inside chroot
+	chroot ${ROOTFS_BASE} /bin/bash -c "${G_VARS}; . /${STAGE}"
 }
 
 function rootfs_copy_packages() {
