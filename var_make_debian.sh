@@ -195,7 +195,7 @@ if check_toolchain; then
 	exit 1;
 fi
 
-readonly G_CROSS_COMPILER_JOPTION="-j $(nproc)"
+readonly G_CROSS_COMPILER_JOPTION="-j$(nproc)"
 
 # Setup helper scripts according to SOC_FAMILY
 case "${SOC_FAMILY}" in
