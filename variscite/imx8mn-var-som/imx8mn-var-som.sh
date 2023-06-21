@@ -61,8 +61,6 @@ readonly G_GST_EXTRA_PLUGINS="gstreamer1.0-libav"
 readonly G_SW_ENCODER_DECODERS="x265 x264"
 readonly G_SW_GST_CODEC_DIR="gstreamer-libav"
 
-readonly G_NO_EXECSTACK="y"
-
 # Flashing variables
 BOOTLOADER_OFFSET=32
 

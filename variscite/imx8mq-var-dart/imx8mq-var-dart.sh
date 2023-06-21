@@ -82,7 +82,6 @@ readonly IMX_FIRMWARE_VERSION="8.8"
 readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d"
 
 G2DPACKAGE="imx-gpu-g2d"
-readonly G_NO_EXECSTACK="y"
 
 readonly G_IMX_CODEC_DIR="imxcodec-4.5.5"
 readonly G_IMX_PARSER_DIR="imxparser-4.5.5"

@@ -76,7 +76,6 @@ readonly G_IMX_NN_DIR="imx-nn-1.2.0"
 
 IMXGSTPLG="imx-gst1.0-plugin-mx8mp"
 G2DPACKAGE="imx-gpu-g2d"
-readonly G_NO_EXECSTACK="y"
 
 # Flashing variables
 BOOTLOADER_OFFSET=32
