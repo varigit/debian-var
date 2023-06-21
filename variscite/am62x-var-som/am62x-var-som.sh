@@ -122,3 +122,6 @@ readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
 readonly G_GPU_TI_POWERVR_ROGUE_GPU="y"
 readonly G_TI_IMG_ROGUE_UMLIBS_PACKAGE_DIR="ti-img-rogue-umlibs-1.15.6133109"
 readonly G_TI_POWERVR_GRAPHICS="powervr-graphics-5.10"
+
+#Multimedia - GStreamer Packages - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
