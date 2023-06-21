@@ -140,6 +140,9 @@ protected_install systemd-timesyncd
 # zstd
 protected_install zstd
 
+# var-mii utility
+protected_install var-mii
+
 # install dpkg-dev for dpkg-buildpackage
 protected_install debhelper
 protected_install dh-python

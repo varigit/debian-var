@@ -1,5 +1,9 @@
 # copy common packages
 function copy_common_packages() {
+	# var-mii
+	cp -r ${G_VARISCITE_PATH}/deb/var-mii_1.0/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
+
 	# imx-firmware
 	if [ ! -z "${IMX_FIRMWARE_VERSION}" ]; then
 		cp -r ${G_VARISCITE_PATH}/deb/imx-firmware-${IMX_FIRMWARE_VERSION}/* \

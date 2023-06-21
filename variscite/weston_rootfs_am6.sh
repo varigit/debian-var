@@ -1,6 +1,8 @@
 # copy common packages
 function copy_common_packages() {
-	:
+	# var-mii
+	cp -r ${G_VARISCITE_PATH}/deb/var-mii_1.0/* \
+			${ROOTFS_BASE}/srv/local-apt-repository
 }
 
 # copy display and gpu packages
