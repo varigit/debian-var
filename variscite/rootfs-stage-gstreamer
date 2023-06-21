@@ -45,6 +45,8 @@ protected_install gstreamer1.0-plugins-bad
 protected_install gstreamer1.0-plugins-base
 protected_install gstreamer1.0-plugins-base-apps
 protected_install gstreamer1.0-plugins-good
+protected_install gstreamer1.0-alsa
+protected_install gstreamer1.0-libav
 protected_install gstreamer1.0-tools
 if [ ! -z "${IMXGSTPLG}" ]
 then
