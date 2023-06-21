@@ -202,6 +202,7 @@ case "${SOC_FAMILY}" in
 	am6)
 		source ${G_VARISCITE_PATH}/u-boot-am6.sh
 		source ${G_VARISCITE_PATH}/kernel-am6.sh
+		source ${G_VARISCITE_PATH}/weston_rootfs_am6.sh
 		;;
 	imx*)
 		source ${G_VARISCITE_PATH}/u-boot-imx.sh

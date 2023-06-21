@@ -116,3 +116,9 @@ readonly G_BRCM_LWB5_FW_SHA256SUM="583e2b328a185f545e1c5de55acaf3ae092cdbc791a62
 
 # BlueZ
 readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bluez5/files"
+
+#Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
+readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
+readonly G_GPU_TI_POWERVR_ROGUE_GPU="y"
+readonly G_TI_IMG_ROGUE_UMLIBS_PACKAGE_DIR="ti-img-rogue-umlibs-1.15.6133109"
+readonly G_TI_POWERVR_GRAPHICS="powervr-graphics-5.10"

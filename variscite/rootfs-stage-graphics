@@ -60,6 +60,19 @@ if [ ! -z "${G2DPACKAGE}" ]
 then
 	protected_install ${G2DPACKAGE}
 fi
+
+if [ ! -z "${G_GPU_TI_POWERVR_ROGUE_GPU}" ]
+then
+	protected_install ti-img-rogue-umlibs
+	# Prefer /usr/lib over /lib/aarch64-linux-gnu, required
+	# for libgbm1 from ti-img-rogue-umlibs to be used
+	# instead of from libgbm1 package
+	mkdir -p /etc/ld.so.conf.d/
+	echo "/usr/lib" > /etc/ld.so.conf.d/99-usr-lib.conf
+
+	protected_install powervr-graphics
+fi
+
 protected_install weston
 
 
