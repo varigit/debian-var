@@ -13,6 +13,8 @@ function create_debian_kernel_headers_package()
 	rm -rf ${OUTPUT_DIR}/kernel
 	tar -xjf ${3}/linux-headers_debian_src/kernel-headers-template.tar.bz2 \
 		-C ${OUTPUT_DIR}/
+	tar -xjf ${3}/linux-headers_debian_src/kernel-arm64-template.tar.bz2 \
+		-C ${OUTPUT_DIR}/
 	ln -sf ${KERNEL_SRC_DIR} ${OUTPUT_DIR}/kernel-src
 	cd ${OUTPUT_DIR}
 
@@ -154,7 +156,7 @@ function create_debian_kernel_headers_package()
 	tar -xjf ${3}/linux-headers_debian_src/kernel-arm64-template.tar.bz2 \
 		-C ${OUTPUT_DIR}/
 
-	echo "10" > ${OUTPUT_DIR}/debian/compat
+	echo "11" > ${OUTPUT_DIR}/debian/compat
 	cd ${ORIG_DIR}
 	rm -f ${OUTPUT_DIR}/kernel-src
 }

@@ -1,4 +1,4 @@
-kernel (5.4.3) bullseye; urgency=medium
+kernel (5.4.3) bookworm; urgency=medium
 
   * Debianized Linux kernel headers
 

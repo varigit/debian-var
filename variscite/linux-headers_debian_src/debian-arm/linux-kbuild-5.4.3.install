@@ -12,14 +12,12 @@ kernel/scripts/Makefile.kasan /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/Makefile.lib /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/Makefile.modinst /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/Makefile.modpost /usr/lib/linux-kbuild-5.4.3/scripts/
-kernel/scripts/Makefile.modsign /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/Makefile.ubsan /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/basic/fixdep /usr/lib/linux-kbuild-5.4.3/scripts/basic/
 kernel/scripts/checkincludes.pl /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/checkstack.pl /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/checkversion.pl /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/depmod.sh /usr/lib/linux-kbuild-5.4.3/scripts/
-kernel/scripts/extract-cert /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/gcc-goto.sh /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/gcc-plugin.sh /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/gcc-version.sh /usr/lib/linux-kbuild-5.4.3/scripts/
