@@ -143,6 +143,11 @@ protected_install zstd
 # var-mii utility
 protected_install var-mii
 
+# Install k3conf
+if [ ! -z "${G_K3CONF_PACKAGE_DIR}" ]; then
+	protected_install k3conf
+fi
+
 # install dpkg-dev for dpkg-buildpackage
 protected_install debhelper
 protected_install dh-python

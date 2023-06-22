@@ -125,3 +125,5 @@ readonly G_TI_POWERVR_GRAPHICS="powervr-graphics-5.10"
 
 #Multimedia - GStreamer Packages - Set it to "n" if you want to disable it
 readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
+
+readonly G_K3CONF_PACKAGE_DIR="k3conf_0.2"
