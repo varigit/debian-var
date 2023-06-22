@@ -12,6 +12,27 @@ function run_rootfs_stage() {
 	chroot ${ROOTFS_BASE} /bin/bash -c "${G_VARS}; . /${STAGE}"
 }
 
+copy_required_package() {
+    PACKAGE_DIR="$1"
+
+    if [ -d "${G_VARISCITE_PATH}/deb/$PACKAGE_DIR" ]; then
+        cp -r "${G_VARISCITE_PATH}/deb/$PACKAGE_DIR"/* \
+            "${ROOTFS_BASE}/srv/local-apt-repository"
+    else
+        echo "Error: Directory '${G_VARISCITE_PATH}/deb/$PACKAGE_DIR' does not exist."
+    fi
+}
+
+copy_optional_package() {
+	PACKAGE_DIR="$1"
+
+	if [ ! -z "$PACKAGE_DIR" ]; then
+		copy_required_package "${PACKAGE_DIR}"
+	fi
+}
+
+
+
 function rootfs_copy_packages() {
 	# copy common packages
 	[[ $(type -t copy_common_packages) == function ]] && copy_common_packages

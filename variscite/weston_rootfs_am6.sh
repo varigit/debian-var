@@ -1,23 +1,16 @@
 # copy common packages
 function copy_common_packages() {
 	# var-mii
-	cp -r ${G_VARISCITE_PATH}/deb/var-mii_1.0/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
+	copy_required_package "var-mii_1.0"
 }
 
 # copy display and gpu packages
 function copy_packages_display() {
 	# PowerVR Rogue GPU SDK Binaries
-	if [ ! -z "${G_TI_IMG_ROGUE_UMLIBS_PACKAGE_DIR}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_TI_IMG_ROGUE_UMLIBS_PACKAGE_DIR}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-	fi
+	copy_optional_package "${G_TI_IMG_ROGUE_UMLIBS_PACKAGE_DIR}"
 
 	# PowerVR Graphics SDK
-	if [ ! -z "${G_TI_POWERVR_GRAPHICS}" ]; then
-		cp -r ${G_VARISCITE_PATH}/deb/${G_TI_POWERVR_GRAPHICS}/* \
-			${ROOTFS_BASE}/srv/local-apt-repository
-	fi
+	copy_optional_package "${G_TI_POWERVR_GRAPHICS}"
 }
 
 # copy machine lerning packages
