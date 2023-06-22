@@ -22,7 +22,6 @@ git_repos=(
 	"G_META_VARISCITE_BSP"
 )
 
-
 # meta-variscite-bsp
 readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp"
 readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp"
@@ -104,6 +103,3 @@ readonly G_DEBIAN_DISTRO_FEATURE_MM="y"
 
 #Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
 readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
-
-#Machine Learning - Machine learning libraries - Set it to "n" if you want to disable it
-#readonly G_DEBIAN_DISTRO_FEATURE_ML="y"
