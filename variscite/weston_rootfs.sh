@@ -399,6 +399,9 @@ function make_debian_weston_rootfs()
 
 	run_step "run_rootfs_stage" "rootfs-stage-base" "rootfs: install selected Debian packages (console-only-stage)"
 
+	# Rebuild apt repository
+	chroot ${ROOTFS_BASE} /usr/lib/local-apt-repository/rebuild
+
 	if [ "${G_DEBIAN_DISTRO_FEATURE_GRAPHICS}" = "y" ]; then
 		run_step "run_rootfs_stage" "rootfs-stage-graphics" "rootfs: install selected Debian packages (Graphics - GPU/Weston)"
 	else
