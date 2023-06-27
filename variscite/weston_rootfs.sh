@@ -119,7 +119,7 @@ function install_kernel_package() {
 
 	if [ -f "${ROOTFS_BASE}/srv/local-apt-repository/${kpackage_deb}" ]; then
 		pr_info "Installing ${kpackage}"
-		chroot ${ROOTFS_BASE} apt-get install --allow-downgrades -y ${kpackage}
+		chroot ${ROOTFS_BASE} apt-get install --allow-downgrades -y --reinstall ${kpackage}
 	else
 		pr_error "${ROOTFS_BASE}/srv/local-apt-repository/${kpackage_deb} is missing"
 		exit 1
