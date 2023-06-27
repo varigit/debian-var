@@ -96,9 +96,7 @@ function usage()
 	echo "       all         -- build or rebuild kernel/bootloader/rootfs"
 	echo "       bootloader  -- build or rebuild U-Boot"
 	echo "       freertosvariscite - build or rebuild freertos for M4/M7 core"
-	echo "       kernel      -- build or rebuild the Linux kernel"
-	echo "       kernelheaders -- build or rebuild Linux kernel headers"
-	echo "       modules     -- build or rebuild the Linux kernel modules & headers and install them in the rootfs dir"
+	echo "       kernelpackage -- build or rebuild the Linux kernel packages"
 	echo "       rootfs      -- build or rebuild the Debian root filesystem and create rootfs.tar.zst"
 	echo "                       (including: make & install Debian packages, firmware and kernel modules & headers)"
 	echo "       rubi        -- generate or regenerate rootfs.ubi.img image from rootfs folder "
@@ -459,101 +457,6 @@ function make_tarball()
 
 	cd -
 	return $RETVAL
-}
-
-# make Linux kernel image & dtbs
-# $1 -- cross compiler prefix
-# $2 -- Linux defconfig file
-# $3 -- Linux dtb files
-# $4 -- Linux dirname
-# $5 -- out path
-function make_kernel()
-{
-	pr_info "make kernel .config"
-	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${4}/ ${2}
-
-	pr_info "make kernel"
-	if [ ! -z "${UIMAGE_LOADADDR}" ]; then
-		IMAGE_EXTRA_ARGS="LOADADDR=${UIMAGE_LOADADDR}"
-	fi
-	make CROSS_COMPILE=${1} ARCH=${ARCH_ARGS} ${G_CROSS_COMPILER_JOPTION} ${IMAGE_EXTRA_ARGS}\
-			-C ${4}/ ${KERNEL_IMAGE_TYPE}
-
-	pr_info "make ${3}"
-	make CROSS_COMPILE=${1} ARCH=${ARCH_ARGS} ${G_CROSS_COMPILER_JOPTION} -C ${4} ${3}
-
-	pr_info "Copy kernel and dtb files to output dir: ${5}"
-	cp ${4}/${KERNEL_BOOT_IMAGE_SRC}/${KERNEL_IMAGE_TYPE} ${5}/;
-	cp ${4}/${KERNEL_DTB_IMAGE_PATH}*.dtb ${5}/;
-}
-
-# clean kernel
-# $1 -- Linux dir path
-function clean_kernel()
-{
-	pr_info "Clean the Linux kernel"
-
-	make ARCH=${ARCH_ARGS} -C ${1}/ mrproper
-
-	pr_info "Clean the external Linux kernel modules"
-	if [[ $(type -t clean_kernel_modules_ext) == function ]]; then
-		clean_kernel_modules_ext ${1}
-	fi
-}
-
-# make Linux kernel modules
-# $1 -- cross compiler prefix
-# $2 -- Linux defconfig file
-# $3 -- Linux dirname
-# $4 -- out modules path
-function make_kernel_modules()
-{
-	pr_info "make kernel defconfig"
-	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} ${2}
-
-	pr_info "Compiling kernel modules"
-	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} modules
-
-	pr_info "Compiling external kernel modules"
-	if [[ $(type -t make_kernel_modules_ext) == function ]]; then
-		make_kernel_modules_ext ${1} ${2} ${3} ${4}
-	fi
-}
-
-# make Linux kernel headers package
-# $1 -- cross compiler prefix
-# $2 -- Linux defconfig file
-# $3 -- Linux dirname
-# $4 -- out modules path
-function make_kernel_headers_package()
-{
-	pr_info "make kernel defconfig"
-	create_debian_kernel_headers_package ${3} \
-		${PARAM_OUTPUT_DIR}/kernel-headers ${G_VARISCITE_PATH}
-	pr_info "Installing kernel modules to ${4}"
-	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} \
-		${G_CROSS_COMPILER_JOPTION} -C ${3} \
-		INSTALL_MOD_PATH=${4} modules_install
-}
-# install the Linux kernel modules
-# $1 -- cross compiler prefix
-# $2 -- Linux defconfig file
-# $3 -- Linux dirname
-# $4 -- out modules path
-function install_kernel_modules()
-{
-	pr_info "Installing kernel headers to ${4}"
-	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} \
-		INSTALL_HDR_PATH=${4}/usr/local headers_install
-
-	pr_info "Installing kernel modules to ${4}"
-	make ARCH=${ARCH_ARGS} CROSS_COMPILE=${1} ${G_CROSS_COMPILER_JOPTION} -C ${3} \
-		INSTALL_MOD_PATH=${4} modules_install
-
-	pr_info "Installing external kernel modules to ${4}"
-	if [[ $(type -t make_kernel_modules_ext) == function ]]; then
-		install_kernel_modules_ext ${1} ${2} ${3} ${4}
-	fi
 }
 
 compile_fw() {
@@ -974,33 +877,46 @@ function cmd_make_uboot()
 	make_uboot ${G_UBOOT_SRC_DIR} ${PARAM_OUTPUT_DIR}
 }
 
-function cmd_make_kernel()
+function cmd_make_kernel_package()
 {
-	make_kernel ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
-		${G_LINUX_KERNEL_DEF_CONFIG} "${G_LINUX_DTB}" \
-		${G_LINUX_KERNEL_SRC_DIR} ${PARAM_OUTPUT_DIR}
-}
+	# Build string of common kernel arguments
+	if [ ! -z "${UIMAGE_LOADADDR}" ]; then
+		image_extra_args="LOADADDR=${UIMAGE_LOADADDR}"
+	fi
+	kargs=" \
+		-C ${G_LINUX_KERNEL_SRC_DIR} \
+		ARCH=${ARCH_ARGS} \
+		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_CROSS_COMPILER_JOPTION} \
+		${image_extra_args} \
+	"
 
-function cmd_make_kernel_header_deb()
-{
-	make_kernel_headers_package \
-		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
-		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
-		${PARAM_OUTPUT_DIR}/kernel-headers/kernel
+	# Get kernel release
+	krelease=$(make ${kargs} kernelrelease | grep -v "directory")
 
-}
+	# Save the name of the final debian package
+	kpackage=linux-image-${krelease}_${krelease}-1_${ARCH_ARGS}.deb
 
-function cmd_make_kmodules()
-{
-	rm -rf ${G_ROOTFS_DIR}/lib/modules/*
+	# Check if the package already exists in apt repository
+	if [ -f "${ROOTFS_BASE}/srv/local-apt-repository/${kpackage}" ]; then
+		pr_info "cmd_make_kernel_package: File '${ROOTFS_BASE}/srv/local-apt-repository/${kpackage}' exists, skipping"
+		return 0
+	else
+		pr_info "cmd_make_kernel_package: Building ${krelease} packages"
+	fi
 
-	make_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
-		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
-		${G_ROOTFS_DIR}
+	# Clean directory
+	make ${kargs} mrproper
 
-	install_kernel_modules ${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
-		${G_LINUX_KERNEL_DEF_CONFIG} \
-		${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DIR}
+	# Make defconfig
+	make ${kargs} ${G_LINUX_KERNEL_DEF_CONFIG}
+
+	# Generate debian package using make bindeb-pkg
+	make ${kargs} KBUILD_IMAGE=arch/arm64/boot/${KERNEL_IMAGE_TYPE} bindeb-pkg
+
+	# Copy debian packages to apt repository
+	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
+	mv ${DEF_SRC_DIR}/*${krelease}* ${G_ROOTFS_DIR}/srv/local-apt-repository/
 }
 
 function cmd_make_rfs_ubi() {
@@ -1099,7 +1015,7 @@ function cmd_make_clean()
 
 # test for root access support
 [ "$PARAM_CMD" != "deploy" ] && [ "$PARAM_CMD" != "bootloader" ] &&
-[ "$PARAM_CMD" != "kernel" ] && [ "$PARAM_CMD" != "modules" ] &&
+[ "$PARAM_CMD" != "kernelpackage" ] &&
 [ ${EUID} -ne 0 ] && {
 	pr_error "this command must be run as root (or sudo/su)"
 	exit 1;
@@ -1119,14 +1035,8 @@ case $PARAM_CMD in
 	bootloader )
 		cmd_make_uboot
 		;;
-	kernel )
-		cmd_make_kernel
-		;;
-	modules )
-		cmd_make_kmodules
-		;;
-	kernelheaders )
-		cmd_make_kernel_header_deb
+	kernelpackage )
+		cmd_make_kernel_package
 		;;
 	brcmfw )
 		cmd_make_brcmfw
@@ -1152,9 +1062,7 @@ case $PARAM_CMD in
 		;;
 	all )
 		cmd_make_uboot  &&
-		cmd_make_kernel &&
-		cmd_make_kmodules &&
-		cmd_make_kernel_header_deb &&
+		cmd_make_kernel_package &&
 		cmd_make_freertos_variscite &&
 		cmd_make_rootfs
 		;;
