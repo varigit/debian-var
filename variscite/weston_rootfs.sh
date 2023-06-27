@@ -1,15 +1,17 @@
 function run_rootfs_stage() {
 	STAGE="${1}"
 	DESCRIPTION="${2}"
-	pr_info "${DESCRIPTION}"
-	cp ${G_VARISCITE_PATH}/${STAGE} ${ROOTFS_BASE}
-	chmod +x ${ROOTFS_BASE}/${STAGE}
+	CHROOT_ROOTFS="${3:-$ROOTFS_BASE}"  # Use the third argument if provided, otherwise use default value
+
+	pr_info "${DESCRIPTION} (${CHROOT_ROOTFS})"
+	cp "${G_VARISCITE_PATH}/${STAGE}" "${CHROOT_ROOTFS}"
+	chmod +x "${CHROOT_ROOTFS}/${STAGE}"
 
 	# Save all variables starting with G_ so they can be passed to the chroot
 	G_VARS=$(declare -r | grep -v ' declare -[a-z]*r' | cut -d ' ' -f 3- | grep "G_")
 
 	# Run ${STAGE} inside chroot
-	chroot ${ROOTFS_BASE} /bin/bash -c "${G_VARS}; . /${STAGE}"
+	chroot "${CHROOT_ROOTFS}" /bin/bash -c "${G_VARS}; . /${STAGE}"
 }
 
 copy_required_package() {
