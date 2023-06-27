@@ -102,41 +102,38 @@ EOF
 	chmod +x ${ROOTFS_BASE}/usr/sbin/policy-rc.d
 }
 
+function install_kernel_package() {
+	package="$1"
+	kargs=" \
+		-C ${G_LINUX_KERNEL_SRC_DIR} \
+		ARCH=${ARCH_ARGS} \
+		CROSS_COMPILE=${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+		${G_CROSS_COMPILER_JOPTION} \
+		${image_extra_args} \
+	"
+	krelease=$(make ${kargs} kernelrelease | grep -v "directory")
+	kpackage=${package}-${krelease}
+	kpackage_deb=${package}-${krelease}_${krelease}-1_${ARCH_ARGS}.deb
+
+	if [ -f "${ROOTFS_BASE}/srv/local-apt-repository/${kpackage_deb}" ]; then
+		pr_info "Installing ${kpackage}"
+		chroot ${ROOTFS_BASE} apt-get install --allow-downgrades -y ${kpackage}
+	else
+		pr_error "${ROOTFS_BASE}/srv/local-apt-repository/${kpackage_deb} is missing"
+		exit 1
+	fi
+}
+
 function rootfs_install_kernel() {
-	# install kernel image in rootfs
-	cp ${PARAM_OUTPUT_DIR}/${KERNEL_IMAGE_TYPE} ${ROOTFS_BASE}/boot
+	# install kernel image, modules, and dtbs in rootfs
+	install_kernel_package "linux-image"
 
-	# install kernel dtbs
-	cp ${PARAM_OUTPUT_DIR}/*.dtb ${ROOTFS_BASE}/boot
-	if [ "$DEFAULT_BOOT_DTB" != "$BOOT_DTB" ]; then
-		ln -sf ${DEFAULT_BOOT_DTB} ${ROOTFS_BASE}/boot/${BOOT_DTB}
-		if [ ! -z "${BOOT_DTB2}" ]; then
-			ln -sf ${DEFAULT_BOOT_DTB2} \
-				${ROOTFS_BASE}/boot/${BOOT_DTB2}
-		fi
-		if [ "${MACHINE}" = "imx8qm-var-som" ]; then
-			ln -sf ${DEFAULT_BOOT_SPEAR8_DTB} ${ROOTFS_BASE}/boot/${BOOT_SPEAR8_DTB}
-			# i.MX8QP SoC Default DTBs
-			ln -sf ${DEFAULT_BOOT_DTB/imx8qm/imx8qp} ${ROOTFS_BASE}/boot/${BOOT_DTB/imx8qm/imx8qp}
-			ln -sf ${DEFAULT_BOOT_SPEAR8_DTB/imx8qm/imx8qp} ${ROOTFS_BASE}/boot/${BOOT_SPEAR8_DTB/imx8qm/imx8qp}
-		fi
-	fi
+	# create symbolic links to kernel image and dtbs
+	sudo ln -sf "${KERNEL_IMAGE_TYPE}-${krelease}" "${ROOTFS_BASE}/boot/${KERNEL_IMAGE_TYPE}"
+	sudo ln -sf "../usr/lib/linux-image-${krelease}/${G_LINUX_DTB}" "${ROOTFS_BASE}/boot/$(basename ${G_LINUX_DTB})"
 
-	# install kernel modules in rootfs
-	install_kernel_modules \
-		${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
-		${G_LINUX_KERNEL_DEF_CONFIG} ${G_LINUX_KERNEL_SRC_DIR} \
-		${ROOTFS_BASE}
-
-	# copy all kernel headers for development
-	mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx
-	if [ ! -z "${UAPI_PATH}" ]; then
-		mkdir -p ${ROOTFS_BASE}/usr/local/src/linux-imx/${UAPI_PATH}
-		cp ${G_LINUX_KERNEL_SRC_DIR}/drivers/staging/android/uapi/* \
-		${ROOTFS_BASE}/usr/local/src/linux-imx/drivers/staging/android/uapi
-	fi
-	cp -r ${G_LINUX_KERNEL_SRC_DIR}/include \
-		${ROOTFS_BASE}/usr/local/src/linux-imx/
+	# install kernel headers for development
+	install_kernel_package "linux-headers"
 }
 
 function rootfs_install_var_bt {
@@ -256,12 +253,6 @@ function rootfs_install_config_pm_utils() {
 function rootfs_install_config_logind() {
 	# we don't want systemd to handle the power key
 	echo "HandlePowerKey=ignore" >> ${ROOTFS_BASE}/etc/systemd/logind.conf
-}
-
-function rootfs_build_kernel_headers() {
-	#Build kernel headers on the target
-	cp -ar ${PARAM_OUTPUT_DIR}/kernel-headers ${ROOTFS_BASE}/tmp/
-	run_rootfs_stage "rootfs-stage-header" "rootfs: Building kernel-headers"
 }
 
 function rootfs_install_user_packages() {
@@ -429,7 +420,6 @@ function make_debian_weston_rootfs()
 	run_step "rootfs_install_config_weston_service"
 	run_step "rootfs_install_config_pm_utils"
 	run_step "rootfs_install_config_logind"
-	run_step "rootfs_build_kernel_headers"
 	run_step "rootfs_install_kernel"
 	run_step "rootfs_install_user_packages"
 	run_step "rootfs_install_config_alsa"

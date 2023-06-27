@@ -1,9 +1,0 @@
-#!/bin/bash
-# update packages
-cd /tmp/kernel-headers
-dpkg-buildpackage -b ${G_CROSS_COMPILER_JOPTION} -us -uc
-cp -ar /tmp/*.deb /srv/local-apt-repository/
-dpkg-reconfigure local-apt-repository
-cd -
-rm -rf /var/cache/apt/*
-rm -f header-stage
