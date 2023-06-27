@@ -32,6 +32,7 @@ readonly DEF_CONSOLE_ROOTFS_TARBALL_NAME="console_rootfs.tar.zst"
 readonly DEF_BUILDENV="${ABSOLUTE_DIRECTORY}"
 readonly DEF_SRC_DIR="${DEF_BUILDENV}/src"
 readonly G_ROOTFS_DIR="${DEF_BUILDENV}/rootfs"
+readonly G_ROOTFS_DEV_DIR="${DEF_BUILDENV}/rootfs-dev"
 readonly G_TMP_DIR="${DEF_BUILDENV}/tmp"
 readonly G_TOOLS_PATH="${DEF_BUILDENV}/toolchain"
 readonly G_VARISCITE_PATH="${DEF_BUILDENV}/variscite"
@@ -822,6 +823,9 @@ function cmd_make_rootfs()
 
 	# build base rootfs
 	make_debian_base_rootfs ${G_ROOTFS_DIR}
+
+	# build development rootfs
+	run_step "make_debian_dev_rootfs"
 
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	   [ "${MACHINE}" = "var-som-mx7" ]; then
