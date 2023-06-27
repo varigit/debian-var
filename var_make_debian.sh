@@ -827,6 +827,9 @@ function cmd_make_rootfs()
 	# build development rootfs
 	run_step "make_debian_dev_rootfs"
 
+	# build kernel packages
+	cmd_make_kernel_package
+
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	   [ "${MACHINE}" = "var-som-mx7" ]; then
 		# make debian console rootfs
@@ -886,6 +889,45 @@ function cmd_make_uboot()
 	make_uboot ${G_UBOOT_SRC_DIR} ${PARAM_OUTPUT_DIR}
 }
 
+# Kernel header scripts must be compiled using chroot. They currently
+# cannot be cross compiled
+function kernel_fixup_header_scripts()
+{
+	# Setup global variables for chroot script
+	readonly G_KDIR=/root/linux-${krelease}
+	readonly G_KARGS=" \
+		ARCH=${ARCH_ARGS} \
+		${G_CROSS_COMPILER_JOPTION} \
+		${image_extra_args} \
+	"
+
+	pr_info "kernel_fixup_header_scripts"
+
+	# Copy kernel source to development rootfs
+	if [ ! -d ${G_KDIR} ]; then
+		rsync -a --stats --quiet ${G_LINUX_KERNEL_SRC_DIR} ${G_ROOTFS_DEV_DIR}/${G_KDIR}
+	fi
+
+	# Build kernel scripts
+	run_step "run_rootfs_stage" "rootfs-stage-kernel-header-fixup" "rootfs: build kernel packages" ${G_ROOTFS_DEV_DIR}
+
+	# Get linux-headers package name
+	headers_package=linux-headers-${krelease}_${krelease}-1_${ARCH_ARGS}.deb
+
+	# Unpack the original kernel headers package
+	rm -rf linux-headers-${krelease}-temp
+	dpkg-deb -R ${DEF_SRC_DIR}/${headers_package} linux-headers-${krelease}-temp
+	rm ${DEF_SRC_DIR}/${headers_package}
+
+	# Update the package with the new scripts
+	rm -rf linux-headers-${krelease}-temp/usr/src/linux-headers-${krelease}/scripts/*
+	cp -r ${G_ROOTFS_DEV_DIR}${G_KDIR}/kernel/scripts/* linux-headers-${krelease}-temp/usr/src/linux-headers-${krelease}/scripts
+
+	# Repack the new kernel headers package
+	dpkg-deb -b linux-headers-${krelease}-temp ${DEF_SRC_DIR}/${headers_package}
+	rm -rf linux-headers-${krelease}-temp
+}
+
 function cmd_make_kernel_package()
 {
 	# Build string of common kernel arguments
@@ -922,6 +964,9 @@ function cmd_make_kernel_package()
 
 	# Generate debian package using make bindeb-pkg
 	make ${kargs} KBUILD_IMAGE=arch/arm64/boot/${KERNEL_IMAGE_TYPE} bindeb-pkg
+
+	# Cross compile kernel header scripts
+	kernel_fixup_header_scripts
 
 	# Copy debian packages to apt repository
 	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
@@ -1071,7 +1116,6 @@ case $PARAM_CMD in
 		;;
 	all )
 		cmd_make_uboot  &&
-		cmd_make_kernel_package &&
 		cmd_make_freertos_variscite &&
 		cmd_make_rootfs
 		;;

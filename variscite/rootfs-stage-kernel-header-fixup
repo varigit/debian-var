@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# build the kernel packages
+
+# apply debconfig options
+debconf-set-selections /debconf.set
+rm -f /debconf.set
+
+cd ${G_KDIR}/kernel
+
+# Install dependencies
+apt update && apt install -y build-essential bc kmod cpio flex libncurses5-dev libelf-dev libssl-dev dwarves bison
+
+# Clean directory
+make ${G_KARGS} mrproper
+
+# Make defconfig
+make ${G_KARGS} ${G_LINUX_KERNEL_DEF_CONFIG}
+
+# Build linux header scripts
+make ${G_KARGS} scripts modules_prepare
