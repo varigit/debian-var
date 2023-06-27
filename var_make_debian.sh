@@ -220,6 +220,7 @@ if [ "${ARCH_CPU}" = "64BIT" ]; then
 	G_CROSS_COMPILER_PREFIX=${G_CROSS_COMPILER_64BIT_PREFIX}
 	ARCH_ARGS="arm64"
 	# Include weston backend rootfs helper
+	source ${G_VARISCITE_PATH}/base_rootfs.sh
 	source ${G_VARISCITE_PATH}/weston_rootfs.sh
 	source ${G_VARISCITE_PATH}/linux-headers_debian_src/create_kernel_tree.sh
 elif [ "${ARCH_CPU}" = "32BIT" ]; then
@@ -229,6 +230,7 @@ elif [ "${ARCH_CPU}" = "32BIT" ]; then
 	G_CROSS_COMPILER_PREFIX=${G_CROSS_COMPILER_32BIT_PREFIX}
 	ARCH_ARGS="arm"
 	# Include x11 backend rootfs helper
+	source ${G_VARISCITE_PATH}/base_rootfs.sh
 	source ${G_VARISCITE_PATH}/console_rootfs.sh
 	source ${G_VARISCITE_PATH}/linux-headers_debian_src/create_kernel_tree_arm.sh
 	source ${G_VARISCITE_PATH}/x11_rootfs.sh
@@ -817,6 +819,9 @@ function cmd_make_deploy()
 function cmd_make_rootfs()
 {
 	make_prepare;
+
+	# build base rootfs
+	make_debian_base_rootfs ${G_ROOTFS_DIR}
 
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	   [ "${MACHINE}" = "var-som-mx7" ]; then
