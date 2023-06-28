@@ -61,7 +61,7 @@ readonly KERNEL_DTB_IMAGE_PATH="arch/arm64/boot/dts/freescale/"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="lf-6.1.y_var01"
-readonly G_LINUX_KERNEL_REV="5f3e208e5a7509fb3370584b8830dd2aff2f1811"
+readonly G_LINUX_KERNEL_REV="5af56b1beb0ed4b4ce59cbcf8d92115451725fa3"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 readonly G_LINUX_DTB="freescale/imx93-var-som-symphony.dtb"
 
