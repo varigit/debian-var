@@ -351,6 +351,20 @@ run_step() {
 	save_step "${step_name}"
 }
 
+# Remove a step from the steps file.
+# $1 - step
+clean_step() {
+    local step="$1"
+    local temp_file=$(mktemp)
+
+    # Copy lines not containing the search string to a temporary file
+    grep -v "$step" "${STEP_FILE}" > "$temp_file"
+
+    # Move the temporary file back to the original file
+    mv "$temp_file" "${STEP_FILE}"
+}
+
+
 ### work functions ###
 # get_var_required - retrieves the value of a required variable constructed from a prefix and suffix
 # Arguments:
