@@ -817,7 +817,8 @@ function cmd_make_deploy()
 	return 0
 }
 
-function cmd_make_rootfs()
+# Build a minimal rootfs as a foundation for all other rootfs
+function make_rootfs_base()
 {
 	make_prepare;
 
@@ -826,6 +827,11 @@ function cmd_make_rootfs()
 
 	# build development rootfs
 	run_step "make_debian_dev_rootfs"
+}
+
+function cmd_make_rootfs()
+{
+	run_step "make_rootfs_base"
 
 	# build kernel packages
 	cmd_make_kernel_package
@@ -930,6 +936,9 @@ function kernel_fixup_header_scripts()
 
 function cmd_make_kernel_package()
 {
+	# Building the kernel package depends on the base rootfs for chroot
+	run_step "make_rootfs_base"
+
 	# Build string of common kernel arguments
 	if [ ! -z "${UIMAGE_LOADADDR}" ]; then
 		image_extra_args="LOADADDR=${UIMAGE_LOADADDR}"
