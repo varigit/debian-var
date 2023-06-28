@@ -895,6 +895,48 @@ function cmd_make_uboot()
 	make_uboot ${G_UBOOT_SRC_DIR} ${PARAM_OUTPUT_DIR}
 }
 
+# Add files to an existing deb package
+# $1 -- Path to deb package
+# $2 -- Source file path
+# $3 -- Dest directory path inside package
+function dpkg_add_files()
+{
+	deb_package="$1"
+	src_files="$2"
+	dest_files="$3"
+	tmp_deb_dir=".dpkg_add_files"
+
+	# Cleanup
+	rm -rf ${tmp_deb_dir}
+	mkdir -p ${tmp_deb_dir}
+
+	# Verify arguments
+	if [ ! -f $deb_package ]; then
+		pr_error "dpkg_add_files: deb: Could not find $deb_package"
+		exit 1
+	fi
+	if ! ls -d $src_files >/dev/null 2>&1; then
+		pr_error "dpkg_add_files: src: Could not find $src_files"
+		exit 1
+	fi
+
+	# Unpack original deb
+	dpkg-deb -R $deb_package $tmp_deb_dir
+	if [ ! -d $tmp_deb_dir/$dest_files ]; then
+		pr_error "dpkg_add_files: dest: Could not find $tmp_deb_dir/$dest_files"
+		exit 1
+	fi
+
+	# Copy files
+	cp -r $src_files $tmp_deb_dir/$dest_files
+
+	# Repack new deb
+	dpkg-deb -b ${tmp_deb_dir} $deb_package
+
+	# Cleanup
+	rm -rf ${tmp_deb_dir}
+}
+
 # Kernel header scripts must be compiled using chroot. They currently
 # cannot be cross compiled
 function kernel_fixup_header_scripts()
@@ -920,18 +962,11 @@ function kernel_fixup_header_scripts()
 	# Get linux-headers package name
 	headers_package=linux-headers-${krelease}_${krelease}-1_${ARCH_ARGS}.deb
 
-	# Unpack the original kernel headers package
-	rm -rf linux-headers-${krelease}-temp
-	dpkg-deb -R ${DEF_SRC_DIR}/${headers_package} linux-headers-${krelease}-temp
-	rm ${DEF_SRC_DIR}/${headers_package}
-
 	# Update the package with the new scripts
-	rm -rf linux-headers-${krelease}-temp/usr/src/linux-headers-${krelease}/scripts/*
-	cp -r ${G_ROOTFS_DEV_DIR}${G_KDIR}/kernel/scripts/* linux-headers-${krelease}-temp/usr/src/linux-headers-${krelease}/scripts
-
-	# Repack the new kernel headers package
-	dpkg-deb -b linux-headers-${krelease}-temp ${DEF_SRC_DIR}/${headers_package}
-	rm -rf linux-headers-${krelease}-temp
+	dpkg_add_files \
+		"${DEF_SRC_DIR}/${headers_package}" \
+		"${G_ROOTFS_DEV_DIR}${G_KDIR}/kernel/scripts/*" \
+		"/usr/src/linux-headers-${krelease}/scripts"
 }
 
 function cmd_make_kernel_package()
