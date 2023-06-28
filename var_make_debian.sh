@@ -1019,6 +1019,7 @@ function cmd_make_kernel_package()
 	else
 		pr_info "cmd_make_kernel_package: Building ${krelease} packages"
 	fi
+	clean_step "rootfs_install_kernel"
 
 	# Generate debian package using make bindeb-pkg
 	make ${kargs} KBUILD_IMAGE=arch/arm64/boot/${KERNEL_IMAGE_TYPE} bindeb-pkg
