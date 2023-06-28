@@ -1048,9 +1048,6 @@ function cmd_make_firmware() {
 
 function cmd_make_clean()
 {
-	# clean kernel, dtb, modules
-	clean_kernel ${G_LINUX_KERNEL_SRC_DIR}
-
 	# clean U-Boot
 	clean_uboot ${G_UBOOT_SRC_DIR}
 
@@ -1060,6 +1057,9 @@ function cmd_make_clean()
 
 	pr_info "Delete rootfs dir ${G_ROOTFS_DIR}"
 	rm -rf ${G_ROOTFS_DIR}
+
+	pr_info "Delete rootfs-dev dir ${G_ROOTFS_DEV_DIR}"
+	rm -rf $G_ROOTFS_DEV_DIR}
 
 	# Delete state file
 	rm -rf ${STEP_FILE}
