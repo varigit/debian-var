@@ -92,7 +92,7 @@ readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bc
 readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bluez5/files"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20230622T154831Z/"
+readonly DEF_DEBIAN_MIRROR="http://ftp.debian.org/debian"
 
 #rootfs package group control
 #Default compilation of rootfs (Console Base + Multimedia + Graphics)
