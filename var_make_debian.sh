@@ -964,8 +964,8 @@ function cmd_make_kernel_package()
 	kpackage=linux-image-${krelease}_${krelease}-1_${ARCH_ARGS}.deb
 
 	# Check if the package already exists in apt repository
-	if [ -f "${ROOTFS_BASE}/srv/local-apt-repository/${kpackage}" ]; then
-		pr_info "cmd_make_kernel_package: File '${ROOTFS_BASE}/srv/local-apt-repository/${kpackage}' exists, skipping"
+	if [ -f "${G_ROOTFS_DIR}/srv/local-apt-repository/${kpackage}" ]; then
+		pr_info "cmd_make_kernel_package: File '${G_ROOTFS_DIR}/srv/local-apt-repository/${kpackage}' exists, skipping"
 		return 0
 	else
 		pr_info "cmd_make_kernel_package: Building ${krelease} packages"
@@ -978,7 +978,7 @@ function cmd_make_kernel_package()
 	kernel_fixup_header_scripts
 
 	# Copy debian packages to apt repository
-	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
+	mkdir -p ${G_ROOTFS_DIR}/srv/local-apt-repository
 	mv ${DEF_SRC_DIR}/*${krelease}* ${G_ROOTFS_DIR}/srv/local-apt-repository/
 }
 
