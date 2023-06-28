@@ -1027,6 +1027,37 @@ function cmd_make_kernel_package()
 	# Cross compile kernel header scripts
 	kernel_fixup_header_scripts
 
+	# Cross compile external modules
+	if [[ $(type -t make_kernel_modules_ext) == function ]]; then
+		tmp_mod_dir="${DEF_SRC_DIR}/.modules"
+
+		# Clean external modules
+		rm -rf ${tmp_mod_dir}; mkdir -p ${tmp_mod_dir}
+		clean_kernel_modules_ext ${1}
+
+		# Build the modules
+		pr_info "Build the external Linux kernel modules"
+		make_kernel_modules_ext \
+			${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+			${G_LINUX_KERNEL_DEF_CONFIG} \
+			${G_LINUX_KERNEL_SRC_DIR} \
+			"${tmp_mod_dir}"
+
+		# Install the modules
+		pr_info "Install the external Linux kernel modules"
+		install_kernel_modules_ext \
+			${G_CROSS_COMPILER_PATH}/${G_CROSS_COMPILER_PREFIX} \
+			${G_LINUX_KERNEL_DEF_CONFIG} \
+			${G_LINUX_KERNEL_SRC_DIR} \
+			"${tmp_mod_dir}"
+
+		# Add the modules to the linux package
+		dpkg_add_files "${DEF_SRC_DIR}/$kpackage" "${tmp_mod_dir}/*" ""
+
+		# Cleanup
+		rm -rf ${tmp_mod_dir}
+	fi
+
 	# Copy debian packages to apt repository
 	mkdir -p ${G_ROOTFS_DIR}/srv/local-apt-repository
 	mv ${DEF_SRC_DIR}/*${krelease}* ${G_ROOTFS_DIR}/srv/local-apt-repository/
