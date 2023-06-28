@@ -942,6 +942,12 @@ function cmd_make_kernel_package()
 		${image_extra_args} \
 	"
 
+	# Clean directory
+	make ${kargs} mrproper
+
+	# Make defconfig
+	make ${kargs} ${G_LINUX_KERNEL_DEF_CONFIG}
+
 	# Get kernel release
 	krelease=$(make ${kargs} kernelrelease | grep -v "directory")
 
@@ -955,12 +961,6 @@ function cmd_make_kernel_package()
 	else
 		pr_info "cmd_make_kernel_package: Building ${krelease} packages"
 	fi
-
-	# Clean directory
-	make ${kargs} mrproper
-
-	# Make defconfig
-	make ${kargs} ${G_LINUX_KERNEL_DEF_CONFIG}
 
 	# Generate debian package using make bindeb-pkg
 	make ${kargs} KBUILD_IMAGE=arch/arm64/boot/${KERNEL_IMAGE_TYPE} bindeb-pkg
