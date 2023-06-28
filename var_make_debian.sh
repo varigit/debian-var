@@ -971,7 +971,7 @@ function kernel_fixup_header_scripts()
 	fi
 
 	# Build kernel scripts
-	run_step "run_rootfs_stage" "rootfs-stage-kernel-header-fixup" "rootfs: build kernel packages" ${G_ROOTFS_DEV_DIR}
+	run_rootfs_stage "rootfs-stage-kernel-header-fixup" "rootfs: build kernel packages" ${G_ROOTFS_DEV_DIR}
 
 	# Get linux-headers package name
 	headers_package=linux-headers-${krelease}_${krelease}-1_${ARCH_ARGS}.deb
