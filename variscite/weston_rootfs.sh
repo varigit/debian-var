@@ -136,6 +136,16 @@ function rootfs_install_kernel() {
 
 	# install kernel headers for development
 	install_kernel_package "linux-headers"
+
+	# Get path to /lib/modules/<version> directory from the debian package
+	libdir_temp=$(mktemp)
+	dpkg -c ${ROOTFS_BASE}/srv/local-apt-repository/linux-image-${krelease}_${krelease}-1_arm64.deb > $libdir_temp
+	libdir=$(grep -roE -m1 "/lib/modules/[^/]+" "$libdir_temp" | sed 's/\/lib\/modules\///')
+	rm -rf $libdir_temp
+
+	# generate modules.dep and map files
+	chroot ${ROOTFS_BASE} depmod -a ${libdir}
+	cleanup_mounts
 }
 
 function rootfs_install_var_bt {
