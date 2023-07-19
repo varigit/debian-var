@@ -47,6 +47,7 @@ readonly GST_MM_VERSION="MM_04.06.02_2108_L5.10.y"
 readonly G_GST_PLUGINS_BAD_DIR="MM_04.06.02_2108_L5.10.y"
 readonly G2D_PACKAGE_DIR="imx-gpu-g2d-6.4.3.p2.2"
 readonly IMX_FIRMWARE_VERSION="8.13"
+readonly XCVR_FIRMWARE_PACKAGE="imx-firmware-xcvr"
 readonly WESTON_PACKAGE_DIR="imx8m-vivante-g2d/weston-9"
 readonly IMX_GPU_VIV_DEFAULT_WL_PACKAGE="imx-gpu-viv-core"
 

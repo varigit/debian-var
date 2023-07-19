@@ -294,6 +294,11 @@ then
 	protected_install ${HDMI_FIRMWARE_PACKAGE}
 fi
 
+# xcvr firmware package
+if [ ! -z "${XCVR_FIRMWARE_PACKAGE}" ]
+then
+	protected_install ${XCVR_FIRMWARE_PACKAGE}
+fi
 
 # alsa
 protected_install alsa-utils
