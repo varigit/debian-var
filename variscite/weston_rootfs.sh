@@ -34,6 +34,11 @@ copy_optional_package() {
 }
 
 
+# xcvr firmware package
+if [ ! -z "${XCVR_FIRMWARE_PACKAGE}" ]
+then
+	protected_install ${XCVR_FIRMWARE_PACKAGE}
+fi
 
 function rootfs_copy_packages() {
 	# copy common packages
