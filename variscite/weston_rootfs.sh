@@ -645,6 +645,10 @@ EOF
 			${ROOTFS_BASE}/usr/share/alsa/cards/
 		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/${ALSA_CONF_FILES_DIR}/IMX-XCVR.conf \
 			${ROOTFS_BASE}/usr/share/alsa/cards/
+		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/${ALSA_CONF_FILES_DIR}/CS42888.conf \
+			${ROOTFS_BASE}/usr/share/alsa/cards/
+		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/${ALSA_CONF_FILES_DIR}/AK4458.conf \
+			${ROOTFS_BASE}/usr/share/alsa/cards/
 		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/${ALSA_CONF_FILES_DIR}/aliases.conf \
 			${ROOTFS_BASE}/usr/share/alsa/cards/
 	fi
