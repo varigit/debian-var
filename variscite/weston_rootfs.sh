@@ -207,6 +207,16 @@ function rootfs_install_config_pulseaudio() {
 	install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/pulseaudio/client.conf \
 		${ROOTFS_BASE}/etc/pulse/
 
+	# install alsa-libs and alisas files
+	if [ ! -z "${ALSA_CONF_FILES_DIR}" ]; then
+		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/${ALSA_CONF_FILES_DIR}/IMX-HDMI.conf \
+			${ROOTFS_BASE}/usr/share/alsa/cards/
+		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/${ALSA_CONF_FILES_DIR}/IMX-XCVR.conf \
+			${ROOTFS_BASE}/usr/share/alsa/cards/
+		install -m 0644 ${G_VARISCITE_PATH}/${MACHINE}/${ALSA_CONF_FILES_DIR}/aliases.conf \
+			${ROOTFS_BASE}/usr/share/alsa/cards/
+	fi
+
 	rm -rf ${ROOTFS_BASE}/etc/systemd/user/sockets.target.wants/pulseaudio.socket
 	rm -rf ${ROOTFS_BASE}/etc/systemd/user/default.target.wants/pulseaudio.service
 	
