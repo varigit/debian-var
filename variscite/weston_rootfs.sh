@@ -136,7 +136,11 @@ function rootfs_install_kernel() {
 
 	# create symbolic links to kernel image and dtbs
 	sudo ln -sf "${KERNEL_IMAGE_TYPE}-${krelease}" "${ROOTFS_BASE}/boot/${KERNEL_IMAGE_TYPE}"
-	sudo ln -sf "../usr/lib/linux-image-${krelease}/${G_LINUX_DTB}" "${ROOTFS_BASE}/boot/$(basename ${G_LINUX_DTB})"
+
+	for dtb_path in $G_LINUX_DTB; do
+		dtb_filename=$(basename "$dtb_path")
+		sudo ln -sf "/usr/lib/linux-image-${krelease}/freescale/${dtb_filename}" "${ROOTFS_BASE}/boot/${dtb_filename}"
+	done
 
 	# install kernel headers for development
 	install_kernel_package "linux-headers"
