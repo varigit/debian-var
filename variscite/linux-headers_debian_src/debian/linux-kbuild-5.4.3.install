@@ -37,7 +37,6 @@ kernel/scripts/makelst /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/mksysmap /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/mkuboot.sh /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/mod/modpost /usr/lib/linux-kbuild-5.4.3/scripts/mod/
-kernel/scripts/module-common.lds /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/namespace.pl /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/patch-kernel /usr/lib/linux-kbuild-5.4.3/scripts/
 kernel/scripts/recordmcount.pl /usr/lib/linux-kbuild-5.4.3/scripts/
