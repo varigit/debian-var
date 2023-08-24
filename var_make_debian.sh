@@ -1000,7 +1000,7 @@ function cmd_make_deploy()
 	# SDMA firmware
 	if [ "${MACHINE}" = "imx6ul-var-dart" ] ||
 	   [ "${MACHINE}" = "var-som-mx7" ]; then
-		# get linux-frimwrae source repository
+		# get linux-firmware source repository
 		(( `ls ${G_IMX_SDMA_FW_SRC_DIR}  2>/dev/null | wc -l` == 0 )) && {
 			pr_info "Get Linux-Firmware";
 			get_git_src ${G_IMX_SDMA_FW_GIT} \
