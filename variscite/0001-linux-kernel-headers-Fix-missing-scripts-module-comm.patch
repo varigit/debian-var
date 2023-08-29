@@ -1,0 +1,58 @@
+From 28ec5de51e31d9632b9b485cf4c593bb80080000 Mon Sep 17 00:00:00 2001
+From: Harshesh Valera <harshesh.v@variscite.com>
+Date: Sun, 20 Aug 2023 14:39:48 -0700
+Subject: [PATCH] linux-kernel-headers: Fix missing scripts/module-common.lds
+ and namespace.pl
+
+- Removed scripts/module-common.lds and namespace.pl from the linux kernel headers as it
+is no longer available on kernel 5.10
+
+Signed-off-by: Harshesh Valera <harshesh.v@variscite.com>
+---
+ .../debian-arm/linux-kbuild-5.4.3.install                       | 2 --
+ .../linux-headers_debian_src/debian/linux-kbuild-5.4.3.install  | 2 --
+ variscite/linux-headers_debian_src/kbuild_file_list.txt         | 2 --
+ 3 files changed, 6 deletions(-)
+
+diff --git a/variscite/linux-headers_debian_src/debian-arm/linux-kbuild-5.4.3.install b/variscite/linux-headers_debian_src/debian-arm/linux-kbuild-5.4.3.install
+index e3e55b6..b51f0ca 100644
+--- a/variscite/linux-headers_debian_src/debian-arm/linux-kbuild-5.4.3.install
++++ b/variscite/linux-headers_debian_src/debian-arm/linux-kbuild-5.4.3.install
+@@ -34,8 +34,6 @@ kernel/scripts/makelst /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/mksysmap /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/mkuboot.sh /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/mod/modpost /usr/lib/linux-kbuild-5.4.3/scripts/mod/
+-kernel/scripts/module-common.lds /usr/lib/linux-kbuild-5.4.3/scripts/
+-kernel/scripts/namespace.pl /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/patch-kernel /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/recordmcount.pl /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/setlocalversion /usr/lib/linux-kbuild-5.4.3/scripts/
+diff --git a/variscite/linux-headers_debian_src/debian/linux-kbuild-5.4.3.install b/variscite/linux-headers_debian_src/debian/linux-kbuild-5.4.3.install
+index 09c597b..bd5e5e0 100644
+--- a/variscite/linux-headers_debian_src/debian/linux-kbuild-5.4.3.install
++++ b/variscite/linux-headers_debian_src/debian/linux-kbuild-5.4.3.install
+@@ -37,8 +37,6 @@ kernel/scripts/makelst /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/mksysmap /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/mkuboot.sh /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/mod/modpost /usr/lib/linux-kbuild-5.4.3/scripts/mod/
+-kernel/scripts/module-common.lds /usr/lib/linux-kbuild-5.4.3/scripts/
+-kernel/scripts/namespace.pl /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/patch-kernel /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/recordmcount.pl /usr/lib/linux-kbuild-5.4.3/scripts/
+ kernel/scripts/setlocalversion /usr/lib/linux-kbuild-5.4.3/scripts/
+diff --git a/variscite/linux-headers_debian_src/kbuild_file_list.txt b/variscite/linux-headers_debian_src/kbuild_file_list.txt
+index 19e3d94..4e0e068 100644
+--- a/variscite/linux-headers_debian_src/kbuild_file_list.txt
++++ b/variscite/linux-headers_debian_src/kbuild_file_list.txt
+@@ -37,8 +37,6 @@ kernel-src/scripts/makelst
+ kernel-src/scripts/mksysmap
+ kernel-src/scripts/mkuboot.sh
+ kernel-src/scripts/mod/modpost
+-kernel-src/scripts/module-common.lds
+-kernel-src/scripts/namespace.pl
+ kernel-src/scripts/patch-kernel
+ kernel-src/scripts/recordmcount.pl
+ kernel-src/scripts/setlocalversion
+-- 
+2.25.1
+

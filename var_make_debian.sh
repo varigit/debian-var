@@ -900,6 +900,10 @@ function make_bcm_fw()
 }
 
 ################ commands ################
+kernel_is_5_10()
+{
+        grep -q 'PATCHLEVEL = 10' ${G_LINUX_KERNEL_SRC_DIR}/Makefile
+}
 
 function cmd_make_deploy()
 {
@@ -946,6 +950,9 @@ function cmd_make_deploy()
 		pr_info "Get kernel repository";
 		get_git_src ${G_LINUX_KERNEL_GIT} ${G_LINUX_KERNEL_BRANCH} \
 			${G_LINUX_KERNEL_SRC_DIR} ${G_LINUX_KERNEL_REV}
+		if kernel_is_5_10; then
+			patch -p1 < ${G_VARISCITE_PATH}/0001-linux-kernel-headers-Fix-missing-scripts-module-comm.patch
+		fi
 	};
 	if [ ! -z "${G_BCM_FW_GIT}" ]; then
 		# get bcm firmware repository
