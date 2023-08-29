@@ -37,6 +37,7 @@ kernel-src/scripts/makelst
 kernel-src/scripts/mksysmap
 kernel-src/scripts/mkuboot.sh
 kernel-src/scripts/mod/modpost
+kernel-src/scripts/module-common.lds
 kernel-src/scripts/namespace.pl
 kernel-src/scripts/patch-kernel
 kernel-src/scripts/recordmcount.pl
