@@ -45,6 +45,24 @@ function make_uboot()
 		SOC=am62x SOC_TYPE=gp SBL=$G_UBOOT_SRC_DIR/out/r5/spl/u-boot-spl.bin \
 		SYSFW_DIR=${G_CORE_LINUX_FIRMWARE_SRC_DIR}/ti-sysfw
 
+	# Build tiboot3-am62x-hs-evm.bin. Saved in $G_CORE_K3_IMAGE_GEN_SRC_DIR.
+	# Requires u-boot-spl.bin, ti-fs-firmware-am62x-hs-enc.bin and ti-fs-firmware-am62x-hs-cert.bin
+	make -C ${G_CORE_K3_IMAGE_GEN_SRC_DIR} mrproper
+	make -C ${G_CORE_K3_IMAGE_GEN_SRC_DIR} ${G_CROSS_COMPILER_JOPTION} ARCH=arm \
+		CROSS_COMPILE=${G_CROSS_COMPILER_32BIT_PATH}/${G_CROSS_COMPILER_32BIT_PREFIX} \
+		SOC=am62x SOC_TYPE=hs SBL=$G_UBOOT_SRC_DIR/out/r5/spl/u-boot-spl.bin \
+		SYSFW_DIR=${G_CORE_LINUX_FIRMWARE_SRC_DIR}/ti-sysfw \
+		TI_SECURE_DEV_PKG=${G_CORE_SECDEV_K3_SRC_DIR}
+
+	# Build tiboot3-am62x-hs-fs-evm.bin. Saved in $G_CORE_K3_IMAGE_GEN_SRC_DIR.
+	# Requires u-boot-spl.bin, ti-fs-firmware-am62x-hs-fs-enc.bin and ti-fs-firmware-am62x-hs-fs-cert.bin
+	make -C ${G_CORE_K3_IMAGE_GEN_SRC_DIR} mrproper
+	make -C ${G_CORE_K3_IMAGE_GEN_SRC_DIR} ${G_CROSS_COMPILER_JOPTION} ARCH=arm \
+		CROSS_COMPILE=${G_CROSS_COMPILER_32BIT_PATH}/${G_CROSS_COMPILER_32BIT_PREFIX} \
+		SOC=am62x SOC_TYPE=hs-fs SBL=$G_UBOOT_SRC_DIR/out/r5/spl/u-boot-spl.bin \
+		SYSFW_DIR=${G_CORE_LINUX_FIRMWARE_SRC_DIR}/ti-sysfw \
+		TI_SECURE_DEV_PKG=${G_CORE_SECDEV_K3_SRC_DIR}
+
 	##### U-Boot A53
 	pr_info "Make U-Boot: ${G_UBOOT_DEF_CONFIG_A}"
 
@@ -82,6 +100,9 @@ function make_uboot()
 	pr_info "Deploying to ${2}/boot"
 	mkdir -p ${2}/boot
 	cp ${G_CORE_K3_IMAGE_GEN_SRC_DIR}/tiboot3.bin \
+		${G_CORE_K3_IMAGE_GEN_SRC_DIR}/tiboot3-am62x-gp-evm.bin \
+		${G_CORE_K3_IMAGE_GEN_SRC_DIR}/tiboot3-am62x-hs-evm.bin \
+		${G_CORE_K3_IMAGE_GEN_SRC_DIR}/tiboot3-am62x-hs-fs-evm.bin \
 		${G_UBOOT_SRC_DIR}/out/a53/tispl.bin \
 		${G_UBOOT_SRC_DIR}/out/a53/u-boot.img \
 		${2}/boot
