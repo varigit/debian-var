@@ -429,9 +429,11 @@ function make_debian_weston_rootfs()
 	install -d ${ROOTFS_BASE}/boot/
 	install -m 0644 ${G_VARISCITE_PATH}/splash.bmp ${ROOTFS_BASE}/boot/
 
-	# Add kernelargs=net.ifnames=0 to /boot/uEnv.txt
-	grep -qF "kernelargs=net.ifnames=0" "${ROOTFS_BASE}/boot/uEnv.txt" ||
-		echo "kernelargs=net.ifnames=0" >> "${ROOTFS_BASE}/boot/uEnv.txt"
+	if grep -q "imx" <<< ${SOC_FAMILY}; then
+		# Add kernelargs=net.ifnames=0 to /boot/uEnv.txt
+		grep -qF "kernelargs=net.ifnames=0" "${ROOTFS_BASE}/boot/uEnv.txt" ||
+			echo "kernelargs=net.ifnames=0" >> "${ROOTFS_BASE}/boot/uEnv.txt"
+	fi
 
 	mkdir -p ${ROOTFS_BASE}/usr/share/images/desktop-base/
 	install -m 0644 ${G_VARISCITE_PATH}/wallpaper_hd.png \
