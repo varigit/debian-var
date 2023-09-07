@@ -639,7 +639,11 @@ EOF
 function make_weston_sdcard_am6() {
 	EMMC_BLOCK=$(basename "$1")
 	IMGS_PATH="$2"
-	PART=""
+	if [ "${PARAM_CMD}" = "sdimage" ]; then
+		PART="p"
+	else
+		PART=""
+	fi
 	INSTALL_OS="Debian"
 	. ${G_META_VARISCITE_SDK_SRC_DIR}/scripts/variscite/am6_install_yocto.sh
 }
