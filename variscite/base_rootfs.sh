@@ -47,7 +47,7 @@ function make_debian_base_rootfs() {
 	mkdir -p ${ROOTFS_BASE}/etc/sudoers.d/
 	echo "user ALL=(root) /usr/bin/apt-get, /usr/bin/dpkg, /usr/bin/vi, /sbin/reboot" > ${ROOTFS_BASE}/etc/sudoers.d/user
 	chmod 0440 ${ROOTFS_BASE}/etc/sudoers.d/user
-	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository
+	mkdir -p ${ROOTFS_BASE}/srv/local-apt-repository/rebuild
 
 	cleanup_mounts
 }
