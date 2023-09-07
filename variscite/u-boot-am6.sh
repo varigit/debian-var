@@ -105,5 +105,6 @@ function make_uboot()
 		${G_CORE_K3_IMAGE_GEN_SRC_DIR}/tiboot3-am62x-hs-fs-evm.bin \
 		${G_UBOOT_SRC_DIR}/out/a53/tispl.bin \
 		${G_UBOOT_SRC_DIR}/out/a53/u-boot.img \
+		${G_META_VARISCITE_BSP_SRC_DIR}/recipes-tisdk/tisdk-uenv/tisdk-uenv/k3/uEnv.txt \
 		${2}/boot
 }
