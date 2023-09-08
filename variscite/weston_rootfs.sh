@@ -151,10 +151,12 @@ function rootfs_install_var_bt {
 	# install variscite-bt service
 	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus \
 		${ROOTFS_BASE}/usr/bin
-	install -d ${ROOTFS_BASE}/etc/bluetooth
-	install -m 0755 ${BRCM_UTILS_DIR}/${MACHINE}/variscite-bt \
+	install -d ${ROOTFS_BASE}/etc/bluetooth/variscite-bt.d
+	install -m 0755 ${BRCM_UTILS_DIR}/bcm43xx-bt \
+		${ROOTFS_BASE}/etc/bluetooth/variscite-bt.d
+	install -m 0755 ${VAR_WIRELESS_UTILS_DIR}/variscite-bt \
 		${ROOTFS_BASE}/etc/bluetooth
-	install -m 0644 ${BRCM_UTILS_DIR}/variscite-bt.service \
+	install -m 0644 ${VAR_WIRELESS_UTILS_DIR}/variscite-bt.service \
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -sf /lib/systemd/system/variscite-bt.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
@@ -162,10 +164,14 @@ function rootfs_install_var_bt {
 
 function rootfs_install_var_wifi() {
 	# install variscite-wifi service
-	install -d ${ROOTFS_BASE}/etc/wifi
-	install -m 0755 ${BRCM_UTILS_DIR}/${MACHINE}/variscite-wifi \
+	install -d ${ROOTFS_BASE}/etc/wifi/variscite-wifi.d
+	install -m 0755 ${BRCM_UTILS_DIR}/bcm43xx-wifi \
+		${ROOTFS_BASE}/etc/wifi/variscite-wifi.d
+	install -m 0755 ${VAR_WIRELESS_UTILS_DIR}/variscite-wifi \
 		${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${BRCM_UTILS_DIR}/variscite-wifi.service \
+	install -m 0755 ${VAR_WIRELESS_UTILS_DIR}/variscite-wireless \
+		${ROOTFS_BASE}/etc/wifi
+	install -m 0644 ${VAR_WIRELESS_UTILS_DIR}/variscite-wifi.service \
 		${ROOTFS_BASE}/lib/systemd/system
 	ln -sf /lib/systemd/system/variscite-wifi.service \
 		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
@@ -295,6 +301,11 @@ function rootfs_install_config_alsa() {
 	install -m 0644 ${G_VARISCITE_PATH}/asound.conf ${ROOTFS_BASE}/etc/
 }
 
+function rootfs_install_gpio_utils() {
+	install -m 0644 ${VAR_GPIO_UTILS_DIR}/gpiochip \
+		${ROOTFS_BASE}/etc/
+}
+
 function rootfs_install_freertos_variscite() {
 	# install freertos-variscite
 	if [ ! -z "${G_FREERTOS_VAR_BUILD_DIR}" ]; then
@@ -420,6 +431,7 @@ function make_debian_weston_rootfs()
 	run_step "rootfs_install_kernel"
 	run_step "rootfs_install_user_packages"
 	run_step "rootfs_install_config_alsa"
+	run_step "rootfs_install_gpio_utils"
 	run_step "rootfs_install_freertos_variscite"
 
 	# binaries rootfs patching
