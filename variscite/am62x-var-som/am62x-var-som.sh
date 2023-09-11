@@ -29,6 +29,7 @@ git_repos=(
 	"G_LINUX_KERNEL"
 	"G_TI_IMG_ROGUE_DRV"
 	"G_META_VARISCITE_BSP"
+	"G_META_VARISCITE_BSP_COMMON"
 	"G_META_VARISCITE_SDK"
 )
 
@@ -37,6 +38,12 @@ readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_BRANCH="dunfell_var01"
 readonly G_META_VARISCITE_BSP_REV="a9b9e8057609ceb1bf5de0e8c41783873f15c60e"
+
+# meta-variscite-bsp-common
+readonly G_META_VARISCITE_BSP_COMMON_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-common"
+readonly G_META_VARISCITE_BSP_COMMON_GIT="https://github.com/varigit/meta-variscite-bsp-common"
+readonly G_META_VARISCITE_BSP_COMMON_BRANCH="dunfell-var01"
+readonly G_META_VARISCITE_BSP_COMMON_REV="465e535b11902cb653bfdd0e9dd4bd5b92139c2a"
 
 # meta-variscite-sdk-ti
 readonly G_META_VARISCITE_SDK_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-sdk-ti"
@@ -101,7 +108,11 @@ readonly G_TI_IMG_ROGUE_DRV_BRANCH="linuxws/dunfell/k5.10/1.15.6133109_unified_f
 readonly G_TI_IMG_ROGUE_DRV_REV="1dd6291a5cad4f2b909fc2a14bd717a3bc5f0bb2"
 
 # BRCM Utils
-readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils"
+readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils/am62x-var-som"
+
+# Variscite Utils
+readonly VAR_WIRELESS_UTILS_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/var-wireless-utils/var-wireless-utils"
+readonly VAR_GPIO_UTILS_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-support/var-gpio-utils/var-gpio-utils"
 
 # Broadcom BT/WIFI firmware
 readonly G_BRCM_FW_SRC_DIR="${DEF_SRC_DIR}/brcmfw"
@@ -115,7 +126,7 @@ readonly G_BRCM_LWB5_FW_LINK="https://github.com/LairdCP/Sterling-LWB-and-LWB5-R
 readonly G_BRCM_LWB5_FW_SHA256SUM="583e2b328a185f545e1c5de55acaf3ae092cdbc791a62ff005c5559515488f7f"
 
 # BlueZ
-readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bluez5/files"
+readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/bluez5/files"
 
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://ftp.debian.org/debian"
