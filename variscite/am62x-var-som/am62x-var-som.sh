@@ -37,7 +37,7 @@ git_repos=(
 readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-ti"
 readonly G_META_VARISCITE_BSP_BRANCH="dunfell_var01"
-readonly G_META_VARISCITE_BSP_REV="a9b9e8057609ceb1bf5de0e8c41783873f15c60e"
+readonly G_META_VARISCITE_BSP_REV="58e637df0b15b83475b2df3d3337d70922724314"
 
 # meta-variscite-bsp-common
 readonly G_META_VARISCITE_BSP_COMMON_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-common"
@@ -49,7 +49,7 @@ readonly G_META_VARISCITE_BSP_COMMON_REV="465e535b11902cb653bfdd0e9dd4bd5b92139c
 readonly G_META_VARISCITE_SDK_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-sdk-ti"
 readonly G_META_VARISCITE_SDK_GIT="https://github.com/varigit/meta-variscite-sdk-ti"
 readonly G_META_VARISCITE_SDK_BRANCH="dunfell_var01"
-readonly G_META_VARISCITE_SDK_REV="dd29a7ed1948c3fdec9194c068fc1b526fcc9614"
+readonly G_META_VARISCITE_SDK_REV="393795f5b6bc17e31339a081cb86ea14838d3626"
 
 # core-secdev-k3 Security Dev Tool
 readonly G_CORE_SECDEV_K3_SRC_DIR="${DEF_SRC_DIR}/core-secdev-k3"
@@ -85,7 +85,7 @@ readonly G_OPTEE_REV="8e74d47616a20eaa23ca692f4bbbf917a236ed94"
 readonly G_UBOOT_SRC_DIR="${DEF_SRC_DIR}/uboot"
 readonly G_UBOOT_GIT="https://github.com/varigit/ti-u-boot.git"
 readonly G_UBOOT_BRANCH="ti-u-boot-2021.01_var01"
-readonly G_UBOOT_REV="277c2dd356d8ec77d7a776c420cf9d87f4e65ff1"
+readonly G_UBOOT_REV="de651a1b9a229735a841f8bb1774718c7fcf9752"
 readonly G_UBOOT_DEF_CONFIG_R="am62x_var_som_r5_defconfig"
 readonly G_UBOOT_DEF_CONFIG_A="am62x_var_som_a53_defconfig"
 readonly UBOOT_FW_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-bsp/u-boot/u-boot-variscite/${MACHINE}/"
@@ -97,7 +97,7 @@ readonly KERNEL_DTB_IMAGE_PATH="arch/arm64/boot/dts/ti/"
 readonly G_LINUX_KERNEL_SRC_DIR="${DEF_SRC_DIR}/kernel"
 readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/ti-linux-kernel.git"
 readonly G_LINUX_KERNEL_BRANCH="ti-linux-5.10.y_var01"
-readonly G_LINUX_KERNEL_REV="2d58bcd882abfb558eb5269de1c54245525c590f"
+readonly G_LINUX_KERNEL_REV="dd3008efa2ad7ea806c4b9c2fb6ff464ea526eea"
 readonly G_LINUX_KERNEL_DEF_CONFIG='am62x_var_defconfig'
 readonly G_LINUX_DTB="ti/k3-am625-var-som-symphony.dtb"
 
