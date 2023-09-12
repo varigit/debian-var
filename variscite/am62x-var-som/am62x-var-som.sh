@@ -129,7 +129,7 @@ readonly G_BRCM_LWB5_FW_SHA256SUM="583e2b328a185f545e1c5de55acaf3ae092cdbc791a62
 readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/bluez5/files"
 
 # default mirror
-readonly DEF_DEBIAN_MIRROR="http://ftp.debian.org/debian"
+readonly DEF_DEBIAN_MIRROR="https://ftp.debian.org/debian"
 
 #Graphics - Full Graphics and GPU SDK - Set it to "n" if you want to disable it
 readonly G_DEBIAN_DISTRO_FEATURE_GRAPHICS="y"
