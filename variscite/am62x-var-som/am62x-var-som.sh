@@ -49,7 +49,7 @@ readonly G_META_VARISCITE_BSP_COMMON_REV="465e535b11902cb653bfdd0e9dd4bd5b92139c
 readonly G_META_VARISCITE_SDK_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-sdk-ti"
 readonly G_META_VARISCITE_SDK_GIT="https://github.com/varigit/meta-variscite-sdk-ti"
 readonly G_META_VARISCITE_SDK_BRANCH="dunfell_var01"
-readonly G_META_VARISCITE_SDK_REV="393795f5b6bc17e31339a081cb86ea14838d3626"
+readonly G_META_VARISCITE_SDK_REV="4cfa887528ac5fc4fccb3731e2980d78e1b66419"
 
 # core-secdev-k3 Security Dev Tool
 readonly G_CORE_SECDEV_K3_SRC_DIR="${DEF_SRC_DIR}/core-secdev-k3"
