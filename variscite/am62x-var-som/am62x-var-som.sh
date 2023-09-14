@@ -128,6 +128,9 @@ readonly G_BRCM_LWB5_FW_SHA256SUM="583e2b328a185f545e1c5de55acaf3ae092cdbc791a62
 # BlueZ
 readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/bluez5/files"
 
+# ti remote cores support
+readonly G_TI_REMOTE_CORES_PACKAGE_DIR="ti-remote-cores-5.10"
+
 # default mirror
 readonly DEF_DEBIAN_MIRROR="https://ftp.debian.org/debian"
 

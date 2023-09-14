@@ -52,6 +52,11 @@ function rootfs_copy_packages() {
 	if [ "${G_DEBIAN_DISTRO_FEATURE_ML}" = "y" ]; then
 		[[ $(type -t copy_packages_ml) == function ]] && copy_packages_ml
 	fi
+
+	# copy ti remote cores packages only if feature enabled
+	if [ ! -z "${G_TI_REMOTE_CORES_PACKAGE_DIR}" ]; then
+		[[ $(type -t copy_packages_remote_cores) == function ]] && copy_packages_remote_cores
+	fi
 }
 
 function rootfs_configure() {

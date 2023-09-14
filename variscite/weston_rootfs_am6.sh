@@ -20,3 +20,8 @@ function copy_packages_display() {
 function copy_packages_ml() {
 	:
 }
+
+# copy ti remote cores packages
+function copy_packages_remote_cores() {
+	copy_optional_package "${G_TI_REMOTE_CORES_PACKAGE_DIR}"
+}

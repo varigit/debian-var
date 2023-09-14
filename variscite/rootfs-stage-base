@@ -158,6 +158,18 @@ protected_install debhelper
 protected_install dh-python
 protected_install apt-src
 
+# Install ti remote cores support
+if [ ! -z "${G_TI_REMOTE_CORES_PACKAGE_DIR}" ]; then
+	# TI RPMsg Char Sample Applications and Tests
+	protected_install libti-rpmsg-char0
+	protected_install ti-rpmsg-char-examples
+	# Programmable Real-time Unit Software Package
+	protected_install pru-icss-halt
+	protected_install pru-icss-rpmsg-echo
+	# TI RTOS prebuilt binary firmware images
+	protected_install ti-rtos-firmware
+fi
+
 apt-get -y autoremove
 
 #update iptables alternatives to legacy
