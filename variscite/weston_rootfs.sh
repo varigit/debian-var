@@ -265,7 +265,7 @@ function rootfs_install_config_weston_service() {
 }
 
 function rootfs_install_config_pm_utils() {
-	# install freertos-variscite
+	# install pm-utils
 	if [ ! -z "${PM_UTILS_DIR}" ]; then
 		# remove pm-utils default scripts and install wifi / bt pm-utils script
 		rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
