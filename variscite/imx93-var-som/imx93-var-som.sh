@@ -95,6 +95,10 @@ readonly PM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-bsp/pm-utils/pm-u
 # BRCM Utils
 readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils/imx93-var-som"
 
+# Variscite Utils
+readonly VAR_WIRELESS_UTILS_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/var-wireless-utils/var-wireless-utils"
+readonly VAR_GPIO_UTILS_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-support/var-gpio-utils/var-gpio-utils"
+
 # BlueZ
 readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/bluez5/files"
 
