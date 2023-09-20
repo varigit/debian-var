@@ -70,7 +70,14 @@ readonly G_LINUX_KERNEL_GIT="https://github.com/varigit/linux-imx.git"
 readonly G_LINUX_KERNEL_BRANCH="lf-6.1.y_var01"
 readonly G_LINUX_KERNEL_REV="b36e37c21a01d97d9aac597e4f5d7146b723fa8f"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
-readonly G_LINUX_DTB="freescale/imx93-var-som-symphony.dtb"
+readonly G_LINUX_DTB="freescale/imx93-var-som-symphony.dtb
+	freescale/imx93-var-som-1.x-symphony-m33.dtb
+	freescale/imx93-var-som-1.x-symphony.dtb
+	freescale/imx93-var-som-symphony-m33.dtb
+	freescale/imx93-var-som-symphony.dtb
+	freescale/imx93-var-som-wbe-symphony-m33.dtb
+	freescale/imx93-var-som-wbe-symphony.dtb
+	"
 
 # Broadcom BT/WIFI firmware
 readonly G_BRCM_FW_SRC_DIR="${DEF_SRC_DIR}/brcmfw"
