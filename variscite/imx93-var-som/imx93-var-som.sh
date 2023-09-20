@@ -87,7 +87,7 @@ readonly G_ETHOSU_FIRMWARE_REV="3265ff6bfe2ff3e9e6dbbb6c4d8fec73560946ed"
 readonly PM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-bsp/pm-utils/pm-utils"
 
 # BRCM Utils
-readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils"
+readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils/imx93-var-som"
 
 # BlueZ
 readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bluez5/files"
