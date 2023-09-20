@@ -11,7 +11,7 @@ git_repos=(
 	"G_LINUX_KERNEL"
 	"G_BCM_FW"
 	"G_IMXBOOT"
-       "G_FREERTOS_VAR"
+	"G_FREERTOS_VAR"
 )
 
 # U-Boot
@@ -32,26 +32,26 @@ readonly G_LINUX_KERNEL_BRANCH="lf-5.10.y_var03"
 readonly G_LINUX_KERNEL_REV="c5d770bdcc973a1c727cac17f142e483aef04b2b"
 readonly G_LINUX_KERNEL_DEF_CONFIG='imx8_var_defconfig'
 G_LINUX_DTB="freescale/imx8mp-var-dart-dt8mcustomboard.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-legacy.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isp0.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isi0.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isp0.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isi0.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isp0-m7.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-basler-isi0-m7.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isp0-m7.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isi0-m7.dtb
-       freescale/imx8mp-var-som-symphony.dtb
-       freescale/imx8mp-var-som-symphony-2nd-ov5640.dtb
-       freescale/imx8mp-var-som-symphony-basler-isp0.dtb
-       freescale/imx8mp-var-som-symphony-basler-isi0.dtb
-       freescale/imx8mp-var-som-symphony-2nd-ov5640-m7.dtb
-       freescale/imx8mp-var-som-symphony-m7.dtb
-       freescale/imx8mp-var-som-symphony-basler-isp0-m7.dtb
-       freescale/imx8mp-var-som-symphony-basler-isi0-m7.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-legacy-m7.dtb
-       freescale/imx8mp-var-dart-dt8mcustomboard-m7.dtb
-       "
+	freescale/imx8mp-var-dart-dt8mcustomboard-legacy.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-basler-isp0.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-basler-isi0.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isp0.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isi0.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-basler-isp0-m7.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-basler-isi0-m7.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isp0-m7.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-legacy-basler-isi0-m7.dtb
+	freescale/imx8mp-var-som-symphony.dtb
+	freescale/imx8mp-var-som-symphony-2nd-ov5640.dtb
+	freescale/imx8mp-var-som-symphony-basler-isp0.dtb
+	freescale/imx8mp-var-som-symphony-basler-isi0.dtb
+	freescale/imx8mp-var-som-symphony-2nd-ov5640-m7.dtb
+	freescale/imx8mp-var-som-symphony-m7.dtb
+	freescale/imx8mp-var-som-symphony-basler-isp0-m7.dtb
+	freescale/imx8mp-var-som-symphony-basler-isi0-m7.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-legacy-m7.dtb
+	freescale/imx8mp-var-dart-dt8mcustomboard-m7.dtb
+	"
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
