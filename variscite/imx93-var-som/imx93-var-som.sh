@@ -20,6 +20,7 @@ git_repos=(
 	"G_IMXBOOT"
 	"G_ETHOSU_FIRMWARE"
 	"G_META_VARISCITE_BSP"
+	"G_META_VARISCITE_BSP_COMMON"
 )
 
 # meta-variscite-bsp-imx
@@ -28,6 +29,11 @@ readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp
 readonly G_META_VARISCITE_BSP_BRANCH="langdale-var01"
 readonly G_META_VARISCITE_BSP_REV="440c6c023d4fc6385eebd7648fcc02edd3a3cf5d"
 
+# meta-variscite-bsp-common
+readonly G_META_VARISCITE_BSP_COMMON_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-common"
+readonly G_META_VARISCITE_BSP_COMMON_GIT="https://github.com/varigit/meta-variscite-bsp-common"
+readonly G_META_VARISCITE_BSP_COMMON_BRANCH="langdale-var01"
+readonly G_META_VARISCITE_BSP_COMMON_REV="e45936c9f2a1663b2692ca983193fbab923864c6"
 
 #imx-atf
 readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
