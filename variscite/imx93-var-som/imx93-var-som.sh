@@ -96,7 +96,7 @@ readonly PM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-bsp/pm-utils/pm-u
 readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils/imx93-var-som"
 
 # BlueZ
-readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bluez5/files"
+readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/bluez5/files"
 
 # default mirror
 readonly DEF_DEBIAN_MIRROR="http://ftp.debian.org/debian"
