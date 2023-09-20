@@ -22,11 +22,12 @@ git_repos=(
 	"G_META_VARISCITE_BSP"
 )
 
-# meta-variscite-bsp
-readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp"
-readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp"
+# meta-variscite-bsp-imx
+readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-imx"
+readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-imx"
 readonly G_META_VARISCITE_BSP_BRANCH="langdale-var01"
-readonly G_META_VARISCITE_BSP_REV="2713315693f3b4339a6ec27299a18de3a1604b95"
+readonly G_META_VARISCITE_BSP_REV="440c6c023d4fc6385eebd7648fcc02edd3a3cf5d"
+
 
 #imx-atf
 readonly G_IMX_ATF_SRC_DIR="${DEF_SRC_DIR}/imx-atf"
