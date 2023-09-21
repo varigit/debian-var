@@ -148,6 +148,9 @@ protected_install zstd
 # var-mii utility
 protected_install var-mii
 
+# bc
+protected_install bc
+
 # Install k3conf
 if [ ! -z "${G_K3CONF_PACKAGE_DIR}" ]; then
 	protected_install k3conf
