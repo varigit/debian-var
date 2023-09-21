@@ -8,7 +8,20 @@ function run_rootfs_stage() {
 	chmod +x "${CHROOT_ROOTFS}/${STAGE}"
 
 	# Save all variables starting with G_ so they can be passed to the chroot
-	G_VARS=$(declare -r | grep -v ' declare -[a-z]*r' | cut -d ' ' -f 3- | grep "G_")
+	#    1. Retrieve all read-only variables
+	TEMP_VARS=$(declare -r)
+
+	#    2. Use awk to transform multi-line variable values into single-line values (e.g. G_LINUX_DTB)
+	TEMP_SINGLE_LINE=$(echo "$TEMP_VARS" | awk -v RS= -v OFS=" " '{gsub(/\n\s+/," ",$0); print $0}')
+
+	#    3. Filter out any line that explicitly states a variable is read-only
+	TEMP_FILTERED=$(echo "$TEMP_SINGLE_LINE" | grep -v ' declare -[a-z]*r')
+
+	#    4. Extract the actual variable names and their values
+	TEMP_CUT=$(echo "$TEMP_FILTERED" | cut -d ' ' -f 3-)
+
+	#    5. Filter to include only lines that contain the substring "G_"
+	G_VARS=$(echo "$TEMP_CUT" | grep "G_")
 
 	# Run ${STAGE} inside chroot
 	chroot "${CHROOT_ROOTFS}" /bin/bash -c "${G_VARS}; . /${STAGE}"
