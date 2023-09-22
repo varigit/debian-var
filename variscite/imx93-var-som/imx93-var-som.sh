@@ -99,6 +99,9 @@ readonly G_ETHOSU_FIRMWARE_REV="3265ff6bfe2ff3e9e6dbbb6c4d8fec73560946ed"
 # pm utils
 readonly PM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-bsp/pm-utils/pm-utils"
 
+# IW612 Utils
+readonly IW612_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/iw612-utils/iw612-utils/imx93-var-som"
+
 # BRCM Utils
 readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bcm43xx-utils/bcm43xx-utils/imx93-var-som"
 
