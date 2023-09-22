@@ -169,34 +169,91 @@ function rootfs_install_kernel() {
 	cleanup_mounts
 }
 
-function rootfs_install_var_bt {
-	# install variscite-bt service
-	install -m 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus \
-		${ROOTFS_BASE}/usr/bin
-	install -d ${ROOTFS_BASE}/etc/bluetooth/variscite-bt.d
-	install -m 0755 ${BRCM_UTILS_DIR}/bcm43xx-bt \
-		${ROOTFS_BASE}/etc/bluetooth/variscite-bt.d
-	install -m 0755 ${VAR_WIRELESS_UTILS_DIR}/variscite-bt \
-		${ROOTFS_BASE}/etc/bluetooth
-	install -m 0644 ${VAR_WIRELESS_UTILS_DIR}/variscite-bt.service \
+# Install and enable a systemd service
+install_service() {
+	local service_src_path=$1
+
+	# Ensure the systemd service directory exists
+	install -d ${ROOTFS_BASE}/lib/systemd/system
+
+	# Install the service file
+	install -m 0644 ${service_src_path} \
 		${ROOTFS_BASE}/lib/systemd/system
-	ln -sf /lib/systemd/system/variscite-bt.service \
-		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-bt.service
+
+	# Extract the service name from the service path for symlink
+	local service_name=$(basename ${service_src_path} .service)
+
+	# Ensure the systemd symlink directory exists
+	install -d ${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants
+
+	# Create the symbolic link
+	ln -sf /lib/systemd/system/${service_name}.service \
+		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/${service_name}.service
 }
 
+install_file() {
+	local perms=$1
+	local src=$2
+	local dest=$3
+
+	# Check if the first argument is a valid octal number (file permission)
+	if ! [[ "${perms}" =~ ^[0-7]{3,4}$ ]]; then
+		echo "Error: install_file: The first argument must be a valid file permission (e.g., 0755)."
+		return 1
+	fi
+
+	# Check if the source file exists
+	if [[ ! -e "${src}" ]]; then
+		echo "Error: install_file: Source file '${src}' does not exist."
+		return 1
+	fi
+
+	if [[ "${dest}" == /* ]]; then
+		dest="${ROOTFS_BASE}${dest}"
+	else
+		dest="${ROOTFS_BASE}/${dest}"
+	fi
+
+	# Create the directory for the destination
+	if [[ "${dest}" == */ ]]; then
+		dest_dir="${dest}"
+	else
+		dest_dir=$(dirname "${dest}")
+	fi
+	install -d "${dest_dir}"
+
+	# Install the file
+	echo "Installing ${src} to ${dest}"
+	install -m "${perms}" "${src}" "${dest}"
+}
+
+
+# Install Varsicite Bluetooth dependencies
+function rootfs_install_var_bt {
+	# Install brcm_patchram_plus
+	install_file 0755 ${G_VARISCITE_PATH}/brcm_patchram_plus /usr/bin/
+
+	# install variscite-bt service
+	install_service "${VAR_WIRELESS_UTILS_DIR}/variscite-bt.service"
+	install_file 0755 "${VAR_WIRELESS_UTILS_DIR}/variscite-bt" "/etc/bluetooth/"
+
+	# Install module specific scripts
+	#   bcm43xx-utils
+	install_file 0755 "${BRCM_UTILS_DIR}/bcm43xx-bt" "/etc/bluetooth/variscite-bt.d/"
+}
+
+# Install Varsicite Wi-Fi dependencies
 function rootfs_install_var_wifi() {
 	# install variscite-wifi service
-	install -d ${ROOTFS_BASE}/etc/wifi/variscite-wifi.d
-	install -m 0755 ${BRCM_UTILS_DIR}/bcm43xx-wifi \
-		${ROOTFS_BASE}/etc/wifi/variscite-wifi.d
-	install -m 0755 ${VAR_WIRELESS_UTILS_DIR}/variscite-wifi \
-		${ROOTFS_BASE}/etc/wifi
-	install -m 0755 ${VAR_WIRELESS_UTILS_DIR}/variscite-wireless \
-		${ROOTFS_BASE}/etc/wifi
-	install -m 0644 ${VAR_WIRELESS_UTILS_DIR}/variscite-wifi.service \
-		${ROOTFS_BASE}/lib/systemd/system
-	ln -sf /lib/systemd/system/variscite-wifi.service \
-		${ROOTFS_BASE}/etc/systemd/system/multi-user.target.wants/variscite-wifi.service
+	install_service "${VAR_WIRELESS_UTILS_DIR}/variscite-wifi.service"
+	install_file 0755 "${VAR_WIRELESS_UTILS_DIR}/variscite-wifi" "/etc/wifi/"
+
+	# install variscite-wireless helper
+	install_file 0755 "${VAR_WIRELESS_UTILS_DIR}/variscite-wireless" "/etc/wifi/"
+
+	# Install module specific scripts
+	#   bcm43xx-utils
+	install_file 0755 "${BRCM_UTILS_DIR}/bcm43xx-wifi" "/etc/wifi/variscite-wifi.d/"
 }
 
 function rootfs_install_config_bt() {
