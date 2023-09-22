@@ -240,6 +240,26 @@ function rootfs_install_var_bt {
 	# Install module specific scripts
 	#   bcm43xx-utils
 	install_file 0755 "${BRCM_UTILS_DIR}/bcm43xx-bt" "/etc/bluetooth/variscite-bt.d/"
+
+	#   iw612-utils: Only install if IW612_UTILS_DIR is defined
+	if [ -n "${IW612_UTILS_DIR}" ]; then
+		install_file 0755 "${IW612_UTILS_DIR}/iw612-bt" /etc/bluetooth/variscite-bt.d
+	fi
+}
+
+# Install Varsicite OpenThread dependencies
+function rootfs_install_var_ot {
+	# Install module specific scripts
+	if [ -n "${IW612_UTILS_DIR}" ]; then
+		# install variscite-ot service
+		install_service "${VAR_WIRELESS_UTILS_DIR}/variscite-ot.service"
+		install_file 0755 "${VAR_WIRELESS_UTILS_DIR}/variscite-ot" "/etc/openthread/"
+
+		# Install example scripts
+		install_file 0755 ${IW612_UTILS_DIR}/iw612-ot /etc/openthread/variscite-ot.d/
+		install_file 0755 "${VAR_WIRELESS_UTILS_DIR}/variscite-ot-server" /etc/openthread/
+		install_file 0755 "${VAR_WIRELESS_UTILS_DIR}/variscite-ot-client" /etc/openthread/
+	fi
 }
 
 # Install Varsicite Wi-Fi dependencies
@@ -254,6 +274,12 @@ function rootfs_install_var_wifi() {
 	# Install module specific scripts
 	#   bcm43xx-utils
 	install_file 0755 "${BRCM_UTILS_DIR}/bcm43xx-wifi" "/etc/wifi/variscite-wifi.d/"
+
+	#   iw612-utils: Only install if IW612_UTILS_DIR is defined
+	if [ -n "${IW612_UTILS_DIR}" ]; then
+		install -m 0755 ${IW612_UTILS_DIR}/iw612-wifi \
+			${ROOTFS_BASE}/etc/wifi/variscite-wifi.d
+	fi
 }
 
 function rootfs_install_config_bt() {
@@ -500,6 +526,7 @@ function make_debian_weston_rootfs()
 
 	run_step "rootfs_install_var_bt"
 	run_step "rootfs_install_var_wifi"
+	run_step "rootfs_install_var_ot"
 	run_step "rootfs_install_config_bt"
 	run_step "rootfs_install_config_pulseaudio"
 	run_step "rootfs_install_config_blacklist"
