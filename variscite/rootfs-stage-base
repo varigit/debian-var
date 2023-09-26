@@ -173,6 +173,11 @@ if [ ! -z "${G_TI_REMOTE_CORES_PACKAGE_DIR}" ]; then
 	protected_install ti-rtos-firmware
 fi
 
+# Install ot-daemon
+if [ ! -z "${G_OT_DAEMON_PACKAGE_DIR}" ]; then
+	protected_install ot-daemon
+fi
+
 apt-get -y autoremove
 
 #update iptables alternatives to legacy
