@@ -726,6 +726,24 @@ function make_brcm_fw()
 	done
 }
 
+# make firmware for wl murata/nxp module
+# $1 -- rootfs output dir
+function make_iw612_fw()
+{
+	pr_info "Make and install iw612 configs and firmware"
+
+	# Install Firmware
+	set -x
+	install -d ${1}/lib/firmware/nxp/IW612_SD_RFTest
+	install -m 0644 ${G_IW612_FW_WORK_DIR}/*.se ${1}/lib/firmware/nxp
+	install -m 0644 ${G_IW612_FW_WORK_DIR}/IW612_SD_RFTest/*.se ${1}/lib/firmware/nxp/IW612_SD_RFTest
+	install -m 0644 ${G_IW612_FW_WORK_DIR}/../wifi_mod_para.conf ${1}/lib/firmware/nxp
+
+	# Install Config
+	install -d ${1}/etc/modprobe.d/
+	install -m 0644 ${G_META_VARISCITE_BSP_SRC_DIR}/recipes-kernel/kernel-modules/kernel-module-nxp-wlan/moal_modprobe.conf \
+		${1}/etc/modprobe.d/
+}
 
 ################ commands ################
 
@@ -870,6 +888,9 @@ function cmd_make_rootfs()
 	if [ -d "${G_BRCM_FW_SRC_DIR}" ]; then
 		make_brcm_fw ${G_BRCM_FW_SRC_DIR} ${G_ROOTFS_DIR}
 	fi
+
+	# make iw612 firmwares
+	cmd_make_iw612fw
 
 	# make ethos-u-firmware
 	if [ -d "${G_ETHOSU_FIRMWARE_SRC_DIR}" ]; then
@@ -1133,6 +1154,13 @@ function cmd_make_brcmfw()
 	fi
 }
 
+function cmd_make_iw612fw()
+{
+	if [ -d "${G_IW612_FW_SRC_DIR}" ]; then
+			make_iw612_fw ${G_ROOTFS_DIR}
+	fi
+}
+
 function cmd_make_firmware() {
 	make_imx_sdma_fw ${G_IMX_SDMA_FW_SRC_DIR} ${G_ROOTFS_DIR}
 }
@@ -1185,6 +1213,9 @@ case $PARAM_CMD in
 		;;
 	brcmfw )
 		cmd_make_brcmfw
+		;;
+	iw612fw )
+		cmd_make_iw612fw
 		;;
 	firmware )
 		cmd_make_firmware
