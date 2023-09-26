@@ -21,6 +21,8 @@ git_repos=(
 	"G_ETHOSU_FIRMWARE"
 	"G_META_VARISCITE_BSP"
 	"G_META_VARISCITE_BSP_COMMON"
+	"G_IW612_DRV"
+	"G_IW612_FW"
 )
 
 # meta-variscite-bsp-imx
@@ -78,6 +80,20 @@ readonly G_LINUX_DTB="freescale/imx93-var-som-symphony.dtb
 	freescale/imx93-var-som-wbe-symphony-m33.dtb
 	freescale/imx93-var-som-wbe-symphony.dtb
 	"
+
+# IW612 Driver
+readonly G_IW612_DRV_SRC_DIR="${DEF_SRC_DIR}/mwifiex"
+readonly G_IW612_DRV_WORK_DIR="${G_IW612_DRV_SRC_DIR}/mxm_wifiex/wlan_src/"
+readonly G_IW612_DRV_GIT="https://github.com/nxp-imx/mwifiex"
+readonly G_IW612_DRV_BRANCH="lf-6.1.22_2.0.0"
+readonly G_IW612_DRV_REV="f1382ccbd34fc22daf504e798745f6cddb702b82"
+
+# IW612 Firmware
+readonly G_IW612_FW_SRC_DIR="${DEF_SRC_DIR}/iw612-imx-firmware"
+readonly G_IW612_FW_WORK_DIR="${G_IW612_FW_SRC_DIR}/nxp/FwImage_IW612_SD"
+readonly G_IW612_FW_GIT="https://github.com/varigit/imx-firmware"
+readonly G_IW612_FW_BRANCH="lf-6.1.1_1.0.0-var01"
+readonly G_IW612_FW_REV="7b5fe17d264abfe4aa2475fd73016f81097f3f4c"
 
 # Broadcom BT/WIFI firmware
 readonly G_BRCM_FW_SRC_DIR="${DEF_SRC_DIR}/brcmfw"
