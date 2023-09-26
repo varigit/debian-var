@@ -125,6 +125,9 @@ readonly BRCM_UTILS_DIR="${G_META_VARISCITE_BSP_SRC_DIR}/recipes-connectivity/bc
 readonly VAR_WIRELESS_UTILS_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/var-wireless-utils/var-wireless-utils"
 readonly VAR_GPIO_UTILS_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-support/var-gpio-utils/var-gpio-utils"
 
+# ot-daemon
+readonly G_OT_DAEMON_PACKAGE_DIR="ot-daemon_0~git20230926.98e644d538ff2"
+
 # BlueZ
 readonly BLUEZ5_DIR="${G_META_VARISCITE_BSP_COMMON_SRC_DIR}/recipes-connectivity/bluez5/files"
 
