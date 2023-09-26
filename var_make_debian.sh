@@ -205,6 +205,7 @@ case "${SOC_FAMILY}" in
 		;;
 	imx*)
 		source ${G_VARISCITE_PATH}/u-boot-imx.sh
+		source ${G_VARISCITE_PATH}/kernel-imx.sh
 		source ${G_VARISCITE_PATH}/weston_rootfs_imx.sh
 		;;
 	*)
