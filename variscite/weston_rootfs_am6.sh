@@ -1,8 +1,5 @@
 # copy common packages
 function copy_common_packages() {
-	# var-mii
-	copy_required_package "var-mii_1.0"
-
 	# k3conf
 	copy_optional_package "${G_K3CONF_PACKAGE_DIR}"
 }

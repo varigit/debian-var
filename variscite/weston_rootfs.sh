@@ -48,7 +48,10 @@ copy_optional_package() {
 
 
 function rootfs_copy_packages() {
-	# copy common packages
+	# copy common packages for all socs
+	copy_required_package "var-mii_1.0"
+
+	# copy common packages that are soc family specific
 	[[ $(type -t copy_common_packages) == function ]] && copy_common_packages
 
 	# copy display and gpu packages only if distro feature enabled
