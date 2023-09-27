@@ -104,6 +104,7 @@ function usage()
 	echo "       rtar        -- generate or regenerate rootfs.tar.zst image from the rootfs folder"
 	echo "       clean       -- clean all build artifacts (without deleting sources code or resulted images)"
 	echo "       sdcard      -- create a bootable SD card"
+	echo "       sdimage     -- create a bootable SD card image"
 	echo "  -o|--output -- custom select output directory (default: \"${PARAM_OUTPUT_DIR}\")"
 	echo "  -d|--dev    -- specify SD card device (exmple: -d /dev/sde)"
 	echo "  --debug     -- enable debug mode for this script"
