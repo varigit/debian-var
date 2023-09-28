@@ -1,0 +1,28 @@
+Format: 1.8
+Date: Thur, 26 Sep 2023 12:33:09 +0000
+Source: var-mii
+Binary: var-mii var-mii-dbgsym
+Architecture: arm64
+Version: 0~git20230928.01ab6ff5d18d
+Distribution: unstable
+Urgency: medium
+Maintainer: Nate Drude <nate.d@variscite.com>
+Changed-By: Nate Drude <nate.d@variscite.com>
+Description:
+ var-mii    - Variscite MII tool
+Changes:
+ var-mii (0~git20230928.01ab6ff5d18d) unstable; urgency=medium
+ .
+   * Initial release.
+Checksums-Sha1:
+ 4db726d3d1a8ad9f3a09a9cca0932e45edbbd47c 3436 var-mii-dbgsym_0~git20230928.01ab6ff5d18d_arm64.deb
+ 8987283e4ebc37f5eca2f5be62c5b36b8d666a33 5136 var-mii_0~git20230928.01ab6ff5d18d_arm64.buildinfo
+ 1901be2f4ee881284e395fb0b705c74bd05bb39d 8528 var-mii_0~git20230928.01ab6ff5d18d_arm64.deb
+Checksums-Sha256:
+ 8a0c0eb4f1b817c52fc65a26a68820c2a06490dc07c40164c7e2984cfab71b37 3436 var-mii-dbgsym_0~git20230928.01ab6ff5d18d_arm64.deb
+ 7fb555c24603252291766fd9b01fc489b8d882fd544bca95fbd62c668d8a1dee 5136 var-mii_0~git20230928.01ab6ff5d18d_arm64.buildinfo
+ 8789ac917db02d4fb985c881e0e845ca45aa1c21e33c875f1c8b5fd6b21b41f2 8528 var-mii_0~git20230928.01ab6ff5d18d_arm64.deb
+Files:
+ 77269187c4601fa02b619f343396a055 3436 debug optional var-mii-dbgsym_0~git20230928.01ab6ff5d18d_arm64.deb
+ 6f9b79d61f7b9e9523a9b852d68fcba1 5136 utils optional var-mii_0~git20230928.01ab6ff5d18d_arm64.buildinfo
+ 95ea193da030bb3c157d8b1e81763251 8528 utils optional var-mii_0~git20230928.01ab6ff5d18d_arm64.deb
