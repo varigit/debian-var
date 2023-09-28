@@ -375,6 +375,8 @@ function rootfs_install_config_pm_utils() {
 		rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/sleep.d/
 		rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/module.d/
 		rm -rf ${ROOTFS_BASE}/usr/lib/pm-utils/power.d/
+		install -m 0755 ${PM_UTILS_DIR}/00-ot.sh \
+			${ROOTFS_BASE}/etc/pm/sleep.d/
 		install -m 0755 ${PM_UTILS_DIR}/01-bt.sh \
 			${ROOTFS_BASE}/etc/pm/sleep.d/
 		install -m 0755 ${PM_UTILS_DIR}/02-wifi.sh \
