@@ -29,7 +29,7 @@ git_repos=(
 readonly G_META_VARISCITE_BSP_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-imx"
 readonly G_META_VARISCITE_BSP_GIT="https://github.com/varigit/meta-variscite-bsp-imx"
 readonly G_META_VARISCITE_BSP_BRANCH="langdale-var01"
-readonly G_META_VARISCITE_BSP_REV="440c6c023d4fc6385eebd7648fcc02edd3a3cf5d"
+readonly G_META_VARISCITE_BSP_REV="d1b75c013e4cd00f7f7614280dde3c856eed2c1d"
 
 # meta-variscite-bsp-common
 readonly G_META_VARISCITE_BSP_COMMON_SRC_DIR="${DEF_SRC_DIR}/meta-variscite-bsp-common"
