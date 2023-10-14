@@ -765,7 +765,8 @@ EOF
 function make_weston_sdcard_am6() {
 	EMMC_BLOCK=$(basename "$1")
 	IMGS_PATH="$2"
-	if [ "${PARAM_CMD}" = "sdimage" ]; then
+	if [ `echo ${EMMC_BLOCK} | grep -c mmcblk` -ne 0 ] \
+		|| [[ ${EMMC_BLOCK} == *"loop"* ]] ; then
 		PART="p"
 	else
 		PART=""
