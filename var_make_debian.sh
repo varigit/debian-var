@@ -575,6 +575,11 @@ function make_ubi() {
 	rm -rf ${UBIFS_ROOTFS_DIR}
 	cp -a ${_rootfs} ${UBIFS_ROOTFS_DIR}
 
+	# prepare qemu 32bit
+	if [ ! -f "${UBIFS_ROOTFS_DIR}/usr/bin/qemu-arm-static" ]; then
+		cp "${G_VARISCITE_PATH}/qemu_32bit/qemu-arm-static" "${UBIFS_ROOTFS_DIR}/usr/bin/qemu-arm-static"
+	fi
+
 ## ubifs rootfs clenup command
 echo "#!/bin/bash
 apt-get clean
