@@ -53,7 +53,10 @@ then
 	fi
 fi
 
-protected_install libgbm1
+# Do not install libgbm1 if G_GPU_TI_POWERVR_ROGUE_GPU provides it
+if [ -z "${G_GPU_TI_POWERVR_ROGUE_GPU}" ]; then
+	protected_install libgbm1
+fi
 protected_install dpkg-dev
 
 if [ ! -z "${G2DPACKAGE}" ]
