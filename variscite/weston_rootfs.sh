@@ -156,7 +156,7 @@ function rootfs_install_kernel() {
 
 	for dtb_path in $G_LINUX_DTB; do
 		dtb_filename=$(basename "$dtb_path")
-		sudo ln -sf "/usr/lib/linux-image-${krelease}/freescale/${dtb_filename}" "${ROOTFS_BASE}/boot/${dtb_filename}"
+		sudo ln -sf "/usr/lib/linux-image-${krelease}/${dtb_path}" "${ROOTFS_BASE}/boot/${dtb_filename}"
 	done
 
 	# install kernel headers for development
