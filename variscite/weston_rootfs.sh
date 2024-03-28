@@ -918,6 +918,7 @@ function make_weston_sdcard()
 	declare -r LPARAM_OUTPUT_DIR=${2}
 	declare -r P1_MOUNT_DIR="${G_TMP_DIR}/p1"
 	declare -r DEBIAN_IMAGES_TO_ROOTFS_POINT="opt/images/Debian"
+
 	declare -r BOOTLOAD_RESERVE_SIZE=8
 	declare -r SPARE_SIZE=4
 

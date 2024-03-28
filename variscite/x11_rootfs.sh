@@ -139,6 +139,7 @@ function make_x11_sdcard() {
 	declare -r P1_MOUNT_DIR="${G_TMP_DIR}/p1"
 	declare -r P2_MOUNT_DIR="${G_TMP_DIR}/p2"
 	declare -r DEBIAN_IMAGES_TO_ROOTFS_POINT="opt/images/Debian"
+
 	declare -r BOOTLOAD_RESERVE=4
 	declare -r BOOT_ROM_SIZE=12
 	declare -r SPARE_SIZE=0
