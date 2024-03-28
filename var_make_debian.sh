@@ -749,15 +749,14 @@ function make_uboot()
 #  $3 -- output dir
 #  $4 -- ubi file name
 function make_ubi() {
-	readonly local _rootfs=${1};
-	readonly local _tmp=${2};
-	readonly local _output=${3};
-	readonly local _ubi_file_name=${4};
-
-	readonly local UBI_CFG="${_tmp}/ubi.cfg"
-	readonly local UBIFS_IMG="${_tmp}/rootfs.ubifs"
-	readonly local UBI_IMG="${_output}/${_ubi_file_name}"
-	readonly local UBIFS_ROOTFS_DIR="${DEF_BUILDENV}/rootfs_ubi_tmp"
+	declare -r _rootfs=${1};
+	declare -r _tmp=${2};
+	declare -r _output=${3};
+	declare -r _ubi_file_name=${4};
+	declare -r UBI_CFG="${_tmp}/ubi.cfg"
+	declare -r UBIFS_IMG="${_tmp}/rootfs.ubifs"
+	declare -r UBI_IMG="${_output}/${_ubi_file_name}"
+	declare -r UBIFS_ROOTFS_DIR="${DEF_BUILDENV}/rootfs_ubi_tmp"
 
 	rm -rf ${UBIFS_ROOTFS_DIR}
 	cp -a ${_rootfs} ${UBIFS_ROOTFS_DIR}

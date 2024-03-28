@@ -914,13 +914,12 @@ EOF
 # $2 -- output images dir
 function make_weston_sdcard()
 {
-	readonly local LPARAM_BLOCK_DEVICE=${1}
-	readonly local LPARAM_OUTPUT_DIR=${2}
-	readonly local P1_MOUNT_DIR="${G_TMP_DIR}/p1"
-	readonly local DEBIAN_IMAGES_TO_ROOTFS_POINT="opt/images/Debian"
-
-	readonly local BOOTLOAD_RESERVE_SIZE=8
-	readonly local SPARE_SIZE=4
+	declare -r LPARAM_BLOCK_DEVICE=${1}
+	declare -r LPARAM_OUTPUT_DIR=${2}
+	declare -r P1_MOUNT_DIR="${G_TMP_DIR}/p1"
+	declare -r DEBIAN_IMAGES_TO_ROOTFS_POINT="opt/images/Debian"
+	declare -r BOOTLOAD_RESERVE_SIZE=8
+	declare -r SPARE_SIZE=4
 
 	[ "${LPARAM_BLOCK_DEVICE}" = "na" ] && {
 		pr_error "No valid block device: ${LPARAM_BLOCK_DEVICE}"

@@ -134,15 +134,14 @@ rm -f cleanup
 # $1 -- block device
 # $2 -- output images dir
 function make_x11_sdcard() {
-	readonly local LPARAM_BLOCK_DEVICE=${1}
-	readonly local LPARAM_OUTPUT_DIR=${2}
-	readonly local P1_MOUNT_DIR="${G_TMP_DIR}/p1"
-	readonly local P2_MOUNT_DIR="${G_TMP_DIR}/p2"
-	readonly local DEBIAN_IMAGES_TO_ROOTFS_POINT="opt/images/Debian"
-
-	readonly local BOOTLOAD_RESERVE=4
-	readonly local BOOT_ROM_SIZE=12
-	readonly local SPARE_SIZE=0
+	declare -r LPARAM_BLOCK_DEVICE=${1}
+	declare -r LPARAM_OUTPUT_DIR=${2}
+	declare -r P1_MOUNT_DIR="${G_TMP_DIR}/p1"
+	declare -r P2_MOUNT_DIR="${G_TMP_DIR}/p2"
+	declare -r DEBIAN_IMAGES_TO_ROOTFS_POINT="opt/images/Debian"
+	declare -r BOOTLOAD_RESERVE=4
+	declare -r BOOT_ROM_SIZE=12
+	declare -r SPARE_SIZE=0
 
 	[ "${LPARAM_BLOCK_DEVICE}" = "na" ] && {
 		pr_warning "No valid block device: ${LPARAM_BLOCK_DEVICE}"
