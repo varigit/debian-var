@@ -753,6 +753,7 @@ function make_ubi() {
 	declare -r _tmp=${2};
 	declare -r _output=${3};
 	declare -r _ubi_file_name=${4};
+
 	declare -r UBI_CFG="${_tmp}/ubi.cfg"
 	declare -r UBIFS_IMG="${_tmp}/rootfs.ubifs"
 	declare -r UBI_IMG="${_output}/${_ubi_file_name}"
