@@ -20,7 +20,9 @@ G_LINUX_DTB="freescale/imx8mn-var-som-symphony.dtb
 	freescale/imx8mn-var-som-symphony-legacy.dtb
 	freescale/imx8mn-var-som-symphony-legacy-root.dtb
 	freescale/imx8mn-var-som-symphony-legacy-m7.dtb
-	freescale/imx8mn-var-som-inmate.dtb"
+	freescale/imx8mn-var-som-inmate.dtb
+	freescale/imx8mn-var-som-fulfil-lfr.dtb 
+	freescale/imx8mn-var-som-fulfil-mars.dtb"
 
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
