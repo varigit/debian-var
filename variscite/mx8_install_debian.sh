@@ -242,6 +242,51 @@ finish()
 	exit 0
 }
 
+install_fulfil_utils()
+{
+	blue_underlined_bold_echo "Installing Fulfil utilities"
+	if grep -q "lfr_sd"
+	then
+		machine="lfr"
+	else
+		machine="mars"
+	fi
+	switch $machine
+	case
+		"lfr")
+		install_fulfil_utils_lfr
+		;;
+		"mars")
+		install_fulfil_utils_mars
+		;;
+	esac
+}
+
+install_fulfil_utils_mars() {
+	start=$SECONDS
+	name="$1 -> "
+	ssh root@$1 " mkdir -p /code/mars  && apt-get update && apt-get install -y tmux rsync"
+	echo "$name Update starting"
+	echo "$name rsync'ing mars-ctl binary"
+	echo "----> rsync -------------------------------------------------------->"
+	rsync -avP ../MarsControl/bazel-bin/main/mars-ctl root@$1:/usr/bin/mars-ctl
+	echo "<-------------------------------------------------------- rsync <----"
+	echo "$name rsync binary update done"
+	echo "$name rsync'ing service"
+	echo "----> rsync -------------------------------------------------------->"
+	rsync -avP ../marsctl.service root@$1:/etc/systemd/system/marsctl.service
+	echo "<-------------------------------------------------------- rsync <----"
+	echo "$name rsync service update done"
+	ssh root@$1 " systemctl enable marsctl.service && service marsctl restart"
+	sleep 1
+	duration=$(( SECONDS - start ))
+	echo "$name G2G in $duration sec"
+	apt-get update
+}
+
+install_fulfil_utils_lfr() {
+
+}
 #################################################
 #           Execution starts here               #
 #################################################
@@ -286,4 +331,5 @@ format_emmc_parts
 install_bootloader_to_emmc
 install_rootfs_to_emmc
 start_udev
+install_fulfil_utils
 finish
