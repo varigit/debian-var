@@ -23,7 +23,6 @@ G_LINUX_DTB="freescale/imx8mn-var-som-symphony.dtb
 	freescale/imx8mn-var-som-inmate.dtb
 	freescale/imx8mn-var-som-fulfil-lfr.dtb 
 	freescale/imx8mn-var-som-fulfil-mars.dtb"
-
 # Broadcom BT/WIFI firmware
 readonly G_BCM_FW_SRC_DIR="${DEF_SRC_DIR}/bcmfw"
 readonly G_BCM_FW_GIT="https://github.com/varigit/bcm_4343w_fw.git"
@@ -74,9 +73,10 @@ readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20211215T
 
 #freertos-variscite
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
-readonly G_FREERTOS_VAR_SRC_GIT="https://github.com/varigit/freertos-variscite.git"
-readonly G_FREERTOS_VAR_SRC_BRANCH="mcuxpresso_sdk_2.11.x-var01"
-readonly G_FREERTOS_VAR_SRC_REV="400b111535768f7aad0b25d29b09b8a9b352cd5f"
+readonly G_FREERTOS_VAR_SRC_GIT="git@github.com:Fulfil0518/freertos-variscite"
+#"https://github.com/varigit/freertos-variscite.git"
+readonly G_FREERTOS_VAR_SRC_BRANCH="ian/spi_demos"
+readonly G_FREERTOS_VAR_SRC_REV=""
 readonly CM_BOARD="som_mx8mn"
 readonly CM_DEMOS=" \
 	multicore_examples/rpmsg_lite_str_echo_rtos \

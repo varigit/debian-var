@@ -51,7 +51,13 @@ readonly G_CROSS_COMPILER_32BIT_PREFIX="arm-linux-gnueabihf-"
 readonly G_CROSS_COMPILER_JOPTION="-j 4"
 
 #### user rootfs packages ####
-readonly G_USER_PACKAGES=""
+readonly G_USER_PACKAGES=" \
+    git \
+    vim \
+    net-tools \
+    syslog-ng \
+    rsync \
+    "
 
 export LC_ALL=C
 
