@@ -1,0 +1,1 @@
+fork from Variscite debian bullseye repo ([release notes](https://variwiki.com/index.php?title=VAR-SOM-MX8M-NANO_Release_Notes&release=RELEASE_BULLSEYE_5.4.142_V1.0_VAR-SOM-MX8M-NANO)) that will have any modifications we have to their image
