@@ -75,7 +75,7 @@ readonly DEF_DEBIAN_MIRROR="https://snapshot.debian.org/archive/debian/20211215T
 readonly G_FREERTOS_VAR_SRC_DIR="${DEF_SRC_DIR}/freertos-variscite"
 readonly G_FREERTOS_VAR_SRC_GIT="git@github.com:Fulfil0518/freertos-variscite"
 #"https://github.com/varigit/freertos-variscite.git"
-readonly G_FREERTOS_VAR_SRC_BRANCH="ian/spi_demos"
+readonly G_FREERTOS_VAR_SRC_BRANCH="master"
 readonly G_FREERTOS_VAR_SRC_REV=""
 readonly CM_BOARD="som_mx8mn"
 readonly CM_DEMOS=" \
