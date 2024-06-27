@@ -263,6 +263,7 @@ function pr_debug() {
 function get_git_src()
 {
 	# clone src code
+	pr_info "Clone sources from git repository: ${1}"
 	git clone ${1} -b ${2} ${3}
 	cd ${3}
 	git reset --hard ${4}
